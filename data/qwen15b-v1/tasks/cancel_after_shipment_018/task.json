@@ -1,0 +1,74 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "cancel_after_shipment_018",
+  "split": "test",
+  "scenario": "cancel_after_shipment",
+  "user_id": "cust_c591f05187",
+  "user_prompt": "请取消已经发货的订单 ord_cb2da41f56。如果当前阶段不能取消，不要创建退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_cb2da41f56"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "payments",
+      "where": {
+        "id": "pay_49e98cb7af"
+      },
+      "equals": {
+        "status": "captured"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_cb2da41f56"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "订单已发货，无法取消"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cancel_after_shipment",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_c591f05187",
+    "order_id": "ord_cb2da41f56",
+    "product_id": "prod_53eed4880a",
+    "item_id": "item_9b9023a8a6",
+    "payment_id": "pay_49e98cb7af",
+    "shipment_id": "ship_d707a6020d",
+    "tracking_number": "SF3875271",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "智能音箱",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是陈晓，手机号后四位是9152。"
+      }
+    ]
+  }
+}

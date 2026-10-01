@@ -1,0 +1,88 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "partial_quantity_refund_002",
+  "split": "train",
+  "scenario": "partial_quantity_refund",
+  "user_id": "cust_de4cac64c6",
+  "user_prompt": "订单 ord_a42c104564 同一商品买了2件，其中1件损坏。只退损坏的1件，不要把两件都退掉。请核对单件实付金额后让我确认。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_23ad3f206e"
+      },
+      "equals": {
+        "status": "refunded",
+        "quantity": 1
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_a42c104564"
+      },
+      "equals": {
+        "amount_cents": 5999
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_23ad3f206e"
+      },
+      "equals": {
+        "status": "partially_returned"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "59.99",
+    "剩余1件"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "partial_quantity_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_de4cac64c6",
+    "order_id": "ord_a42c104564",
+    "product_id": "prod_414354e864",
+    "item_id": "item_23ad3f206e",
+    "payment_id": "pay_a4daa1f1dd",
+    "shipment_id": "ship_4067fee9c3",
+    "tracking_number": "SF3232736",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "便携投影仪",
+    "refund_amount_cents": 5999,
+    "refund_quantity": 1,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是王伟，手机号后四位是7306。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "单件退款金额我已了解，我确认退掉损坏的1件并原路退款，请执行。"
+      }
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "address_change_same_value_001",
+  "split": "train",
+  "scenario": "address_change_same_value",
+  "user_id": "cust_c3f0e493a2",
+  "user_prompt": "我是李娜，手机号后四位4821。请把订单 ord_b66f774420 的地址改成上海市浦东新区海科路18号。如果本来就是这个地址，不要重复写入。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_b66f774420"
+      },
+      "equals": {
+        "shipping_address": "上海市浦东新区海科路18号"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "当前地址已经是",
+    "上海市浦东新区海科路18号",
+    "无需修改"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "address_change_same_value",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_c3f0e493a2",
+    "order_id": "ord_b66f774420",
+    "product_id": "prod_ec91b55464",
+    "item_id": "item_11dc6c9a4b",
+    "payment_id": "pay_baa0e79d8e",
+    "shipment_id": "ship_5708ad15b0",
+    "tracking_number": "SF2118489",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "智能音箱",
+    "target_address": "上海市浦东新区海科路18号"
+  }
+}

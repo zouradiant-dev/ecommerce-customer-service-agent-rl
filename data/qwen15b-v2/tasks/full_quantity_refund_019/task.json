@@ -1,0 +1,81 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "full_quantity_refund_019",
+  "split": "train",
+  "scenario": "full_quantity_refund",
+  "user_id": "cust_61096f9e93",
+  "user_prompt": "我是李娜，手机号后四位4821。订单 ord_d767d67f91 的同款商品买了2件，两件都有故障，需要全部退掉。我确认退掉全部2件并原路退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_f47725c52a"
+      },
+      "equals": {
+        "status": "refunded",
+        "quantity": 2
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_d767d67f91"
+      },
+      "equals": {
+        "amount_cents": 8398
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_f47725c52a"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "83.98"
+  ],
+  "required_intents": [
+    "refund_quantity_two",
+    "refund_to_original_payment"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "full_quantity_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_61096f9e93",
+    "order_id": "ord_d767d67f91",
+    "product_id": "prod_a567def9f8",
+    "item_id": "item_f47725c52a",
+    "payment_id": "pay_6db743b4c6",
+    "shipment_id": "ship_8f6e8cf6d2",
+    "tracking_number": "SF4047824",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能手环",
+    "refund_amount_cents": 8398,
+    "refund_quantity": 2
+  }
+}

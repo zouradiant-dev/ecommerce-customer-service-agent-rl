@@ -1,0 +1,93 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "mixed_order_bulk_cancel_012",
+  "split": "test",
+  "scenario": "mixed_order_bulk_cancel",
+  "user_id": "cust_b594256aa7",
+  "user_prompt": "请核对并取消订单 ord_fc645cfb1c 和 ordalt_ad847a8c8b。我确认取消其中政策允许取消的订单；已发货的不要强行操作。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_fc645cfb1c"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_ad847a8c8b"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_fc645cfb1c"
+      },
+      "equals": {},
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ordalt_ad847a8c8b"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [
+    "ord_fc645cfb1c",
+    "ordalt_ad847a8c8b"
+  ],
+  "required_intents": [
+    "order_cancelled",
+    "shipped_order_cannot_cancel"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "mixed_order_bulk_cancel",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_b594256aa7",
+    "order_id": "ord_fc645cfb1c",
+    "product_id": "prod_05f2242983",
+    "item_id": "item_8fdf6a21e8",
+    "payment_id": "pay_aa9e850185",
+    "shipment_id": "ship_f6a8c959bb",
+    "tracking_number": "SF1655298",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "智能音箱",
+    "shipped_order_id": "ordalt_ad847a8c8b",
+    "paid_amount_cents": 13200,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是陈晓，手机号后四位是9152。"
+      }
+    ]
+  }
+}

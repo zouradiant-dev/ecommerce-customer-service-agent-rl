@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ecommerce-customer-service-agent-rl"
+version = "0.2.0"
+description = "Verifiable ecommerce customer-service agent environment with a self-built SQLite database"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+agent = ["langgraph>=1.0,<2"]
+
+[project.scripts]
+ecommerce-cs = "ecommerce_customer_service.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

@@ -1,0 +1,64 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "late_refund_012",
+  "split": "dev",
+  "scenario": "late_refund",
+  "user_id": "cust_1cfe3b879c",
+  "user_prompt": "订单 ord_3f60e36e99 已经签收一阵子了，现在想退货退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_3f60e36e99"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_3f60e36e99"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "return_window_expired"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "late_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_1cfe3b879c",
+    "order_id": "ord_3f60e36e99",
+    "product_id": "prod_79d7ca0e68",
+    "item_id": "item_83ac12b678",
+    "payment_id": "pay_e2829eaac5",
+    "shipment_id": "ship_e904a0b016",
+    "tracking_number": "SF4302921",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "便携投影仪",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是王伟，手机号后四位是7306。"
+      }
+    ]
+  }
+}

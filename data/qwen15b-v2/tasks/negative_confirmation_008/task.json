@@ -1,0 +1,69 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "negative_confirmation_008",
+  "split": "dev",
+  "scenario": "negative_confirmation",
+  "user_id": "cust_2741a9c65f",
+  "user_prompt": "订单 ord_b2e0c5cf20 的商品有问题，先帮我核对退款政策和金额，没有我最后确认不要执行退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_b2e0c5cf20"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_b2e0c5cf20"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "operation_stopped"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "negative_confirmation",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_2741a9c65f",
+    "order_id": "ord_b2e0c5cf20",
+    "product_id": "prod_fa8df06aef",
+    "item_id": "item_32cf5cb832",
+    "payment_id": "pay_3038a13e63",
+    "shipment_id": "ship_e4190d00ad",
+    "tracking_number": "SF0081734",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能手环",
+    "refund_amount_cents": 8999,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是刘敏，手机号后四位是2684。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "先不要操作，我还没有确认退款。"
+      }
+    ]
+  }
+}

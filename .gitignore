@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.venv-*/
+.env
+.env.*
+*.egg-info/
+outputs/
+models/
+*.safetensors
+*.pt
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.log

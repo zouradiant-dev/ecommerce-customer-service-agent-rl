@@ -1,0 +1,77 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "multi_order_disambiguation_003",
+  "split": "train",
+  "scenario": "multi_order_disambiguation",
+  "user_id": "cust_fd349c1cfd",
+  "user_prompt": "我是王伟，手机号后四位7306。我账户里有两笔订单，请先列出来核对，然后取消尚未发货、实付136.00元的那笔，我确认取消并接受原路退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_01502971e6"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_22167ec13b"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_01502971e6"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_values": [
+    "136.00"
+  ],
+  "required_intents": [
+    "order_cancelled"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "multi_order_disambiguation",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_fd349c1cfd",
+    "order_id": "ord_01502971e6",
+    "product_id": "prod_7dd6fe8f33",
+    "item_id": "item_1d24070758",
+    "payment_id": "pay_8ec929d6d8",
+    "shipment_id": "ship_81a8401916",
+    "tracking_number": "SF7115681",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "智能音箱",
+    "alternate_order_id": "ordalt_22167ec13b",
+    "paid_amount_cents": 13600
+  }
+}

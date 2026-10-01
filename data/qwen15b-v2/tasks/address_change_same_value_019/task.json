@@ -1,0 +1,55 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "address_change_same_value_019",
+  "split": "train",
+  "scenario": "address_change_same_value",
+  "user_id": "cust_ac2156933b",
+  "user_prompt": "我是张三，手机号后四位1234。请把订单 ord_a0f0b867e8 的地址改成深圳市南山区科技园南区36号。如果本来就是这个地址，不要重复写入。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_a0f0b867e8"
+      },
+      "equals": {
+        "shipping_address": "深圳市南山区科技园南区36号"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "深圳市南山区科技园南区36号"
+  ],
+  "required_intents": [
+    "address_already_same",
+    "no_update_needed"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "address_change_same_value",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_ac2156933b",
+    "order_id": "ord_a0f0b867e8",
+    "product_id": "prod_15db5574c0",
+    "item_id": "item_77f74f14c1",
+    "payment_id": "pay_a8cc67b58a",
+    "shipment_id": "ship_fa7d85afeb",
+    "tracking_number": "SF1483728",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "便携投影仪",
+    "target_address": "深圳市南山区科技园南区36号"
+  }
+}

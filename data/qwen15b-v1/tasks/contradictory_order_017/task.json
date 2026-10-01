@@ -1,0 +1,50 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "contradictory_order_017",
+  "split": "dev",
+  "scenario": "contradictory_order",
+  "user_id": "cust_171578dbf0",
+  "user_prompt": "我是张三，手机号后四位1234。我想取消订单 ord_519a3e119d，等等，也可能不是这个订单。先不要操作。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_519a3e119d"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "请确认准确订单号"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "contradictory_order",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_171578dbf0",
+    "order_id": "ord_519a3e119d",
+    "product_id": "prod_0cd1ed4a62",
+    "item_id": "item_34edd176fe",
+    "payment_id": "pay_65ef345ca7",
+    "shipment_id": "ship_bb645cf93c",
+    "tracking_number": "SF9381832",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能音箱"
+  }
+}

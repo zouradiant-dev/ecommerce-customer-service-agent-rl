@@ -1,0 +1,64 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "refund_quantity_exceeds_010",
+  "split": "dev",
+  "scenario": "refund_quantity_exceeds",
+  "user_id": "cust_4651e5ab10",
+  "user_prompt": "订单 ord_c3adf35fea 里我只买了1件，但我想按2件数量申请退款。请核对购买数量，不要超额退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_c3adf35fea"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_c3adf35fea"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "purchased_quantity_one",
+    "refund_quantity_two_rejected"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_quantity_exceeds",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_4651e5ab10",
+    "order_id": "ord_c3adf35fea",
+    "product_id": "prod_7c8625815c",
+    "item_id": "item_e62415a051",
+    "payment_id": "pay_ab03714fa9",
+    "shipment_id": "ship_3b1337c6e3",
+    "tracking_number": "SF7578680",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能手环",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是刘敏，手机号后四位是2684。"
+      }
+    ]
+  }
+}

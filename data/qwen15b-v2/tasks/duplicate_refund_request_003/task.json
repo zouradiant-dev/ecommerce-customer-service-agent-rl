@@ -1,0 +1,60 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "duplicate_refund_request_003",
+  "split": "test",
+  "scenario": "duplicate_refund_request",
+  "user_id": "cust_8edf16505d",
+  "user_prompt": "我是陈晓，手机号后四位9152。订单 ord_82c196595b 的这件商品我好像已经退过了，请先核对记录；如果已经退款，不要再创建一笔。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_ef13f09b03"
+      },
+      "equals": {},
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_82c196595b"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "refund_already_completed",
+    "duplicate_refund_blocked"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "duplicate_refund_request",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_8edf16505d",
+    "order_id": "ord_82c196595b",
+    "product_id": "prod_893e5aef79",
+    "item_id": "item_ef13f09b03",
+    "payment_id": "pay_4cead52238",
+    "shipment_id": "ship_a6f29c3e18",
+    "tracking_number": "SF8001728",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "便携投影仪",
+    "existing_return_id": "return_331077845a",
+    "existing_refund_id": "refund_c2f0bfdf08"
+  }
+}

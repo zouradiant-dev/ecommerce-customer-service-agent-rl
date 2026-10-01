@@ -1,0 +1,69 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "cancel_after_shipment_003",
+  "split": "test",
+  "scenario": "cancel_after_shipment",
+  "user_id": "cust_9c74ffa142",
+  "user_prompt": "我是王伟，手机号后四位7306。请取消已经发货的订单 ord_221f629e2c。如果当前阶段不能取消，不要创建退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_221f629e2c"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "payments",
+      "where": {
+        "id": "pay_f359a6abe5"
+      },
+      "equals": {
+        "status": "captured"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_221f629e2c"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "shipped_order_cannot_cancel"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cancel_after_shipment",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_9c74ffa142",
+    "order_id": "ord_221f629e2c",
+    "product_id": "prod_5e2ea1fb60",
+    "item_id": "item_7c5957c0f7",
+    "payment_id": "pay_f359a6abe5",
+    "shipment_id": "ship_351b99c863",
+    "tracking_number": "SF6414203",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "电子阅读器"
+  }
+}

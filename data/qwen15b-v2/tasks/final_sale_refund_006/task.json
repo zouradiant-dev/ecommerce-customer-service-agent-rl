@@ -1,0 +1,64 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "final_sale_refund_006",
+  "split": "test",
+  "scenario": "final_sale_refund",
+  "user_id": "cust_c6140e0cc3",
+  "user_prompt": "我要退订单 ord_5bddbfb6bb 的定制刻字商品。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_5bddbfb6bb"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_5bddbfb6bb"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "customized_item_return_blocked"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "final_sale_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_c6140e0cc3",
+    "order_id": "ord_5bddbfb6bb",
+    "product_id": "prod_8f302e5763",
+    "item_id": "item_3d1b7da767",
+    "payment_id": "pay_81f3f1a123",
+    "shipment_id": "ship_943ef4146e",
+    "tracking_number": "SF5373825",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "定制刻字礼品",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是李娜，手机号后四位是4821。"
+      }
+    ]
+  }
+}

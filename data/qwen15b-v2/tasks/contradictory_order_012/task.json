@@ -1,0 +1,57 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "contradictory_order_012",
+  "split": "dev",
+  "scenario": "contradictory_order",
+  "user_id": "cust_8aa563d374",
+  "user_prompt": "我想取消订单 ord_d08bbe9a74，等等，也可能不是这个订单。先不要操作。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_d08bbe9a74"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "order_id_confirmation_needed"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "contradictory_order",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_8aa563d374",
+    "order_id": "ord_d08bbe9a74",
+    "product_id": "prod_e810e79b9b",
+    "item_id": "item_4210483a81",
+    "payment_id": "pay_5135ae21e9",
+    "shipment_id": "ship_9eb4640bd3",
+    "tracking_number": "SF1933059",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "电子阅读器",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是张三，手机号后四位是1234。"
+      }
+    ]
+  }
+}

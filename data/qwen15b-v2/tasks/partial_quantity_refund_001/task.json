@@ -1,0 +1,80 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "partial_quantity_refund_001",
+  "split": "train",
+  "scenario": "partial_quantity_refund",
+  "user_id": "cust_564520a31a",
+  "user_prompt": "我是张三，手机号后四位1234。订单 ord_aba614b742 同一商品买了2件，其中1件损坏。只退损坏的1件，不要把两件都退掉。我确认退掉其中1件并原路退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_4b2206185f"
+      },
+      "equals": {
+        "status": "refunded",
+        "quantity": 1
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_aba614b742"
+      },
+      "equals": {
+        "amount_cents": 5999
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_4b2206185f"
+      },
+      "equals": {
+        "status": "partially_returned"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "59.99"
+  ],
+  "required_intents": [
+    "remaining_quantity_one"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "partial_quantity_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_564520a31a",
+    "order_id": "ord_aba614b742",
+    "product_id": "prod_8581e44a17",
+    "item_id": "item_4b2206185f",
+    "payment_id": "pay_9f340cf26f",
+    "shipment_id": "ship_608cedbbbf",
+    "tracking_number": "SF3356129",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "智能音箱",
+    "refund_amount_cents": 5999,
+    "refund_quantity": 1
+  }
+}

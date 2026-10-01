@@ -1,0 +1,75 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "cancel_without_captured_payment_015",
+  "split": "train",
+  "scenario": "cancel_without_captured_payment",
+  "user_id": "cust_92e87a8fe4",
+  "user_prompt": "我是王伟，手机号后四位7306。订单 ord_8d398f85cc 只预授权还没有实际扣款，请帮我取消。我确认取消。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_8d398f85cc"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "payments",
+      "where": {
+        "id": "pay_35e852527b"
+      },
+      "equals": {
+        "status": "authorized"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_8d398f85cc"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "order_cancelled",
+    "payment_not_captured",
+    "refund_not_needed"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cancel_without_captured_payment",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_92e87a8fe4",
+    "order_id": "ord_8d398f85cc",
+    "product_id": "prod_73a3f79df7",
+    "item_id": "item_a5de7f1ab5",
+    "payment_id": "pay_35e852527b",
+    "shipment_id": "ship_c99f01b37c",
+    "tracking_number": "SF9047684",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "蓝牙耳机",
+    "paid_amount_cents": 0
+  }
+}

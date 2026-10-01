@@ -1,0 +1,45 @@
+{
+  "profile_version": "ecommerce_cs_qwen_7b_v2",
+  "model_id": "Qwen/Qwen2.5-7B-Instruct",
+  "sft": {
+    "method": "qlora",
+    "load_in_4bit": true,
+    "quant_type": "nf4",
+    "double_quant": true,
+    "compute_dtype": "bfloat16",
+    "max_sequence_length": 4096,
+    "assistant_only_loss": true,
+    "lora_rank": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "starting_hyperparameters": {
+      "learning_rate": 0.0002,
+      "micro_batch_size": 1,
+      "gradient_accumulation_steps": 16,
+      "max_optimizer_steps": 200,
+      "epochs": 2,
+      "warmup_ratio": 0.03
+    }
+  },
+  "grpo": {
+    "initial_policy": "sft_checkpoint",
+    "reward": "strict_binary_business_verifier",
+    "num_generations_per_task": 6,
+    "temperature": 0.8,
+    "max_agent_steps": 20,
+    "starting_hyperparameters": {
+      "learning_rate": 0.000005,
+      "kl_beta": 0.04,
+      "max_optimizer_steps_per_iteration": 20
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "cross_order_item_mismatch_017",
+  "split": "test",
+  "scenario": "cross_order_item_mismatch",
+  "user_id": "cust_7b4616bf2d",
+  "user_prompt": "我是陈晓，手机号后四位9152。请从订单 ord_bf6d2a67c1 退款商品项 itemalt_646d1f1240。如果商品项属于另一笔订单，请指出不一致并停止。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_bf6d2a67c1"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ordalt_4563bb8461"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_bf6d2a67c1"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ordalt_4563bb8461"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "商品项不属于指定订单",
+    "没有执行退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cross_order_item_mismatch",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_7b4616bf2d",
+    "order_id": "ord_bf6d2a67c1",
+    "product_id": "prod_498159e458",
+    "item_id": "item_ffe8510ae8",
+    "payment_id": "pay_295675d296",
+    "shipment_id": "ship_e5eb30e5a1",
+    "tracking_number": "SF5637542",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "智能音箱",
+    "mismatched_item_id": "itemalt_646d1f1240",
+    "mismatched_item_order_id": "ordalt_4563bb8461"
+  }
+}

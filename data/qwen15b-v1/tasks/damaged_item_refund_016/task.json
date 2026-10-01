@@ -1,0 +1,86 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "damaged_item_refund_016",
+  "split": "train",
+  "scenario": "damaged_item_refund",
+  "user_id": "cust_588f34b3b3",
+  "user_prompt": "订单 ord_7f5cb970cf 的商品损坏了，我想退掉这一件并按实付金额退款。请先核对政策和金额，再让我确认。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_c973bc5301"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_7f5cb970cf"
+      },
+      "equals": {
+        "amount_cents": 12499
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_c973bc5301"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "124.99",
+    "原路退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "damaged_item_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_588f34b3b3",
+    "order_id": "ord_7f5cb970cf",
+    "product_id": "prod_f33c886bd0",
+    "item_id": "item_c973bc5301",
+    "payment_id": "pay_9ce5d438c1",
+    "shipment_id": "ship_27855fe48e",
+    "tracking_number": "SF9561819",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "智能音箱",
+    "refund_amount_cents": 12499,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是王伟，手机号后四位是7306。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "政策和金额我已了解，我确认退掉这一件并原路退款，请执行。"
+      }
+    ]
+  }
+}

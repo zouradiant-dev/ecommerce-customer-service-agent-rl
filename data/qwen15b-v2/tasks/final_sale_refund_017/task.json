@@ -1,0 +1,58 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "final_sale_refund_017",
+  "split": "test",
+  "scenario": "final_sale_refund",
+  "user_id": "cust_dec6aa133e",
+  "user_prompt": "我是张三，手机号后四位1234。我要退订单 ord_579403ffa8 的定制刻字商品。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_579403ffa8"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_579403ffa8"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "customized_item_return_blocked"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "final_sale_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_dec6aa133e",
+    "order_id": "ord_579403ffa8",
+    "product_id": "prod_ec9e71d010",
+    "item_id": "item_a41ae07b2d",
+    "payment_id": "pay_1299ce34ba",
+    "shipment_id": "ship_9e57c7500d",
+    "tracking_number": "SF0555549",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "定制刻字礼品"
+  }
+}

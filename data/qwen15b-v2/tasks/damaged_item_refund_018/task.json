@@ -1,0 +1,88 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "damaged_item_refund_018",
+  "split": "train",
+  "scenario": "damaged_item_refund",
+  "user_id": "cust_e621e1349e",
+  "user_prompt": "订单 ord_1d6202a238 的商品损坏了，我想退掉这一件并按实付金额退款。请先核对政策和金额，再让我确认。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_818fe89eb7"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_1d6202a238"
+      },
+      "equals": {
+        "amount_cents": 6499
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_818fe89eb7"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "64.99"
+  ],
+  "required_intents": [
+    "refund_to_original_payment"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "damaged_item_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_e621e1349e",
+    "order_id": "ord_1d6202a238",
+    "product_id": "prod_d55fad09da",
+    "item_id": "item_818fe89eb7",
+    "payment_id": "pay_ed9a41d575",
+    "shipment_id": "ship_3740d91afb",
+    "tracking_number": "SF2260349",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "电子阅读器",
+    "refund_amount_cents": 6499,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是王伟，手机号后四位是7306。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "政策和金额我已了解，我确认退掉这一件并原路退款，请执行。"
+      }
+    ]
+  }
+}

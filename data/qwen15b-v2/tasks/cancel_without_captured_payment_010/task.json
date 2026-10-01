@@ -1,0 +1,85 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "cancel_without_captured_payment_010",
+  "split": "train",
+  "scenario": "cancel_without_captured_payment",
+  "user_id": "cust_1258fa60b0",
+  "user_prompt": "订单 ord_c14e664f63 只预授权还没有实际扣款，请帮我取消。核对支付状态后再让我确认。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_c14e664f63"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "payments",
+      "where": {
+        "id": "pay_ad3a4cf360"
+      },
+      "equals": {
+        "status": "authorized"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_c14e664f63"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "order_cancelled",
+    "payment_not_captured",
+    "refund_not_needed"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cancel_without_captured_payment",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_1258fa60b0",
+    "order_id": "ord_c14e664f63",
+    "product_id": "prod_ebe14c9ab9",
+    "item_id": "item_6441d73472",
+    "payment_id": "pay_ad3a4cf360",
+    "shipment_id": "ship_e8a9374f08",
+    "tracking_number": "SF7955330",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "智能手环",
+    "paid_amount_cents": 0,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是李娜，手机号后四位是4821。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "支付状态我已了解，我确认取消订单，请执行。"
+      }
+    ]
+  }
+}

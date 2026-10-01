@@ -1,0 +1,84 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "refund_tool_transient_error_019",
+  "split": "train",
+  "scenario": "refund_tool_transient_error",
+  "user_id": "cust_529ac9fd01",
+  "user_prompt": "我是陈晓，手机号后四位9152。订单 ord_59fefd2130 的商品损坏了，我想退掉这一件并按实付金额退款。我确认退货退款。 如果退款网关首次超时，请核对后安全重试。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_0612794fd4"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_59fefd2130"
+      },
+      "equals": {
+        "amount_cents": 11999
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_0612794fd4"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "119.99"
+  ],
+  "required_intents": [
+    "refund_to_original_payment"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_529ac9fd01",
+    "order_id": "ord_59fefd2130",
+    "product_id": "prod_b1d49cc121",
+    "item_id": "item_0612794fd4",
+    "payment_id": "pay_43d2715e28",
+    "shipment_id": "ship_055c8cb091",
+    "tracking_number": "SF3524953",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "便携投影仪",
+    "refund_amount_cents": 11999,
+    "tool_faults": {
+      "create_refund": {
+        "failures": 1,
+        "error": "refund_gateway_timeout"
+      }
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "schema_version": "agent_rl_experiments_v1",
+  "status": "planned_gpu_runs",
+  "primary_metric": "test_pass_1",
+  "selection_split": "dev",
+  "sealed_split": "test",
+  "seeds": [7, 19, 31],
+  "fixed_protocol": {
+    "base_model": "Qwen/Qwen2.5-7B-Instruct",
+    "starting_policy": "same merged SFT checkpoint",
+    "task_manifest": "same immutable data/v1/tasks.jsonl",
+    "train_only_updates": true,
+    "trials_per_test_task": 4,
+    "temperature": 0.8,
+    "paired_bootstrap_samples": 10000
+  },
+  "experiments": [
+    {
+      "name": "sft_control",
+      "method": "evaluation_only",
+      "purpose": "Control policy before RL; required for paired attribution."
+    },
+    {
+      "name": "offline_group_awr",
+      "method": "offline_group_advantage_weighted_regression",
+      "script": "scripts/train_offline_group_awr.py",
+      "purpose": "Offline-data baseline; explicitly not reported as GRPO."
+    },
+    {
+      "name": "grpo_strict_g4_beta004",
+      "method": "online_environment_grpo",
+      "script": "scripts/train_grpo.py",
+      "arguments": {
+        "reward_mode": "strict_binary",
+        "num_generations": 4,
+        "beta": 0.04
+      },
+      "purpose": "Primary online GRPO run."
+    },
+    {
+      "name": "grpo_shaped_g4_beta004",
+      "method": "online_environment_grpo",
+      "script": "scripts/train_grpo.py",
+      "arguments": {
+        "reward_mode": "audit_shaped",
+        "num_generations": 4,
+        "beta": 0.04
+      },
+      "purpose": "Reward-density ablation with policy failures hard-zeroed."
+    },
+    {
+      "name": "grpo_strict_g8_beta004",
+      "method": "online_environment_grpo",
+      "script": "scripts/train_grpo.py",
+      "arguments": {
+        "reward_mode": "strict_binary",
+        "num_generations": 8,
+        "beta": 0.04
+      },
+      "purpose": "Group-size ablation."
+    },
+    {
+      "name": "grpo_strict_g4_beta001",
+      "method": "online_environment_grpo",
+      "script": "scripts/train_grpo.py",
+      "arguments": {
+        "reward_mode": "strict_binary",
+        "num_generations": 4,
+        "beta": 0.01
+      },
+      "purpose": "KL-strength ablation."
+    }
+  ],
+  "reporting_rules": [
+    "Select checkpoints and hyperparameters on dev only.",
+    "Report each seed plus mean and standard deviation.",
+    "Compare against sft_control by task-paired bootstrap on the sealed test split.",
+    "Report policy violations, unsupported success claims, tool steps and escalation rate.",
+    "Do not treat the scripted reference agent as a model result."
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "multi_order_disambiguation_016",
+  "split": "train",
+  "scenario": "multi_order_disambiguation",
+  "user_id": "cust_9c4a2374a0",
+  "user_prompt": "我账户里有两笔订单，请先列出来核对，然后取消尚未发货、实付76.00元的那笔，确认订单后再让我确认。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_bc2663869a"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_9f324d23b3"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_bc2663869a"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_values": [
+    "76.00"
+  ],
+  "required_intents": [
+    "order_cancelled"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "multi_order_disambiguation",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_9c4a2374a0",
+    "order_id": "ord_bc2663869a",
+    "product_id": "prod_e1f8c189dc",
+    "item_id": "item_ae02acaad7",
+    "payment_id": "pay_61309da0fc",
+    "shipment_id": "ship_ee364c5a07",
+    "tracking_number": "SF8889930",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "电子阅读器",
+    "alternate_order_id": "ordalt_9f324d23b3",
+    "paid_amount_cents": 7600,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是李娜，手机号后四位是4821。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "我确认取消尚未发货、实付金额匹配的订单，并接受原路退款，请执行。"
+      }
+    ]
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "late_refund_005",
+  "split": "dev",
+  "scenario": "late_refund",
+  "user_id": "cust_79e0969b93",
+  "user_prompt": "我是刘敏，手机号后四位2684。订单 ord_3f4e9eff90 已经签收一阵子了，现在想退货退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_3f4e9eff90"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_3f4e9eff90"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "超过30天退货期限"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "late_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_79e0969b93",
+    "order_id": "ord_3f4e9eff90",
+    "product_id": "prod_4de6858151",
+    "item_id": "item_e8f1a57275",
+    "payment_id": "pay_dae2b7a0cb",
+    "shipment_id": "ship_ad6159d90f",
+    "tracking_number": "SF6273964",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能音箱"
+  }
+}

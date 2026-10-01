@@ -1,0 +1,69 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "refund_before_delivery_011",
+  "split": "dev",
+  "scenario": "refund_before_delivery",
+  "user_id": "cust_b3763fc6c0",
+  "user_prompt": "我是刘敏，手机号后四位2684。订单 ord_fd15f737ad 还在运输中，但我现在想直接创建退货退款。请按当前物流状态判断，不要提前退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_fd15f737ad"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_fd15f737ad"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_fd15f737ad"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "order_not_delivered",
+    "return_before_delivery_blocked"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_before_delivery",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_b3763fc6c0",
+    "order_id": "ord_fd15f737ad",
+    "product_id": "prod_0aa49a01dd",
+    "item_id": "item_093173feea",
+    "payment_id": "pay_4b937030cb",
+    "shipment_id": "ship_a7507a17e8",
+    "tracking_number": "SF7572853",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "电子阅读器"
+  }
+}

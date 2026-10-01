@@ -1,0 +1,61 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "cancel_already_cancelled_015",
+  "split": "dev",
+  "scenario": "cancel_already_cancelled",
+  "user_id": "cust_24da48d29a",
+  "user_prompt": "我是陈晓，手机号后四位9152。我不确定订单 ord_ffb6ac748e 是否已经取消，请核对；已经取消的话不要重复操作或重复退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_ffb6ac748e"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_ffb6ac748e"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_facts": [
+    "已经取消",
+    "已经退款",
+    "没有重复操作"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cancel_already_cancelled",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_24da48d29a",
+    "order_id": "ord_ffb6ac748e",
+    "product_id": "prod_21eae1de8f",
+    "item_id": "item_cfaaff3aa1",
+    "payment_id": "pay_b68ae7a48e",
+    "shipment_id": "ship_015ea2d6d8",
+    "tracking_number": "SF1477866",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能手环",
+    "existing_refund_id": "refund_cancel_ord_ffb6ac748e"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "latest_order_lookup_008",
+  "split": "train",
+  "scenario": "latest_order_lookup",
+  "user_id": "cust_a2d8bd27d7",
+  "user_prompt": "我记不住订单号，请从我的订单里找出最新一笔，告诉我订单号、是否发货和实付金额，不要修改任何状态。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_194c4aafdb"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_599d9c4713"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "最新订单",
+    "ordalt_599d9c4713",
+    "尚未发货",
+    "72.00"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "latest_order_lookup",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_a2d8bd27d7",
+    "order_id": "ord_194c4aafdb",
+    "product_id": "prod_bf548bd630",
+    "item_id": "item_1475b8c88d",
+    "payment_id": "pay_0717317177",
+    "shipment_id": "ship_6125f8c72f",
+    "tracking_number": "SF9324973",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "智能手环",
+    "latest_order_id": "ordalt_599d9c4713",
+    "latest_amount_cents": 7200,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是陈晓，手机号后四位是9152。"
+      }
+    ]
+  }
+}

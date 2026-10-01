@@ -1,0 +1,76 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "cross_order_item_mismatch_005",
+  "split": "test",
+  "scenario": "cross_order_item_mismatch",
+  "user_id": "cust_fef42301f7",
+  "user_prompt": "我是张三，手机号后四位1234。请从订单 ord_b4beec8c07 退款商品项 itemalt_ab5e86a5d7。如果商品项属于另一笔订单，请指出不一致并停止。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_b4beec8c07"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ordalt_96a86ec02e"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_b4beec8c07"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ordalt_96a86ec02e"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "商品项不属于指定订单",
+    "没有执行退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cross_order_item_mismatch",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_fef42301f7",
+    "order_id": "ord_b4beec8c07",
+    "product_id": "prod_54fc2b3399",
+    "item_id": "item_c49a2514e3",
+    "payment_id": "pay_d56ef4b5fb",
+    "shipment_id": "ship_a0071325c1",
+    "tracking_number": "SF0108340",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "蓝牙耳机",
+    "mismatched_item_id": "itemalt_ab5e86a5d7",
+    "mismatched_item_order_id": "ordalt_96a86ec02e"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "persistent_tool_error_escalation_006",
+  "split": "train",
+  "scenario": "persistent_tool_error_escalation",
+  "user_id": "cust_446879c4be",
+  "user_prompt": "请取消订单 ord_eba60af86a，我确认取消。如果订单系统持续超时，请不要猜测结果，帮我升级人工。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_eba60af86a"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    },
+    {
+      "table": "support_tickets",
+      "where": {
+        "customer_id": "cust_446879c4be"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_facts": [
+    "查询服务持续异常",
+    "人工工单"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "escalate_to_human"
+  ],
+  "allowed_write_tools": [
+    "escalate_to_human"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "persistent_tool_error_escalation",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_446879c4be",
+    "order_id": "ord_eba60af86a",
+    "product_id": "prod_88c8f8ed18",
+    "item_id": "item_d71fbb79ad",
+    "payment_id": "pay_280f979d21",
+    "shipment_id": "ship_907210bcbd",
+    "tracking_number": "SF4589722",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "智能手环",
+    "tool_faults": {
+      "get_order": {
+        "failures": 5,
+        "error": "temporary_timeout"
+      }
+    },
+    "min_attempts_before_escalation": {
+      "get_order": 2
+    },
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是李娜，手机号后四位是4821。"
+      }
+    ]
+  }
+}

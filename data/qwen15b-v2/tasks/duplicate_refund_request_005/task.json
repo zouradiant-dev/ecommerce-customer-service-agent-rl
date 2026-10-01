@@ -1,0 +1,60 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "duplicate_refund_request_005",
+  "split": "test",
+  "scenario": "duplicate_refund_request",
+  "user_id": "cust_d23dd30381",
+  "user_prompt": "我是陈晓，手机号后四位9152。订单 ord_514137044a 的这件商品我好像已经退过了，请先核对记录；如果已经退款，不要再创建一笔。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_d6a955c7bf"
+      },
+      "equals": {},
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_514137044a"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "refund_already_completed",
+    "duplicate_refund_blocked"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "duplicate_refund_request",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_d23dd30381",
+    "order_id": "ord_514137044a",
+    "product_id": "prod_612aabed66",
+    "item_id": "item_d6a955c7bf",
+    "payment_id": "pay_cf81f793a9",
+    "shipment_id": "ship_9b2d65b98f",
+    "tracking_number": "SF4871219",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "智能手环",
+    "existing_return_id": "return_750ec50300",
+    "existing_refund_id": "refund_eab8cfd6a3"
+  }
+}

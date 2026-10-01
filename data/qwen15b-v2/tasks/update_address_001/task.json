@@ -1,0 +1,57 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "update_address_001",
+  "split": "train",
+  "scenario": "update_address",
+  "user_id": "cust_1abae86199",
+  "user_prompt": "我是刘敏，手机号后四位2684。订单 ord_5ffa44930c 还没发货，请把地址改成上海市徐汇区新地址88号，我确认修改。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_5ffa44930c"
+      },
+      "equals": {
+        "shipping_address": "上海市徐汇区新地址88号"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "上海市徐汇区新地址88号"
+  ],
+  "required_intents": [
+    "address_updated"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "update_shipping_address"
+  ],
+  "allowed_write_tools": [
+    "update_shipping_address"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "update_address",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_1abae86199",
+    "order_id": "ord_5ffa44930c",
+    "product_id": "prod_4e1b107c44",
+    "item_id": "item_09b5f0f23a",
+    "payment_id": "pay_dfe7c6b556",
+    "shipment_id": "ship_9f08702b40",
+    "tracking_number": "SF1566965",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能手环",
+    "target_address": "上海市徐汇区新地址88号"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "cancel_after_shipment_012",
+  "split": "test",
+  "scenario": "cancel_after_shipment",
+  "user_id": "cust_d0eab79d51",
+  "user_prompt": "请取消已经发货的订单 ord_81304ce85c。如果当前阶段不能取消，不要创建退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_81304ce85c"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "payments",
+      "where": {
+        "id": "pay_0a51bfc33f"
+      },
+      "equals": {
+        "status": "captured"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_81304ce85c"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "shipped_order_cannot_cancel"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cancel_after_shipment",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_d0eab79d51",
+    "order_id": "ord_81304ce85c",
+    "product_id": "prod_da23837d63",
+    "item_id": "item_a2ca129dfb",
+    "payment_id": "pay_0a51bfc33f",
+    "shipment_id": "ship_b253aad495",
+    "tracking_number": "SF3356129",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "电子阅读器",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是刘敏，手机号后四位是2684。"
+      }
+    ]
+  }
+}

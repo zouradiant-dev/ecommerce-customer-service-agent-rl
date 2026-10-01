@@ -1,0 +1,61 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "address_change_same_value_000",
+  "split": "train",
+  "scenario": "address_change_same_value",
+  "user_id": "cust_992bd01b07",
+  "user_prompt": "请把订单 ord_9acf772e36 的地址改成杭州市余杭区文一西路88号。如果本来就是这个地址，不要重复写入。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_9acf772e36"
+      },
+      "equals": {
+        "shipping_address": "杭州市余杭区文一西路88号"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "杭州市余杭区文一西路88号"
+  ],
+  "required_intents": [
+    "address_already_same",
+    "no_update_needed"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "address_change_same_value",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_992bd01b07",
+    "order_id": "ord_9acf772e36",
+    "product_id": "prod_bf119fc0cb",
+    "item_id": "item_8559228e97",
+    "payment_id": "pay_7f6ff706f9",
+    "shipment_id": "ship_1d8ca10fe2",
+    "tracking_number": "SF3488536",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "电子阅读器",
+    "target_address": "杭州市余杭区文一西路88号",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是刘敏，手机号后四位是2684。"
+      }
+    ]
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "late_refund_007",
+  "split": "dev",
+  "scenario": "late_refund",
+  "user_id": "cust_a1a04c8701",
+  "user_prompt": "我是王伟，手机号后四位7306。订单 ord_0a715196a1 已经签收一阵子了，现在想退货退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_0a715196a1"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_0a715196a1"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "return_window_expired"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "late_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_a1a04c8701",
+    "order_id": "ord_0a715196a1",
+    "product_id": "prod_d93c8c3cd5",
+    "item_id": "item_fae68b997e",
+    "payment_id": "pay_2710c17bec",
+    "shipment_id": "ship_af2ad42173",
+    "tracking_number": "SF3224494",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "智能手环"
+  }
+}

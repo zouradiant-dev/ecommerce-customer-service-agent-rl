@@ -1,0 +1,72 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "refund_policy_tool_transient_error_017",
+  "split": "train",
+  "scenario": "refund_policy_tool_transient_error",
+  "user_id": "cust_8d5f8c404b",
+  "user_prompt": "我是张三，手机号后四位1234。订单 ord_b8cd28f1ba 的商品损坏，需要退货退款。政策查询首次超时请重试，不能跳过政策检查。我确认退货退款并按实付金额处理。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_8e1deb2666"
+      },
+      "equals": {
+        "quantity": 1
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_b8cd28f1ba"
+      },
+      "equals": {
+        "amount_cents": 6799
+      },
+      "count": 1
+    }
+  ],
+  "required_facts": [
+    "67.99",
+    "原路退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_policy_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_8d5f8c404b",
+    "order_id": "ord_b8cd28f1ba",
+    "product_id": "prod_06c8f78a02",
+    "item_id": "item_8e1deb2666",
+    "payment_id": "pay_d1f3a26a29",
+    "shipment_id": "ship_2a43821330",
+    "tracking_number": "SF3400899",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "电子阅读器",
+    "refund_amount_cents": 6799,
+    "tool_faults": {
+      "search_refund_policy": {
+        "failures": 1,
+        "error": "policy_service_timeout"
+      }
+    }
+  }
+}

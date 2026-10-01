@@ -1,0 +1,75 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "multi_order_disambiguation_011",
+  "split": "train",
+  "scenario": "multi_order_disambiguation",
+  "user_id": "cust_bb9add7942",
+  "user_prompt": "我是王伟，手机号后四位7306。我账户里有两笔订单，请先列出来核对，然后取消尚未发货、实付76.00元的那笔，我确认取消并接受原路退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_d2ae5e68ad"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_550be508c1"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_d2ae5e68ad"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_facts": [
+    "已取消",
+    "76.00"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "multi_order_disambiguation",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_bb9add7942",
+    "order_id": "ord_d2ae5e68ad",
+    "product_id": "prod_975e075b00",
+    "item_id": "item_311e561e49",
+    "payment_id": "pay_1efd541fc9",
+    "shipment_id": "ship_1f89f6595b",
+    "tracking_number": "SF7233501",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能手环",
+    "alternate_order_id": "ordalt_550be508c1",
+    "paid_amount_cents": 7600
+  }
+}

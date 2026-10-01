@@ -1,0 +1,88 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "partial_quantity_refund_010",
+  "split": "train",
+  "scenario": "partial_quantity_refund",
+  "user_id": "cust_556738ffb4",
+  "user_prompt": "订单 ord_b36397457d 同一商品买了2件，其中1件损坏。只退损坏的1件，不要把两件都退掉。请核对单件实付金额后让我确认。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_db9911e701"
+      },
+      "equals": {
+        "status": "refunded",
+        "quantity": 1
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_b36397457d"
+      },
+      "equals": {
+        "amount_cents": 4599
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_db9911e701"
+      },
+      "equals": {
+        "status": "partially_returned"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "45.99",
+    "剩余1件"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "partial_quantity_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_556738ffb4",
+    "order_id": "ord_b36397457d",
+    "product_id": "prod_060dadfec0",
+    "item_id": "item_db9911e701",
+    "payment_id": "pay_5825f43509",
+    "shipment_id": "ship_22ecf5f7fd",
+    "tracking_number": "SF9651015",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "电子阅读器",
+    "refund_amount_cents": 4599,
+    "refund_quantity": 1,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是刘敏，手机号后四位是2684。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "单件退款金额我已了解，我确认退掉损坏的1件并原路退款，请执行。"
+      }
+    ]
+  }
+}

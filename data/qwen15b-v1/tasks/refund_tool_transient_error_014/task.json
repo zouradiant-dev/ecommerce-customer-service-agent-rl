@@ -1,0 +1,92 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "refund_tool_transient_error_014",
+  "split": "train",
+  "scenario": "refund_tool_transient_error",
+  "user_id": "cust_6597af33a2",
+  "user_prompt": "订单 ord_44f830355e 的商品损坏了，我想退掉这一件并按实付金额退款。请先核对政策和金额，再让我确认。 如果退款网关首次超时，请核对后安全重试。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_40c3a36ca4"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_44f830355e"
+      },
+      "equals": {
+        "amount_cents": 11499
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_40c3a36ca4"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "114.99",
+    "原路退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_6597af33a2",
+    "order_id": "ord_44f830355e",
+    "product_id": "prod_054e8fba8f",
+    "item_id": "item_40c3a36ca4",
+    "payment_id": "pay_a6614a0001",
+    "shipment_id": "ship_741aa6289f",
+    "tracking_number": "SF8538480",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "电子阅读器",
+    "refund_amount_cents": 11499,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是陈晓，手机号后四位是9152。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "政策和金额我已了解，我确认退掉这一件并原路退款，请执行。"
+      }
+    ],
+    "tool_faults": {
+      "create_refund": {
+        "failures": 1,
+        "error": "refund_gateway_timeout"
+      }
+    }
+  }
+}

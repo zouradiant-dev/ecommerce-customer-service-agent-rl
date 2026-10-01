@@ -1,0 +1,53 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "shipment_status_005",
+  "split": "train",
+  "scenario": "shipment_status",
+  "user_id": "cust_421294c1f6",
+  "user_prompt": "我是王伟，手机号后四位7306。请帮我查一下订单 ord_f728e77fe8 到哪里了。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_f728e77fe8"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "SF6016286"
+  ],
+  "required_intents": [
+    "shipment_in_transit"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_shipment"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "shipment_status",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_421294c1f6",
+    "order_id": "ord_f728e77fe8",
+    "product_id": "prod_a301839197",
+    "item_id": "item_ae667b0340",
+    "payment_id": "pay_ad1e2b6f6a",
+    "shipment_id": "ship_c7e24042d9",
+    "tracking_number": "SF6016286",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "智能音箱"
+  }
+}

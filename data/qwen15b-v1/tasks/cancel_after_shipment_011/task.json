@@ -1,0 +1,68 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "cancel_after_shipment_011",
+  "split": "test",
+  "scenario": "cancel_after_shipment",
+  "user_id": "cust_e484dbdaf8",
+  "user_prompt": "我是张三，手机号后四位1234。请取消已经发货的订单 ord_ac4c211810。如果当前阶段不能取消，不要创建退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_ac4c211810"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "payments",
+      "where": {
+        "id": "pay_a070fa4d1c"
+      },
+      "equals": {
+        "status": "captured"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_ac4c211810"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "订单已发货，无法取消"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cancel_after_shipment",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_e484dbdaf8",
+    "order_id": "ord_ac4c211810",
+    "product_id": "prod_63322b551a",
+    "item_id": "item_7045c52751",
+    "payment_id": "pay_a070fa4d1c",
+    "shipment_id": "ship_e3588d9fe1",
+    "tracking_number": "SF1460385",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "蓝牙耳机"
+  }
+}

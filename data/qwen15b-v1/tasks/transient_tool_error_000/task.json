@@ -1,0 +1,89 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "transient_tool_error_000",
+  "split": "train",
+  "scenario": "transient_tool_error",
+  "user_id": "cust_21d90917b1",
+  "user_prompt": "请取消订单 ord_2bd9482d6c，退款前先告诉我具体金额。 如果查询超时请重试，不要直接放弃。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_2bd9482d6c"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "payments",
+      "where": {
+        "id": "pay_886a9e97c2"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_2bd9482d6c"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_facts": [
+    "已取消",
+    "219.00"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "transient_tool_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_21d90917b1",
+    "order_id": "ord_2bd9482d6c",
+    "product_id": "prod_0f83f09341",
+    "item_id": "item_0c9edcc0de",
+    "payment_id": "pay_886a9e97c2",
+    "shipment_id": "ship_c2ddf190e9",
+    "tracking_number": "SF4540544",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "电子阅读器",
+    "paid_amount_cents": 21900,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是陈晓，手机号后四位是9152。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "我确认取消这个订单并接受原路退款，请执行。"
+      }
+    ],
+    "tool_faults": {
+      "get_order": {
+        "failures": 1,
+        "error": "temporary_timeout"
+      }
+    }
+  }
+}

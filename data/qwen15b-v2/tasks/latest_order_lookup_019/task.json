@@ -1,0 +1,68 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "latest_order_lookup_019",
+  "split": "train",
+  "scenario": "latest_order_lookup",
+  "user_id": "cust_2df494f767",
+  "user_prompt": "我是李娜，手机号后四位4821。我记不住订单号，请从我的订单里找出最新一笔，告诉我订单号、是否发货和实付金额，不要修改任何状态。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_2dca84deeb"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_276720ea18"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "ordalt_276720ea18",
+    "72.00"
+  ],
+  "required_intents": [
+    "latest_order_identified",
+    "order_not_shipped"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "latest_order_lookup",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_2df494f767",
+    "order_id": "ord_2dca84deeb",
+    "product_id": "prod_fdfac8d483",
+    "item_id": "item_fe7f0c22cb",
+    "payment_id": "pay_4efa4a0bd8",
+    "shipment_id": "ship_2297831f61",
+    "tracking_number": "SF4371951",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能音箱",
+    "latest_order_id": "ordalt_276720ea18",
+    "latest_amount_cents": 7200
+  }
+}

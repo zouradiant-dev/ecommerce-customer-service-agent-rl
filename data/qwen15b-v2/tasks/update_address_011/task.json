@@ -1,0 +1,57 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "update_address_011",
+  "split": "train",
+  "scenario": "update_address",
+  "user_id": "cust_c1d1dbced6",
+  "user_prompt": "我是张三，手机号后四位1234。订单 ord_2c87a90f92 还没发货，请把地址改成上海市徐汇区新地址88号，我确认修改。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_2c87a90f92"
+      },
+      "equals": {
+        "shipping_address": "上海市徐汇区新地址88号"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "上海市徐汇区新地址88号"
+  ],
+  "required_intents": [
+    "address_updated"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "update_shipping_address"
+  ],
+  "allowed_write_tools": [
+    "update_shipping_address"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "update_address",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_c1d1dbced6",
+    "order_id": "ord_2c87a90f92",
+    "product_id": "prod_8c07581472",
+    "item_id": "item_5f9e11f67c",
+    "payment_id": "pay_838475b43f",
+    "shipment_id": "ship_c77993cfba",
+    "tracking_number": "SF4857470",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "电子阅读器",
+    "target_address": "上海市徐汇区新地址88号"
+  }
+}

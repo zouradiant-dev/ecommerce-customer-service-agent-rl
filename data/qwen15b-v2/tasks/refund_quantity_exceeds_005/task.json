@@ -1,0 +1,58 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "refund_quantity_exceeds_005",
+  "split": "dev",
+  "scenario": "refund_quantity_exceeds",
+  "user_id": "cust_a9ab7ec2e1",
+  "user_prompt": "我是李娜，手机号后四位4821。订单 ord_3b94dfaf26 里我只买了1件，但我想按2件数量申请退款。请核对购买数量，不要超额退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_3b94dfaf26"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_3b94dfaf26"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "purchased_quantity_one",
+    "refund_quantity_two_rejected"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_quantity_exceeds",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_a9ab7ec2e1",
+    "order_id": "ord_3b94dfaf26",
+    "product_id": "prod_5987f0b4d5",
+    "item_id": "item_1e345a06ca",
+    "payment_id": "pay_702b9f0693",
+    "shipment_id": "ship_4295749a94",
+    "tracking_number": "SF1634699",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "便携投影仪"
+  }
+}

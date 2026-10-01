@@ -1,0 +1,89 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "full_quantity_refund_010",
+  "split": "train",
+  "scenario": "full_quantity_refund",
+  "user_id": "cust_ebf7e16ed8",
+  "user_prompt": "订单 ord_537e4dc4c8 的同款商品买了2件，两件都有故障，需要全部退掉。请核对两件的退款总额后让我确认。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_7faf3e428d"
+      },
+      "equals": {
+        "status": "refunded",
+        "quantity": 2
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_537e4dc4c8"
+      },
+      "equals": {
+        "amount_cents": 11398
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_7faf3e428d"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "2件",
+    "113.98",
+    "原路退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "full_quantity_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_ebf7e16ed8",
+    "order_id": "ord_537e4dc4c8",
+    "product_id": "prod_44f6f82a16",
+    "item_id": "item_7faf3e428d",
+    "payment_id": "pay_45a24c11b0",
+    "shipment_id": "ship_f7ee13f87d",
+    "tracking_number": "SF0225199",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "电子阅读器",
+    "refund_amount_cents": 11398,
+    "refund_quantity": 2,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是张三，手机号后四位是1234。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "两件退款总额我已了解，我确认退掉全部2件并原路退款，请执行。"
+      }
+    ]
+  }
+}

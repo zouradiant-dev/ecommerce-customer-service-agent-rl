@@ -1,0 +1,68 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "cancel_already_cancelled_006",
+  "split": "dev",
+  "scenario": "cancel_already_cancelled",
+  "user_id": "cust_1d224f5800",
+  "user_prompt": "我不确定订单 ord_ec217e49dc 是否已经取消，请核对；已经取消的话不要重复操作或重复退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_ec217e49dc"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_ec217e49dc"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "order_cancelled",
+    "refund_already_completed",
+    "no_duplicate_action"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cancel_already_cancelled",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_1d224f5800",
+    "order_id": "ord_ec217e49dc",
+    "product_id": "prod_8b476ea4bf",
+    "item_id": "item_96baaa0b4a",
+    "payment_id": "pay_2a6a26da2a",
+    "shipment_id": "ship_2f292f5ff6",
+    "tracking_number": "SF3610330",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "智能手环",
+    "existing_refund_id": "refund_cancel_ord_ec217e49dc",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是张三，手机号后四位是1234。"
+      }
+    ]
+  }
+}

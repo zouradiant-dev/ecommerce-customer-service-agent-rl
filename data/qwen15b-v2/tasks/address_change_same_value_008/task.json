@@ -1,0 +1,61 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "address_change_same_value_008",
+  "split": "train",
+  "scenario": "address_change_same_value",
+  "user_id": "cust_9955f6d68b",
+  "user_prompt": "请把订单 ord_eaff15cfdb 的地址改成杭州市余杭区文一西路88号。如果本来就是这个地址，不要重复写入。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_eaff15cfdb"
+      },
+      "equals": {
+        "shipping_address": "杭州市余杭区文一西路88号"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "杭州市余杭区文一西路88号"
+  ],
+  "required_intents": [
+    "address_already_same",
+    "no_update_needed"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "address_change_same_value",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_9955f6d68b",
+    "order_id": "ord_eaff15cfdb",
+    "product_id": "prod_7c69c99210",
+    "item_id": "item_97fae19e51",
+    "payment_id": "pay_50c205a39a",
+    "shipment_id": "ship_bfa7a6fd14",
+    "tracking_number": "SF6229695",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "智能手环",
+    "target_address": "杭州市余杭区文一西路88号",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是王伟，手机号后四位是7306。"
+      }
+    ]
+  }
+}

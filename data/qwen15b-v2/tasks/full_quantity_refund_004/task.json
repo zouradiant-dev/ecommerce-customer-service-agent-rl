@@ -1,0 +1,91 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "full_quantity_refund_004",
+  "split": "train",
+  "scenario": "full_quantity_refund",
+  "user_id": "cust_61a9796a16",
+  "user_prompt": "订单 ord_eb13502326 的同款商品买了2件，两件都有故障，需要全部退掉。请核对两件的退款总额后让我确认。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_20ddbcb1c9"
+      },
+      "equals": {
+        "status": "refunded",
+        "quantity": 2
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_eb13502326"
+      },
+      "equals": {
+        "amount_cents": 14998
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_20ddbcb1c9"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "149.98"
+  ],
+  "required_intents": [
+    "refund_quantity_two",
+    "refund_to_original_payment"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "full_quantity_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_61a9796a16",
+    "order_id": "ord_eb13502326",
+    "product_id": "prod_42bdcfec0e",
+    "item_id": "item_20ddbcb1c9",
+    "payment_id": "pay_aef3bba084",
+    "shipment_id": "ship_ab07698ead",
+    "tracking_number": "SF1576879",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "电子阅读器",
+    "refund_amount_cents": 14998,
+    "refund_quantity": 2,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是李娜，手机号后四位是4821。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "两件退款总额我已了解，我确认退掉全部2件并原路退款，请执行。"
+      }
+    ]
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "cancel_unshipped_017",
+  "split": "train",
+  "scenario": "cancel_unshipped",
+  "user_id": "cust_09ff11bd3d",
+  "user_prompt": "我是刘敏，手机号后四位2684。请取消订单 ord_174a85df28，我确认取消并接受原路退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_174a85df28"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "payments",
+      "where": {
+        "id": "pay_34cb54bbea"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_174a85df28"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_values": [
+    "89.00"
+  ],
+  "required_intents": [
+    "order_cancelled"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cancel_unshipped",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_09ff11bd3d",
+    "order_id": "ord_174a85df28",
+    "product_id": "prod_5fa784c741",
+    "item_id": "item_dc58950b63",
+    "payment_id": "pay_34cb54bbea",
+    "shipment_id": "ship_b4c632cc3e",
+    "tracking_number": "SF9814729",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "便携投影仪",
+    "paid_amount_cents": 8900
+  }
+}

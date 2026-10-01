@@ -1,0 +1,55 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "address_change_same_value_013",
+  "split": "train",
+  "scenario": "address_change_same_value",
+  "user_id": "cust_b7c5a0557c",
+  "user_prompt": "我是刘敏，手机号后四位2684。请把订单 ord_d075a712b9 的地址改成成都市高新区天府三街108号。如果本来就是这个地址，不要重复写入。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_d075a712b9"
+      },
+      "equals": {
+        "shipping_address": "成都市高新区天府三街108号"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "成都市高新区天府三街108号"
+  ],
+  "required_intents": [
+    "address_already_same",
+    "no_update_needed"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "address_change_same_value",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_b7c5a0557c",
+    "order_id": "ord_d075a712b9",
+    "product_id": "prod_0a691f0052",
+    "item_id": "item_075fb0379b",
+    "payment_id": "pay_151f47c2a3",
+    "shipment_id": "ship_27e7f1fff6",
+    "tracking_number": "SF7682259",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "便携投影仪",
+    "target_address": "成都市高新区天府三街108号"
+  }
+}

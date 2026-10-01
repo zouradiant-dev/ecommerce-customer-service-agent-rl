@@ -1,0 +1,57 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "identity_tool_transient_error_013",
+  "split": "train",
+  "scenario": "identity_tool_transient_error",
+  "user_id": "cust_b280f88a2d",
+  "user_prompt": "我是李娜，手机号后四位4821。请查询订单 ord_67cb558f2f 的物流。如果身份服务首次超时，请重试一次，不要绕过核验。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_67cb558f2f"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "运输中",
+    "SF9090593"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_shipment"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "identity_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_b280f88a2d",
+    "order_id": "ord_67cb558f2f",
+    "product_id": "prod_2b4da070ba",
+    "item_id": "item_92b48084cb",
+    "payment_id": "pay_500a8dd9a5",
+    "shipment_id": "ship_0dc6c4a951",
+    "tracking_number": "SF9090593",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "电子阅读器",
+    "tool_faults": {
+      "verify_customer_identity": {
+        "failures": 1,
+        "error": "identity_timeout"
+      }
+    }
+  }
+}

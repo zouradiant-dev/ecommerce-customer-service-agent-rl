@@ -1,0 +1,87 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "mixed_order_bulk_cancel_001",
+  "split": "test",
+  "scenario": "mixed_order_bulk_cancel",
+  "user_id": "cust_81a1384aca",
+  "user_prompt": "我是陈晓，手机号后四位9152。请核对并取消订单 ord_f5250f39ad 和 ordalt_cb5e0b1cde。我确认取消其中政策允许取消的订单；已发货的不要强行操作。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_f5250f39ad"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_cb5e0b1cde"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_f5250f39ad"
+      },
+      "equals": {},
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ordalt_cb5e0b1cde"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [
+    "ord_f5250f39ad",
+    "ordalt_cb5e0b1cde"
+  ],
+  "required_intents": [
+    "order_cancelled",
+    "shipped_order_cannot_cancel"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "mixed_order_bulk_cancel",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_81a1384aca",
+    "order_id": "ord_f5250f39ad",
+    "product_id": "prod_8e870fabdb",
+    "item_id": "item_a4a454e512",
+    "payment_id": "pay_b6d83be109",
+    "shipment_id": "ship_dcf2383216",
+    "tracking_number": "SF8755826",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能手环",
+    "shipped_order_id": "ordalt_cb5e0b1cde",
+    "paid_amount_cents": 8800
+  }
+}

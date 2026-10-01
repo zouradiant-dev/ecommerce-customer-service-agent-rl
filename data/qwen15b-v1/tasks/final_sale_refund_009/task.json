@@ -1,0 +1,57 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "final_sale_refund_009",
+  "split": "test",
+  "scenario": "final_sale_refund",
+  "user_id": "cust_9c1c841450",
+  "user_prompt": "我是刘敏，手机号后四位2684。我要退订单 ord_446276863a 的定制刻字商品。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_446276863a"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_446276863a"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "定制商品不支持退货"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "final_sale_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_9c1c841450",
+    "order_id": "ord_446276863a",
+    "product_id": "prod_880936a99b",
+    "item_id": "item_21cd495ccf",
+    "payment_id": "pay_73f5c369c9",
+    "shipment_id": "ship_c79cbadff8",
+    "tracking_number": "SF6044017",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "定制刻字礼品"
+  }
+}

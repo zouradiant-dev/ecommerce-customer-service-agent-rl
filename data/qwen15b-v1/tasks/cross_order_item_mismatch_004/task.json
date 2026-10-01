@@ -1,0 +1,82 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "cross_order_item_mismatch_004",
+  "split": "test",
+  "scenario": "cross_order_item_mismatch",
+  "user_id": "cust_e4549d32c7",
+  "user_prompt": "请从订单 ord_34e9a2d22d 退款商品项 itemalt_b52481bfd9。如果商品项属于另一笔订单，请指出不一致并停止。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_34e9a2d22d"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ordalt_c0300db547"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_34e9a2d22d"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ordalt_c0300db547"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "商品项不属于指定订单",
+    "没有执行退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cross_order_item_mismatch",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_e4549d32c7",
+    "order_id": "ord_34e9a2d22d",
+    "product_id": "prod_ba6bf3da2a",
+    "item_id": "item_666d45fd63",
+    "payment_id": "pay_a047988930",
+    "shipment_id": "ship_cdf6573597",
+    "tracking_number": "SF1350640",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "智能手环",
+    "mismatched_item_id": "itemalt_b52481bfd9",
+    "mismatched_item_order_id": "ordalt_c0300db547",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是李娜，手机号后四位是4821。"
+      }
+    ]
+  }
+}

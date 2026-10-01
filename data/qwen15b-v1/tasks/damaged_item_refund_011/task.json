@@ -1,0 +1,76 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "damaged_item_refund_011",
+  "split": "train",
+  "scenario": "damaged_item_refund",
+  "user_id": "cust_034acbc317",
+  "user_prompt": "我是陈晓，手机号后四位9152。订单 ord_a2312103df 的商品损坏了，我想退掉这一件并按实付金额退款。我确认退货退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_471b129c38"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_a2312103df"
+      },
+      "equals": {
+        "amount_cents": 5999
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_471b129c38"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "59.99",
+    "原路退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "damaged_item_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_034acbc317",
+    "order_id": "ord_a2312103df",
+    "product_id": "prod_d2aebc5662",
+    "item_id": "item_471b129c38",
+    "payment_id": "pay_455c0fc3e2",
+    "shipment_id": "ship_293ad5597b",
+    "tracking_number": "SF6939914",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "智能手环",
+    "refund_amount_cents": 5999
+  }
+}

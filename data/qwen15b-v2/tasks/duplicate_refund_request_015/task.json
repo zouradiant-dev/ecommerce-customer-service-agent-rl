@@ -1,0 +1,60 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "duplicate_refund_request_015",
+  "split": "test",
+  "scenario": "duplicate_refund_request",
+  "user_id": "cust_a834dcb439",
+  "user_prompt": "我是陈晓，手机号后四位9152。订单 ord_a01e14326a 的这件商品我好像已经退过了，请先核对记录；如果已经退款，不要再创建一笔。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_db392a0e60"
+      },
+      "equals": {},
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_a01e14326a"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "refund_already_completed",
+    "duplicate_refund_blocked"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "duplicate_refund_request",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_a834dcb439",
+    "order_id": "ord_a01e14326a",
+    "product_id": "prod_7286aea9a5",
+    "item_id": "item_db392a0e60",
+    "payment_id": "pay_480ef5aa01",
+    "shipment_id": "ship_0b4fe44ff4",
+    "tracking_number": "SF2579542",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "蓝牙耳机",
+    "existing_return_id": "return_282e2203dd",
+    "existing_refund_id": "refund_649602d75c"
+  }
+}

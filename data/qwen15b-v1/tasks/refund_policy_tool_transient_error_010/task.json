@@ -1,0 +1,82 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "refund_policy_tool_transient_error_010",
+  "split": "train",
+  "scenario": "refund_policy_tool_transient_error",
+  "user_id": "cust_64e2009497",
+  "user_prompt": "订单 ord_c6d9c961ab 的商品损坏，需要退货退款。政策查询首次超时请重试，不能跳过政策检查。确认金额后再让我确认。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_f3fa25cffd"
+      },
+      "equals": {
+        "quantity": 1
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_c6d9c961ab"
+      },
+      "equals": {
+        "amount_cents": 8799
+      },
+      "count": 1
+    }
+  ],
+  "required_facts": [
+    "87.99",
+    "原路退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_policy_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_64e2009497",
+    "order_id": "ord_c6d9c961ab",
+    "product_id": "prod_38c1d78fab",
+    "item_id": "item_f3fa25cffd",
+    "payment_id": "pay_1a84030594",
+    "shipment_id": "ship_91343649cb",
+    "tracking_number": "SF4222259",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "电子阅读器",
+    "refund_amount_cents": 8799,
+    "tool_faults": {
+      "search_refund_policy": {
+        "failures": 1,
+        "error": "policy_service_timeout"
+      }
+    },
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是王伟，手机号后四位是7306。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "政策和金额我已了解，我确认退货退款，请执行。"
+      }
+    ]
+  }
+}

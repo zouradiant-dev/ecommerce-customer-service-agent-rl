@@ -1,0 +1,50 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "contradictory_order_003",
+  "split": "dev",
+  "scenario": "contradictory_order",
+  "user_id": "cust_52040b9e7a",
+  "user_prompt": "我是张三，手机号后四位1234。我想取消订单 ord_569f8d8090，等等，也可能不是这个订单。先不要操作。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_569f8d8090"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "请确认准确订单号"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "contradictory_order",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_52040b9e7a",
+    "order_id": "ord_569f8d8090",
+    "product_id": "prod_bd64c16b0e",
+    "item_id": "item_c47f6dd41a",
+    "payment_id": "pay_e1c5e1ef8f",
+    "shipment_id": "ship_24d9fcb246",
+    "tracking_number": "SF5627776",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "智能手环"
+  }
+}

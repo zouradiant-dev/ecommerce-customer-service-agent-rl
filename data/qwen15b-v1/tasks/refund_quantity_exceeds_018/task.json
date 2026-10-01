@@ -1,0 +1,64 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "refund_quantity_exceeds_018",
+  "split": "dev",
+  "scenario": "refund_quantity_exceeds",
+  "user_id": "cust_6ca303f08e",
+  "user_prompt": "订单 ord_1e6d9d1636 里我只买了1件，但我想按2件数量申请退款。请核对购买数量，不要超额退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_1e6d9d1636"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_1e6d9d1636"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "只购买了1件",
+    "不能按2件退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_quantity_exceeds",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_6ca303f08e",
+    "order_id": "ord_1e6d9d1636",
+    "product_id": "prod_2e588875ae",
+    "item_id": "item_1758ddb554",
+    "payment_id": "pay_475721ec5b",
+    "shipment_id": "ship_896db70271",
+    "tracking_number": "SF5143145",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "电子阅读器",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是张三，手机号后四位是1234。"
+      }
+    ]
+  }
+}

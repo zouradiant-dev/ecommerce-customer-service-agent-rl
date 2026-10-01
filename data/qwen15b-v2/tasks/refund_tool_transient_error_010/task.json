@@ -1,0 +1,94 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "refund_tool_transient_error_010",
+  "split": "train",
+  "scenario": "refund_tool_transient_error",
+  "user_id": "cust_adbad42bc7",
+  "user_prompt": "订单 ord_fb50aa7aa8 的商品损坏了，我想退掉这一件并按实付金额退款。请先核对政策和金额，再让我确认。 如果退款网关首次超时，请核对后安全重试。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_b42a1e1527"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_fb50aa7aa8"
+      },
+      "equals": {
+        "amount_cents": 6499
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_b42a1e1527"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "64.99"
+  ],
+  "required_intents": [
+    "refund_to_original_payment"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_adbad42bc7",
+    "order_id": "ord_fb50aa7aa8",
+    "product_id": "prod_9bb9289c4e",
+    "item_id": "item_b42a1e1527",
+    "payment_id": "pay_12bb01476b",
+    "shipment_id": "ship_e81005364a",
+    "tracking_number": "SF6841213",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能手环",
+    "refund_amount_cents": 6499,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是李娜，手机号后四位是4821。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "政策和金额我已了解，我确认退掉这一件并原路退款，请执行。"
+      }
+    ],
+    "tool_faults": {
+      "create_refund": {
+        "failures": 1,
+        "error": "refund_gateway_timeout"
+      }
+    }
+  }
+}

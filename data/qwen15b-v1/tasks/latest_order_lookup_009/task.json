@@ -1,0 +1,66 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "latest_order_lookup_009",
+  "split": "train",
+  "scenario": "latest_order_lookup",
+  "user_id": "cust_d4369ec308",
+  "user_prompt": "我是李娜，手机号后四位4821。我记不住订单号，请从我的订单里找出最新一笔，告诉我订单号、是否发货和实付金额，不要修改任何状态。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_f8d52c3c29"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_e46139e0ab"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "最新订单",
+    "ordalt_e46139e0ab",
+    "尚未发货",
+    "72.00"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "latest_order_lookup",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_d4369ec308",
+    "order_id": "ord_f8d52c3c29",
+    "product_id": "prod_4c741c12be",
+    "item_id": "item_d57eaba2f8",
+    "payment_id": "pay_d81dedf34a",
+    "shipment_id": "ship_53b29713bc",
+    "tracking_number": "SF2325805",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "蓝牙耳机",
+    "latest_order_id": "ordalt_e46139e0ab",
+    "latest_amount_cents": 7200
+  }
+}

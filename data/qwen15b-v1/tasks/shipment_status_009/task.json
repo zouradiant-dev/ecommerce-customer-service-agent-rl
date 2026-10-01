@@ -1,0 +1,51 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "shipment_status_009",
+  "split": "train",
+  "scenario": "shipment_status",
+  "user_id": "cust_3d1eee8a58",
+  "user_prompt": "我是陈晓，手机号后四位9152。请帮我查一下订单 ord_07ca1a97cf 到哪里了。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_07ca1a97cf"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "运输中",
+    "SF1851989"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_shipment"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "shipment_status",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_3d1eee8a58",
+    "order_id": "ord_07ca1a97cf",
+    "product_id": "prod_ea6930a565",
+    "item_id": "item_7c187797a6",
+    "payment_id": "pay_1d5ffdcdb5",
+    "shipment_id": "ship_aa460ffe26",
+    "tracking_number": "SF1851989",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "电子阅读器"
+  }
+}

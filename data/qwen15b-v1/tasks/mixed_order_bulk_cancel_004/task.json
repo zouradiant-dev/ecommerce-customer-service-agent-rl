@@ -1,0 +1,91 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "mixed_order_bulk_cancel_004",
+  "split": "test",
+  "scenario": "mixed_order_bulk_cancel",
+  "user_id": "cust_918977d22d",
+  "user_prompt": "请核对并取消订单 ord_78a58949ab 和 ordalt_09850cd997。我确认取消其中政策允许取消的订单；已发货的不要强行操作。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_78a58949ab"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_09850cd997"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_78a58949ab"
+      },
+      "equals": {},
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ordalt_09850cd997"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "ord_78a58949ab",
+    "已取消",
+    "ordalt_09850cd997",
+    "已发货，无法取消"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "mixed_order_bulk_cancel",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_918977d22d",
+    "order_id": "ord_78a58949ab",
+    "product_id": "prod_aed066704f",
+    "item_id": "item_0a3c91e5ab",
+    "payment_id": "pay_39bc70fdfd",
+    "shipment_id": "ship_5b09890bea",
+    "tracking_number": "SF0543087",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "便携投影仪",
+    "shipped_order_id": "ordalt_09850cd997",
+    "paid_amount_cents": 8800,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是张三，手机号后四位是1234。"
+      }
+    ]
+  }
+}

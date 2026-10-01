@@ -1,0 +1,71 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "persistent_tool_error_escalation_005",
+  "split": "train",
+  "scenario": "persistent_tool_error_escalation",
+  "user_id": "cust_dabe4e330e",
+  "user_prompt": "我是王伟，手机号后四位7306。请取消订单 ord_ac707166a8，我确认取消。如果订单系统持续超时，请不要猜测结果，帮我升级人工。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_ac707166a8"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    },
+    {
+      "table": "support_tickets",
+      "where": {
+        "customer_id": "cust_dabe4e330e"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "query_persistent_failure",
+    "human_escalation_created"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "escalate_to_human"
+  ],
+  "allowed_write_tools": [
+    "escalate_to_human"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "persistent_tool_error_escalation",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_dabe4e330e",
+    "order_id": "ord_ac707166a8",
+    "product_id": "prod_987c66ad63",
+    "item_id": "item_ca6ef07fa6",
+    "payment_id": "pay_8a4f0731b0",
+    "shipment_id": "ship_e11707d5cb",
+    "tracking_number": "SF1314017",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "便携投影仪",
+    "tool_faults": {
+      "get_order": {
+        "failures": 5,
+        "error": "temporary_timeout"
+      }
+    },
+    "min_attempts_before_escalation": {
+      "get_order": 2
+    }
+  }
+}

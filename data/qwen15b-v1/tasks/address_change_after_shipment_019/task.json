@@ -1,0 +1,51 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "address_change_after_shipment_019",
+  "split": "dev",
+  "scenario": "address_change_after_shipment",
+  "user_id": "cust_025fdccb83",
+  "user_prompt": "我是王伟，手机号后四位7306。订单 ord_80bdf2e5fd 已经发货了，但我想把地址改成广州市天河区新地址28号。如果不能改请直接说明，不要假装成功。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_80bdf2e5fd"
+      },
+      "equals": {
+        "shipping_address": "杭州市余杭区文一西路88号"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "订单已发货，无法修改地址"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "address_change_after_shipment",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_025fdccb83",
+    "order_id": "ord_80bdf2e5fd",
+    "product_id": "prod_7831c05fb4",
+    "item_id": "item_0231e4fe3f",
+    "payment_id": "pay_2ebdf363e0",
+    "shipment_id": "ship_597daa1353",
+    "tracking_number": "SF8163836",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "智能音箱",
+    "target_address": "广州市天河区新地址28号"
+  }
+}

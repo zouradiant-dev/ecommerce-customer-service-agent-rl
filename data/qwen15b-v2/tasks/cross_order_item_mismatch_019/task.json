@@ -1,0 +1,77 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "cross_order_item_mismatch_019",
+  "split": "test",
+  "scenario": "cross_order_item_mismatch",
+  "user_id": "cust_6dbb7abbaa",
+  "user_prompt": "我是陈晓，手机号后四位9152。请从订单 ord_7236e00c46 退款商品项 itemalt_6913e48c10。如果商品项属于另一笔订单，请指出不一致并停止。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_7236e00c46"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ordalt_a26fb9000d"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_7236e00c46"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ordalt_a26fb9000d"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "item_order_mismatch",
+    "refund_not_executed"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cross_order_item_mismatch",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_6dbb7abbaa",
+    "order_id": "ord_7236e00c46",
+    "product_id": "prod_ac53e4eddd",
+    "item_id": "item_29f0a1f564",
+    "payment_id": "pay_fe9a66ea79",
+    "shipment_id": "ship_201c2715c0",
+    "tracking_number": "SF9890173",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "便携投影仪",
+    "mismatched_item_id": "itemalt_6913e48c10",
+    "mismatched_item_order_id": "ordalt_a26fb9000d"
+  }
+}

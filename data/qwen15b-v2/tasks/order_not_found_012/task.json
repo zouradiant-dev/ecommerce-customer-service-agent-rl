@@ -1,0 +1,69 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "order_not_found_012",
+  "split": "test",
+  "scenario": "order_not_found",
+  "user_id": "cust_052fea3ff9",
+  "user_prompt": "请查询并取消订单 ordmissing_1d399163ca。如果我的订单列表里没有它，不要猜测或操作其他订单。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_bcfb18bed8"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_bcfb18bed8"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [
+    "ordmissing_1d399163ca"
+  ],
+  "required_intents": [
+    "order_not_found",
+    "no_operation_executed"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "order_not_found",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_052fea3ff9",
+    "order_id": "ord_bcfb18bed8",
+    "product_id": "prod_568c7e98fc",
+    "item_id": "item_b5bbf95051",
+    "payment_id": "pay_d28d6c9cea",
+    "shipment_id": "ship_6f88836b59",
+    "tracking_number": "SF8464923",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "智能手环",
+    "requested_order_id": "ordmissing_1d399163ca",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是李娜，手机号后四位是4821。"
+      }
+    ]
+  }
+}

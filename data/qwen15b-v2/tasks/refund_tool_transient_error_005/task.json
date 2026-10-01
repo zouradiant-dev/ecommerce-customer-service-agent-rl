@@ -1,0 +1,84 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "refund_tool_transient_error_005",
+  "split": "train",
+  "scenario": "refund_tool_transient_error",
+  "user_id": "cust_391487006a",
+  "user_prompt": "我是张三，手机号后四位1234。订单 ord_c40be8ef25 的商品损坏了，我想退掉这一件并按实付金额退款。我确认退货退款。 如果退款网关首次超时，请核对后安全重试。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_5358db6b86"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_c40be8ef25"
+      },
+      "equals": {
+        "amount_cents": 5499
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_5358db6b86"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "54.99"
+  ],
+  "required_intents": [
+    "refund_to_original_payment"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_391487006a",
+    "order_id": "ord_c40be8ef25",
+    "product_id": "prod_0a3ba9740e",
+    "item_id": "item_5358db6b86",
+    "payment_id": "pay_9fe2aa333d",
+    "shipment_id": "ship_95ed11f6e1",
+    "tracking_number": "SF6944644",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "蓝牙耳机",
+    "refund_amount_cents": 5499,
+    "tool_faults": {
+      "create_refund": {
+        "failures": 1,
+        "error": "refund_gateway_timeout"
+      }
+    }
+  }
+}

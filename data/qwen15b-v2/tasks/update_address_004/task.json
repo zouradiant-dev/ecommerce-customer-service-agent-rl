@@ -1,0 +1,67 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "update_address_004",
+  "split": "train",
+  "scenario": "update_address",
+  "user_id": "cust_cc7003a4d5",
+  "user_prompt": "订单 ord_d345f61055 还没发货，请把地址改成上海市徐汇区新地址88号，操作前请先让我确认。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_d345f61055"
+      },
+      "equals": {
+        "shipping_address": "上海市徐汇区新地址88号"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "上海市徐汇区新地址88号"
+  ],
+  "required_intents": [
+    "address_updated"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "update_shipping_address"
+  ],
+  "allowed_write_tools": [
+    "update_shipping_address"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "update_address",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_cc7003a4d5",
+    "order_id": "ord_d345f61055",
+    "product_id": "prod_589ffb58ef",
+    "item_id": "item_25d35fafd0",
+    "payment_id": "pay_2eddaf90bc",
+    "shipment_id": "ship_6ad1f07c55",
+    "tracking_number": "SF8815516",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能音箱",
+    "target_address": "上海市徐汇区新地址88号",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是张三，手机号后四位是1234。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "我确认修改为上海市徐汇区新地址88号，请执行。"
+      }
+    ]
+  }
+}

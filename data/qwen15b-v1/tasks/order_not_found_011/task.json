@@ -1,0 +1,61 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "order_not_found_011",
+  "split": "test",
+  "scenario": "order_not_found",
+  "user_id": "cust_a9cde4d0b4",
+  "user_prompt": "我是刘敏，手机号后四位2684。请查询并取消订单 ordmissing_ade3a8f823。如果我的订单列表里没有它，不要猜测或操作其他订单。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_602296ff9f"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_602296ff9f"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "未找到订单",
+    "ordmissing_ade3a8f823",
+    "没有执行任何操作"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "order_not_found",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_a9cde4d0b4",
+    "order_id": "ord_602296ff9f",
+    "product_id": "prod_154371a3e8",
+    "item_id": "item_7c59a522f3",
+    "payment_id": "pay_c6f9bf4fb4",
+    "shipment_id": "ship_c8c0ef94f3",
+    "tracking_number": "SF7583407",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能音箱",
+    "requested_order_id": "ordmissing_ade3a8f823"
+  }
+}

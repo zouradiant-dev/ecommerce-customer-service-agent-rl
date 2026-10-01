@@ -1,0 +1,50 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "contradictory_order_015",
+  "split": "dev",
+  "scenario": "contradictory_order",
+  "user_id": "cust_41b2901765",
+  "user_prompt": "我是刘敏，手机号后四位2684。我想取消订单 ord_36304e42c8，等等，也可能不是这个订单。先不要操作。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_36304e42c8"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "请确认准确订单号"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "contradictory_order",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_41b2901765",
+    "order_id": "ord_36304e42c8",
+    "product_id": "prod_972ce97be1",
+    "item_id": "item_29c857a640",
+    "payment_id": "pay_fc6d8bda5e",
+    "shipment_id": "ship_335c8296e0",
+    "tracking_number": "SF5708987",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "蓝牙耳机"
+  }
+}

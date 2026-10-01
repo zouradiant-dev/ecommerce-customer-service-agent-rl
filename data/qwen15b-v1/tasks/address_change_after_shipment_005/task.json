@@ -1,0 +1,51 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "address_change_after_shipment_005",
+  "split": "dev",
+  "scenario": "address_change_after_shipment",
+  "user_id": "cust_62271cb758",
+  "user_prompt": "我是王伟，手机号后四位7306。订单 ord_03f4b2f57a 已经发货了，但我想把地址改成广州市天河区新地址28号。如果不能改请直接说明，不要假装成功。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_03f4b2f57a"
+      },
+      "equals": {
+        "shipping_address": "北京市朝阳区望京路66号"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "订单已发货，无法修改地址"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "address_change_after_shipment",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_62271cb758",
+    "order_id": "ord_03f4b2f57a",
+    "product_id": "prod_c4eacfc85a",
+    "item_id": "item_30b17bfcd5",
+    "payment_id": "pay_76b1f2f4e2",
+    "shipment_id": "ship_dc52c22edc",
+    "tracking_number": "SF1662462",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "智能手环",
+    "target_address": "广州市天河区新地址28号"
+  }
+}

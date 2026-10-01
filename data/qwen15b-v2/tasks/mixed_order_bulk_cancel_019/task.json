@@ -1,0 +1,87 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "mixed_order_bulk_cancel_019",
+  "split": "test",
+  "scenario": "mixed_order_bulk_cancel",
+  "user_id": "cust_6daf5a12d5",
+  "user_prompt": "我是刘敏，手机号后四位2684。请核对并取消订单 ord_69aa07ff93 和 ordalt_65faed2ed2。我确认取消其中政策允许取消的订单；已发货的不要强行操作。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_69aa07ff93"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_65faed2ed2"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_69aa07ff93"
+      },
+      "equals": {},
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ordalt_65faed2ed2"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [
+    "ord_69aa07ff93",
+    "ordalt_65faed2ed2"
+  ],
+  "required_intents": [
+    "order_cancelled",
+    "shipped_order_cannot_cancel"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "mixed_order_bulk_cancel",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_6daf5a12d5",
+    "order_id": "ord_69aa07ff93",
+    "product_id": "prod_941635dd0e",
+    "item_id": "item_238d37d29c",
+    "payment_id": "pay_bc925ca133",
+    "shipment_id": "ship_edb15cac68",
+    "tracking_number": "SF2290567",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "智能音箱",
+    "shipped_order_id": "ordalt_65faed2ed2",
+    "paid_amount_cents": 8800
+  }
+}

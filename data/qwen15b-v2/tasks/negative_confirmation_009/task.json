@@ -1,0 +1,65 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "negative_confirmation_009",
+  "split": "dev",
+  "scenario": "negative_confirmation",
+  "user_id": "cust_93a664b9e2",
+  "user_prompt": "我是王伟，手机号后四位7306。订单 ord_209d15d66c 的商品有问题，先帮我核对退款政策和金额，没有我最后确认不要执行退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_209d15d66c"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_209d15d66c"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "operation_stopped"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "negative_confirmation",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_93a664b9e2",
+    "order_id": "ord_209d15d66c",
+    "product_id": "prod_cb1f6e48fc",
+    "item_id": "item_8857db5766",
+    "payment_id": "pay_e781a96853",
+    "shipment_id": "ship_dc10bbc91e",
+    "tracking_number": "SF5397623",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "便携投影仪",
+    "refund_amount_cents": 8999,
+    "scripted_user_replies": [
+      {
+        "kind": "confirmation",
+        "content": "先不要操作，我还没有确认退款。"
+      }
+    ]
+  }
+}

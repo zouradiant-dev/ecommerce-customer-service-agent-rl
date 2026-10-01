@@ -1,0 +1,82 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "cross_order_item_mismatch_012",
+  "split": "test",
+  "scenario": "cross_order_item_mismatch",
+  "user_id": "cust_7524c54eab",
+  "user_prompt": "请从订单 ord_ce5e8091e2 退款商品项 itemalt_edf73665f5。如果商品项属于另一笔订单，请指出不一致并停止。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_ce5e8091e2"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ordalt_28e520809b"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_ce5e8091e2"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ordalt_28e520809b"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "商品项不属于指定订单",
+    "没有执行退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cross_order_item_mismatch",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_7524c54eab",
+    "order_id": "ord_ce5e8091e2",
+    "product_id": "prod_540bc6940f",
+    "item_id": "item_b26117d020",
+    "payment_id": "pay_1781f8e4a1",
+    "shipment_id": "ship_e27e7d1b24",
+    "tracking_number": "SF5466576",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "电子阅读器",
+    "mismatched_item_id": "itemalt_edf73665f5",
+    "mismatched_item_order_id": "ordalt_28e520809b",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是李娜，手机号后四位是4821。"
+      }
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "order_not_found_005",
+  "split": "test",
+  "scenario": "order_not_found",
+  "user_id": "cust_48cd0ef96e",
+  "user_prompt": "我是张三，手机号后四位1234。请查询并取消订单 ordmissing_159cbfae42。如果我的订单列表里没有它，不要猜测或操作其他订单。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_258bf93825"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_258bf93825"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [
+    "ordmissing_159cbfae42"
+  ],
+  "required_intents": [
+    "order_not_found",
+    "no_operation_executed"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "order_not_found",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_48cd0ef96e",
+    "order_id": "ord_258bf93825",
+    "product_id": "prod_3830a5fc14",
+    "item_id": "item_be7135690a",
+    "payment_id": "pay_b612596511",
+    "shipment_id": "ship_bcfc420301",
+    "tracking_number": "SF9182409",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "便携投影仪",
+    "requested_order_id": "ordmissing_159cbfae42"
+  }
+}

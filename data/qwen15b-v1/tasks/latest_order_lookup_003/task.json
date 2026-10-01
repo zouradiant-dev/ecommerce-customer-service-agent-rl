@@ -1,0 +1,66 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "latest_order_lookup_003",
+  "split": "train",
+  "scenario": "latest_order_lookup",
+  "user_id": "cust_958bf0946f",
+  "user_prompt": "我是李娜，手机号后四位4821。我记不住订单号，请从我的订单里找出最新一笔，告诉我订单号、是否发货和实付金额，不要修改任何状态。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_211dc77517"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_95a4b11bea"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "最新订单",
+    "ordalt_95a4b11bea",
+    "尚未发货",
+    "99.00"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "latest_order_lookup",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_958bf0946f",
+    "order_id": "ord_211dc77517",
+    "product_id": "prod_4cedb6d495",
+    "item_id": "item_ba394b29e4",
+    "payment_id": "pay_de3756d2fd",
+    "shipment_id": "ship_f2e177dafd",
+    "tracking_number": "SF4723978",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "电子阅读器",
+    "latest_order_id": "ordalt_95a4b11bea",
+    "latest_amount_cents": 9900
+  }
+}

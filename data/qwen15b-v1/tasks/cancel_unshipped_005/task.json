@@ -1,0 +1,73 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "cancel_unshipped_005",
+  "split": "train",
+  "scenario": "cancel_unshipped",
+  "user_id": "cust_dcc189cf7b",
+  "user_prompt": "我是李娜，手机号后四位4821。请取消订单 ord_13e6684f86，我确认取消并接受原路退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_13e6684f86"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "payments",
+      "where": {
+        "id": "pay_c5e23fb0f9"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_13e6684f86"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_facts": [
+    "已取消",
+    "89.00"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cancel_unshipped",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_dcc189cf7b",
+    "order_id": "ord_13e6684f86",
+    "product_id": "prod_711d79d0bf",
+    "item_id": "item_879fd5dbcc",
+    "payment_id": "pay_c5e23fb0f9",
+    "shipment_id": "ship_d22eecf002",
+    "tracking_number": "SF4563229",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "电子阅读器",
+    "paid_amount_cents": 8900
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "mixed_order_bulk_cancel_014",
+  "split": "test",
+  "scenario": "mixed_order_bulk_cancel",
+  "user_id": "cust_fe4fec09be",
+  "user_prompt": "请核对并取消订单 ord_67779f5746 和 ordalt_e8622565a3。我确认取消其中政策允许取消的订单；已发货的不要强行操作。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_67779f5746"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_e8622565a3"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_67779f5746"
+      },
+      "equals": {},
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ordalt_e8622565a3"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "ord_67779f5746",
+    "已取消",
+    "ordalt_e8622565a3",
+    "已发货，无法取消"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "mixed_order_bulk_cancel",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_fe4fec09be",
+    "order_id": "ord_67779f5746",
+    "product_id": "prod_52ad4e05a8",
+    "item_id": "item_ccadfb8648",
+    "payment_id": "pay_4808abd4fc",
+    "shipment_id": "ship_d54c8b962b",
+    "tracking_number": "SF2130813",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "智能手环",
+    "shipped_order_id": "ordalt_e8622565a3",
+    "paid_amount_cents": 13200,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是陈晓，手机号后四位是9152。"
+      }
+    ]
+  }
+}

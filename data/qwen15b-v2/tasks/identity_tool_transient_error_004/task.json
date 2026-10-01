@@ -1,0 +1,65 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "identity_tool_transient_error_004",
+  "split": "train",
+  "scenario": "identity_tool_transient_error",
+  "user_id": "cust_5bd3ef1754",
+  "user_prompt": "请查询订单 ord_cf22afd882 的物流。如果身份服务首次超时，请重试一次，不要绕过核验。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_cf22afd882"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "SF9713484"
+  ],
+  "required_intents": [
+    "shipment_in_transit"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_shipment"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "identity_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_5bd3ef1754",
+    "order_id": "ord_cf22afd882",
+    "product_id": "prod_222e1148a1",
+    "item_id": "item_c7e450604a",
+    "payment_id": "pay_1b2f1185fa",
+    "shipment_id": "ship_4301b6952d",
+    "tracking_number": "SF9713484",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "智能手环",
+    "tool_faults": {
+      "verify_customer_identity": {
+        "failures": 1,
+        "error": "identity_timeout"
+      }
+    },
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是刘敏，手机号后四位是2684。"
+      }
+    ]
+  }
+}

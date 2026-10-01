@@ -1,0 +1,53 @@
+{
+  "reviewed_at": "2026-09-21",
+  "sources": [
+    {
+      "id": "abcd",
+      "url": "https://github.com/asappresearch/abcd",
+      "language": "en",
+      "license": "MIT",
+      "access": "direct",
+      "recommended_use": ["multi_turn_sft", "action_flow_transfer"]
+    },
+    {
+      "id": "tau2_retail",
+      "url": "https://github.com/sierra-research/tau2-bench",
+      "language": "en",
+      "license": "MIT",
+      "access": "direct",
+      "recommended_use": ["external_benchmark", "simulator_design_reference"]
+    },
+    {
+      "id": "bitext_retail_ecommerce",
+      "url": "https://huggingface.co/datasets/bitext/Bitext-retail-ecommerce-llm-chatbot-training-dataset",
+      "language": "en",
+      "license": "CDLA-Sharing-1.0",
+      "access": "direct",
+      "recommended_use": ["intent_coverage", "utterance_augmentation"]
+    },
+    {
+      "id": "chinese_ambiguous_reference",
+      "url": "https://github.com/ygan/Chinese-Ambiguous-Reference",
+      "language": "zh",
+      "license": "MIT",
+      "access": "direct",
+      "recommended_use": ["clarification_sft", "chinese_style_augmentation"]
+    },
+    {
+      "id": "jddc_2_1",
+      "url": "https://github.com/hrlinlp/jddc2.1",
+      "language": "zh",
+      "license": "application_required",
+      "access": "apply_with_organization_email",
+      "recommended_use": ["chinese_dialogue_pretraining", "query_rewriting", "summarization"]
+    },
+    {
+      "id": "csds",
+      "url": "https://github.com/xiaolinAndy/CSDS",
+      "language": "zh",
+      "license": "not_explicit_on_repository",
+      "access": "download_link_available_but_terms_need_confirmation",
+      "recommended_use": ["ticket_summarization_after_license_review"]
+    }
+  ]
+}

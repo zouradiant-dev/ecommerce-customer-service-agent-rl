@@ -1,0 +1,74 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "refund_policy_tool_transient_error_007",
+  "split": "train",
+  "scenario": "refund_policy_tool_transient_error",
+  "user_id": "cust_d6695913c7",
+  "user_prompt": "我是李娜，手机号后四位4821。订单 ord_e9b9779ea4 的商品损坏，需要退货退款。政策查询首次超时请重试，不能跳过政策检查。我确认退货退款并按实付金额处理。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_8eeed742bb"
+      },
+      "equals": {
+        "quantity": 1
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_e9b9779ea4"
+      },
+      "equals": {
+        "amount_cents": 8799
+      },
+      "count": 1
+    }
+  ],
+  "required_values": [
+    "87.99"
+  ],
+  "required_intents": [
+    "refund_to_original_payment"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_policy_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_d6695913c7",
+    "order_id": "ord_e9b9779ea4",
+    "product_id": "prod_15b772e6f0",
+    "item_id": "item_8eeed742bb",
+    "payment_id": "pay_48dbed0416",
+    "shipment_id": "ship_89f9ee8a35",
+    "tracking_number": "SF5582265",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能音箱",
+    "refund_amount_cents": 8799,
+    "tool_faults": {
+      "search_refund_policy": {
+        "failures": 1,
+        "error": "policy_service_timeout"
+      }
+    }
+  }
+}

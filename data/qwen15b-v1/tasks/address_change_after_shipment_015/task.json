@@ -1,0 +1,51 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "address_change_after_shipment_015",
+  "split": "dev",
+  "scenario": "address_change_after_shipment",
+  "user_id": "cust_ba225a48d7",
+  "user_prompt": "我是李娜，手机号后四位4821。订单 ord_5d7d1c79e1 已经发货了，但我想把地址改成广州市天河区新地址28号。如果不能改请直接说明，不要假装成功。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_5d7d1c79e1"
+      },
+      "equals": {
+        "shipping_address": "杭州市余杭区文一西路88号"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "订单已发货，无法修改地址"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "address_change_after_shipment",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_ba225a48d7",
+    "order_id": "ord_5d7d1c79e1",
+    "product_id": "prod_9bbf1acbb1",
+    "item_id": "item_65e0075cfd",
+    "payment_id": "pay_4c7baa47b6",
+    "shipment_id": "ship_383cdd55bb",
+    "tracking_number": "SF5078706",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "便携投影仪",
+    "target_address": "广州市天河区新地址28号"
+  }
+}

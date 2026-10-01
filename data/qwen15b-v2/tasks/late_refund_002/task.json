@@ -1,0 +1,64 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "late_refund_002",
+  "split": "dev",
+  "scenario": "late_refund",
+  "user_id": "cust_a95dffcc1d",
+  "user_prompt": "订单 ord_2067338d7f 已经签收一阵子了，现在想退货退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_2067338d7f"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_2067338d7f"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "return_window_expired"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "late_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_a95dffcc1d",
+    "order_id": "ord_2067338d7f",
+    "product_id": "prod_d2cc6b4b59",
+    "item_id": "item_620d0f2344",
+    "payment_id": "pay_124fcb8c1d",
+    "shipment_id": "ship_be8d12031e",
+    "tracking_number": "SF4069844",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "电子阅读器",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是陈晓，手机号后四位是9152。"
+      }
+    ]
+  }
+}

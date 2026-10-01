@@ -1,0 +1,51 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "contradictory_order_013",
+  "split": "dev",
+  "scenario": "contradictory_order",
+  "user_id": "cust_9bff6e4070",
+  "user_prompt": "我是李娜，手机号后四位4821。我想取消订单 ord_008a999013，等等，也可能不是这个订单。先不要操作。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_008a999013"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "order_id_confirmation_needed"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "contradictory_order",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_9bff6e4070",
+    "order_id": "ord_008a999013",
+    "product_id": "prod_4d5b7a0d4c",
+    "item_id": "item_2dd75a499f",
+    "payment_id": "pay_020371ed3c",
+    "shipment_id": "ship_34a3045973",
+    "tracking_number": "SF8291406",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "智能音箱"
+  }
+}

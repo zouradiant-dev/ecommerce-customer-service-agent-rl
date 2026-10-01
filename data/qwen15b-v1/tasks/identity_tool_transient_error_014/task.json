@@ -1,0 +1,63 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "identity_tool_transient_error_014",
+  "split": "train",
+  "scenario": "identity_tool_transient_error",
+  "user_id": "cust_4955c4ae1c",
+  "user_prompt": "请查询订单 ord_e1606dc838 的物流。如果身份服务首次超时，请重试一次，不要绕过核验。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_e1606dc838"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "运输中",
+    "SF5293937"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_shipment"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "identity_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_4955c4ae1c",
+    "order_id": "ord_e1606dc838",
+    "product_id": "prod_41d963be89",
+    "item_id": "item_90c06f6d1c",
+    "payment_id": "pay_0d897a0d38",
+    "shipment_id": "ship_9946a2a387",
+    "tracking_number": "SF5293937",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "电子阅读器",
+    "tool_faults": {
+      "verify_customer_identity": {
+        "failures": 1,
+        "error": "identity_timeout"
+      }
+    },
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是陈晓，手机号后四位是9152。"
+      }
+    ]
+  }
+}

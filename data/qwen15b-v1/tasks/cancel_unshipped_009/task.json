@@ -1,0 +1,73 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "cancel_unshipped_009",
+  "split": "train",
+  "scenario": "cancel_unshipped",
+  "user_id": "cust_bdefeb4566",
+  "user_prompt": "我是李娜，手机号后四位4821。请取消订单 ord_5a8581ad52，我确认取消并接受原路退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_5a8581ad52"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "payments",
+      "where": {
+        "id": "pay_80a9015d7b"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_5a8581ad52"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_facts": [
+    "已取消",
+    "89.00"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cancel_unshipped",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_bdefeb4566",
+    "order_id": "ord_5a8581ad52",
+    "product_id": "prod_a95f1c2374",
+    "item_id": "item_cda52a91b7",
+    "payment_id": "pay_80a9015d7b",
+    "shipment_id": "ship_85cde96be3",
+    "tracking_number": "SF4469888",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "智能音箱",
+    "paid_amount_cents": 8900
+  }
+}

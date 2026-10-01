@@ -1,0 +1,58 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "refund_quantity_exceeds_013",
+  "split": "dev",
+  "scenario": "refund_quantity_exceeds",
+  "user_id": "cust_6d9a4f6c5a",
+  "user_prompt": "我是张三，手机号后四位1234。订单 ord_acf7530910 里我只买了1件，但我想按2件数量申请退款。请核对购买数量，不要超额退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_acf7530910"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_acf7530910"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "只购买了1件",
+    "不能按2件退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_quantity_exceeds",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_6d9a4f6c5a",
+    "order_id": "ord_acf7530910",
+    "product_id": "prod_e3bef10cdc",
+    "item_id": "item_29396b10c4",
+    "payment_id": "pay_a775580f5d",
+    "shipment_id": "ship_28d7c096a8",
+    "tracking_number": "SF2756648",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能音箱"
+  }
+}

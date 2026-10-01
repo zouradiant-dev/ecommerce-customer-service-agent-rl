@@ -1,0 +1,64 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "negative_confirmation_007",
+  "split": "dev",
+  "scenario": "negative_confirmation",
+  "user_id": "cust_d4db03d721",
+  "user_prompt": "我是王伟，手机号后四位7306。订单 ord_e19d9bd315 的商品有问题，先帮我核对退款政策和金额，没有我最后确认不要执行退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_e19d9bd315"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_e19d9bd315"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "已停止操作"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "negative_confirmation",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_d4db03d721",
+    "order_id": "ord_e19d9bd315",
+    "product_id": "prod_75c4378d13",
+    "item_id": "item_c6e3116d6f",
+    "payment_id": "pay_456e20384d",
+    "shipment_id": "ship_de01eca3b9",
+    "tracking_number": "SF2012952",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "智能音箱",
+    "refund_amount_cents": 8999,
+    "scripted_user_replies": [
+      {
+        "kind": "confirmation",
+        "content": "先不要操作，我还没有确认退款。"
+      }
+    ]
+  }
+}

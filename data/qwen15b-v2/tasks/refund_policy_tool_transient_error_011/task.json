@@ -1,0 +1,74 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "refund_policy_tool_transient_error_011",
+  "split": "train",
+  "scenario": "refund_policy_tool_transient_error",
+  "user_id": "cust_b7c6fe6ff0",
+  "user_prompt": "我是张三，手机号后四位1234。订单 ord_6ca59595aa 的商品损坏，需要退货退款。政策查询首次超时请重试，不能跳过政策检查。我确认退货退款并按实付金额处理。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_5babb02500"
+      },
+      "equals": {
+        "quantity": 1
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_6ca59595aa"
+      },
+      "equals": {
+        "amount_cents": 8799
+      },
+      "count": 1
+    }
+  ],
+  "required_values": [
+    "87.99"
+  ],
+  "required_intents": [
+    "refund_to_original_payment"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_policy_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_b7c6fe6ff0",
+    "order_id": "ord_6ca59595aa",
+    "product_id": "prod_eb36ee8def",
+    "item_id": "item_5babb02500",
+    "payment_id": "pay_43e4e84b1f",
+    "shipment_id": "ship_079d7a3383",
+    "tracking_number": "SF1961527",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "智能手环",
+    "refund_amount_cents": 8799,
+    "tool_faults": {
+      "search_refund_policy": {
+        "failures": 1,
+        "error": "policy_service_timeout"
+      }
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "damaged_item_refund_009",
+  "split": "train",
+  "scenario": "damaged_item_refund",
+  "user_id": "cust_6d2e664298",
+  "user_prompt": "我是刘敏，手机号后四位2684。订单 ord_178b3ebcf0 的商品损坏了，我想退掉这一件并按实付金额退款。我确认退货退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_92a77380aa"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_178b3ebcf0"
+      },
+      "equals": {
+        "amount_cents": 12499
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_92a77380aa"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "124.99"
+  ],
+  "required_intents": [
+    "refund_to_original_payment"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "damaged_item_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_6d2e664298",
+    "order_id": "ord_178b3ebcf0",
+    "product_id": "prod_53ac36a43b",
+    "item_id": "item_92a77380aa",
+    "payment_id": "pay_ed1b95d205",
+    "shipment_id": "ship_15bd804504",
+    "tracking_number": "SF9632928",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "电子阅读器",
+    "refund_amount_cents": 12499
+  }
+}

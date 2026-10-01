@@ -1,0 +1,78 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "damaged_item_refund_019",
+  "split": "train",
+  "scenario": "damaged_item_refund",
+  "user_id": "cust_612306e255",
+  "user_prompt": "我是李娜，手机号后四位4821。订单 ord_c6a05fb9f6 的商品损坏了，我想退掉这一件并按实付金额退款。我确认退货退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_ee68f88745"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_c6a05fb9f6"
+      },
+      "equals": {
+        "amount_cents": 7999
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_ee68f88745"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "79.99"
+  ],
+  "required_intents": [
+    "refund_to_original_payment"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "damaged_item_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_612306e255",
+    "order_id": "ord_c6a05fb9f6",
+    "product_id": "prod_99e87c8413",
+    "item_id": "item_ee68f88745",
+    "payment_id": "pay_e8aeaef302",
+    "shipment_id": "ship_e910aaeecb",
+    "tracking_number": "SF7053793",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "蓝牙耳机",
+    "refund_amount_cents": 7999
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "multi_order_disambiguation_006",
+  "split": "train",
+  "scenario": "multi_order_disambiguation",
+  "user_id": "cust_896aab0306",
+  "user_prompt": "我账户里有两笔订单，请先列出来核对，然后取消尚未发货、实付98.00元的那笔，确认订单后再让我确认。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_ffb2e6133f"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_246e058eb5"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_ffb2e6133f"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_values": [
+    "98.00"
+  ],
+  "required_intents": [
+    "order_cancelled"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "multi_order_disambiguation",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_896aab0306",
+    "order_id": "ord_ffb2e6133f",
+    "product_id": "prod_e560a9a3af",
+    "item_id": "item_6c93e504da",
+    "payment_id": "pay_ed1a8b89fe",
+    "shipment_id": "ship_42c758171a",
+    "tracking_number": "SF9077862",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "便携投影仪",
+    "alternate_order_id": "ordalt_246e058eb5",
+    "paid_amount_cents": 9800,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是陈晓，手机号后四位是9152。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "我确认取消尚未发货、实付金额匹配的订单，并接受原路退款，请执行。"
+      }
+    ]
+  }
+}

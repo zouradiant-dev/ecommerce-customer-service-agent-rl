@@ -1,0 +1,80 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "partial_quantity_refund_003",
+  "split": "train",
+  "scenario": "partial_quantity_refund",
+  "user_id": "cust_89c5b2af1e",
+  "user_prompt": "我是陈晓，手机号后四位9152。订单 ord_2b84f41913 同一商品买了2件，其中1件损坏。只退损坏的1件，不要把两件都退掉。我确认退掉其中1件并原路退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_86c1b311fb"
+      },
+      "equals": {
+        "status": "refunded",
+        "quantity": 1
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_2b84f41913"
+      },
+      "equals": {
+        "amount_cents": 5999
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_86c1b311fb"
+      },
+      "equals": {
+        "status": "partially_returned"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "59.99"
+  ],
+  "required_intents": [
+    "remaining_quantity_one"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "partial_quantity_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_89c5b2af1e",
+    "order_id": "ord_2b84f41913",
+    "product_id": "prod_38faf008a9",
+    "item_id": "item_86c1b311fb",
+    "payment_id": "pay_42fb7b5e86",
+    "shipment_id": "ship_a93d922588",
+    "tracking_number": "SF1850078",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "智能手环",
+    "refund_amount_cents": 5999,
+    "refund_quantity": 1
+  }
+}

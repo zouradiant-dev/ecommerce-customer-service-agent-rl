@@ -1,0 +1,59 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "duplicate_refund_request_019",
+  "split": "test",
+  "scenario": "duplicate_refund_request",
+  "user_id": "cust_8ac72868ec",
+  "user_prompt": "我是陈晓，手机号后四位9152。订单 ord_b46dc523de 的这件商品我好像已经退过了，请先核对记录；如果已经退款，不要再创建一笔。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_27c58f7215"
+      },
+      "equals": {},
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_b46dc523de"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_facts": [
+    "已经退款",
+    "不能重复退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "duplicate_refund_request",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_8ac72868ec",
+    "order_id": "ord_b46dc523de",
+    "product_id": "prod_6f84328fce",
+    "item_id": "item_27c58f7215",
+    "payment_id": "pay_027a8d6d90",
+    "shipment_id": "ship_9a64f44812",
+    "tracking_number": "SF7717167",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "电子阅读器",
+    "existing_return_id": "return_c85a9c0fa5",
+    "existing_refund_id": "refund_a5a0a30d7b"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "update_address_016",
+  "split": "train",
+  "scenario": "update_address",
+  "user_id": "cust_177985cbbf",
+  "user_prompt": "订单 ord_0f73dcdf40 还没发货，请把地址改成上海市徐汇区新地址88号，操作前请先让我确认。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_0f73dcdf40"
+      },
+      "equals": {
+        "shipping_address": "上海市徐汇区新地址88号"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "已更新",
+    "上海市徐汇区新地址88号"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "update_shipping_address"
+  ],
+  "allowed_write_tools": [
+    "update_shipping_address"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "update_address",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_177985cbbf",
+    "order_id": "ord_0f73dcdf40",
+    "product_id": "prod_d3a499e2f1",
+    "item_id": "item_cb61b56a54",
+    "payment_id": "pay_c2d8de9549",
+    "shipment_id": "ship_87e4843c9c",
+    "tracking_number": "SF3810360",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "电子阅读器",
+    "target_address": "上海市徐汇区新地址88号",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是张三，手机号后四位是1234。"
+      },
+      {
+        "kind": "confirmation",
+        "content": "我确认修改为上海市徐汇区新地址88号，请执行。"
+      }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "identity_tool_transient_error_019",
+  "split": "train",
+  "scenario": "identity_tool_transient_error",
+  "user_id": "cust_082e27f4fe",
+  "user_prompt": "我是李娜，手机号后四位4821。请查询订单 ord_5c7bf4597b 的物流。如果身份服务首次超时，请重试一次，不要绕过核验。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_5c7bf4597b"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "SF8413911"
+  ],
+  "required_intents": [
+    "shipment_in_transit"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_shipment"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "identity_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_082e27f4fe",
+    "order_id": "ord_5c7bf4597b",
+    "product_id": "prod_f528a6ddce",
+    "item_id": "item_21a97ddc64",
+    "payment_id": "pay_5d04c277b3",
+    "shipment_id": "ship_74a6c0b5d6",
+    "tracking_number": "SF8413911",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "便携投影仪",
+    "tool_faults": {
+      "verify_customer_identity": {
+        "failures": 1,
+        "error": "identity_timeout"
+      }
+    }
+  }
+}

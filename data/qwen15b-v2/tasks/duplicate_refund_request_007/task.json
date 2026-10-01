@@ -1,0 +1,60 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "duplicate_refund_request_007",
+  "split": "test",
+  "scenario": "duplicate_refund_request",
+  "user_id": "cust_b69ced29d9",
+  "user_prompt": "我是陈晓，手机号后四位9152。订单 ord_f70b81d991 的这件商品我好像已经退过了，请先核对记录；如果已经退款，不要再创建一笔。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_1376672d14"
+      },
+      "equals": {},
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_f70b81d991"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "refund_already_completed",
+    "duplicate_refund_blocked"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "duplicate_refund_request",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_b69ced29d9",
+    "order_id": "ord_f70b81d991",
+    "product_id": "prod_23ea693855",
+    "item_id": "item_1376672d14",
+    "payment_id": "pay_02be650ae2",
+    "shipment_id": "ship_4136858151",
+    "tracking_number": "SF7161170",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "智能音箱",
+    "existing_return_id": "return_d4b2c9714f",
+    "existing_refund_id": "refund_1e67af4c0b"
+  }
+}

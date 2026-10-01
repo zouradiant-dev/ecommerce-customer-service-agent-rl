@@ -1,0 +1,74 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "latest_order_lookup_014",
+  "split": "train",
+  "scenario": "latest_order_lookup",
+  "user_id": "cust_50e528b43c",
+  "user_prompt": "我记不住订单号，请从我的订单里找出最新一笔，告诉我订单号、是否发货和实付金额，不要修改任何状态。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_bde1efc109"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_9cc36a828f"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "ordalt_9cc36a828f",
+    "72.00"
+  ],
+  "required_intents": [
+    "latest_order_identified",
+    "order_not_shipped"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "latest_order_lookup",
+    "generation_seed": 7,
+    "identity": {
+      "name": "刘敏",
+      "phone_last4": "2684"
+    },
+    "customer_id": "cust_50e528b43c",
+    "order_id": "ord_bde1efc109",
+    "product_id": "prod_89e5daa062",
+    "item_id": "item_1ba15b9496",
+    "payment_id": "pay_19d8416b95",
+    "shipment_id": "ship_59e7e254ba",
+    "tracking_number": "SF6752293",
+    "customer_name": "刘敏",
+    "phone_last4": "2684",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "电子阅读器",
+    "latest_order_id": "ordalt_9cc36a828f",
+    "latest_amount_cents": 7200,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是刘敏，手机号后四位是2684。"
+      }
+    ]
+  }
+}

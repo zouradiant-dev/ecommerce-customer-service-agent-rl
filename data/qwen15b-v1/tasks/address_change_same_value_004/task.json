@@ -1,0 +1,59 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "address_change_same_value_004",
+  "split": "train",
+  "scenario": "address_change_same_value",
+  "user_id": "cust_d85a085eeb",
+  "user_prompt": "请把订单 ord_2ca97fe2c7 的地址改成成都市高新区天府三街108号。如果本来就是这个地址，不要重复写入。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_2ca97fe2c7"
+      },
+      "equals": {
+        "shipping_address": "成都市高新区天府三街108号"
+      },
+      "count": null
+    }
+  ],
+  "required_facts": [
+    "当前地址已经是",
+    "成都市高新区天府三街108号",
+    "无需修改"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "address_change_same_value",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_d85a085eeb",
+    "order_id": "ord_2ca97fe2c7",
+    "product_id": "prod_7fc6a0f554",
+    "item_id": "item_9b04d606d8",
+    "payment_id": "pay_c51b97f8e9",
+    "shipment_id": "ship_4ac98a9052",
+    "tracking_number": "SF3518050",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能音箱",
+    "target_address": "成都市高新区天府三街108号",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是张三，手机号后四位是1234。"
+      }
+    ]
+  }
+}

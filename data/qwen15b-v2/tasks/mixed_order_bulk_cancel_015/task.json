@@ -1,0 +1,87 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "mixed_order_bulk_cancel_015",
+  "split": "test",
+  "scenario": "mixed_order_bulk_cancel",
+  "user_id": "cust_492a39fa31",
+  "user_prompt": "我是王伟，手机号后四位7306。请核对并取消订单 ord_801b0694d2 和 ordalt_7f6200d66b。我确认取消其中政策允许取消的订单；已发货的不要强行操作。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_801b0694d2"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_7f6200d66b"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_801b0694d2"
+      },
+      "equals": {},
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ordalt_7f6200d66b"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [
+    "ord_801b0694d2",
+    "ordalt_7f6200d66b"
+  ],
+  "required_intents": [
+    "order_cancelled",
+    "shipped_order_cannot_cancel"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "mixed_order_bulk_cancel",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_492a39fa31",
+    "order_id": "ord_801b0694d2",
+    "product_id": "prod_3cbc95169d",
+    "item_id": "item_d63a792b2d",
+    "payment_id": "pay_142652ebdd",
+    "shipment_id": "ship_3bbc4da184",
+    "tracking_number": "SF4609716",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "电子阅读器",
+    "shipped_order_id": "ordalt_7f6200d66b",
+    "paid_amount_cents": 8800
+  }
+}

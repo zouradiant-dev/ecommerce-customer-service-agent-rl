@@ -1,0 +1,70 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "persistent_tool_error_escalation_009",
+  "split": "train",
+  "scenario": "persistent_tool_error_escalation",
+  "user_id": "cust_8723057c58",
+  "user_prompt": "我是张三，手机号后四位1234。请取消订单 ord_d556aebf42，我确认取消。如果订单系统持续超时，请不要猜测结果，帮我升级人工。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_d556aebf42"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    },
+    {
+      "table": "support_tickets",
+      "where": {
+        "customer_id": "cust_8723057c58"
+      },
+      "equals": {},
+      "count": 1
+    }
+  ],
+  "required_facts": [
+    "查询服务持续异常",
+    "人工工单"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "escalate_to_human"
+  ],
+  "allowed_write_tools": [
+    "escalate_to_human"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "persistent_tool_error_escalation",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_8723057c58",
+    "order_id": "ord_d556aebf42",
+    "product_id": "prod_ccf60d43ab",
+    "item_id": "item_1ad1380fe2",
+    "payment_id": "pay_bdd9117fe3",
+    "shipment_id": "ship_b02baf9bcc",
+    "tracking_number": "SF8002509",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "蓝牙耳机",
+    "tool_faults": {
+      "get_order": {
+        "failures": 5,
+        "error": "temporary_timeout"
+      }
+    },
+    "min_attempts_before_escalation": {
+      "get_order": 2
+    }
+  }
+}

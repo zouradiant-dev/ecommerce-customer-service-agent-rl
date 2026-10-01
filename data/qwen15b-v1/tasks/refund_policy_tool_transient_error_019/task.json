@@ -1,0 +1,72 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "refund_policy_tool_transient_error_019",
+  "split": "train",
+  "scenario": "refund_policy_tool_transient_error",
+  "user_id": "cust_e3c28a94c0",
+  "user_prompt": "我是陈晓，手机号后四位9152。订单 ord_2ac1072a26 的商品损坏，需要退货退款。政策查询首次超时请重试，不能跳过政策检查。我确认退货退款并按实付金额处理。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_6b3e4706cd"
+      },
+      "equals": {
+        "quantity": 1
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_2ac1072a26"
+      },
+      "equals": {
+        "amount_cents": 6799
+      },
+      "count": 1
+    }
+  ],
+  "required_facts": [
+    "67.99",
+    "原路退款"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_policy_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "陈晓",
+      "phone_last4": "9152"
+    },
+    "customer_id": "cust_e3c28a94c0",
+    "order_id": "ord_2ac1072a26",
+    "product_id": "prod_7149e3c7c8",
+    "item_id": "item_6b3e4706cd",
+    "payment_id": "pay_73991902a5",
+    "shipment_id": "ship_b5b84cc726",
+    "tracking_number": "SF8673784",
+    "customer_name": "陈晓",
+    "phone_last4": "9152",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "便携投影仪",
+    "refund_amount_cents": 6799,
+    "tool_faults": {
+      "search_refund_policy": {
+        "failures": 1,
+        "error": "policy_service_timeout"
+      }
+    }
+  }
+}

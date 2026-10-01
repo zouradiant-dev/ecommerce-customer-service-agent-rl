@@ -1,0 +1,74 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "refund_before_delivery_002",
+  "split": "dev",
+  "scenario": "refund_before_delivery",
+  "user_id": "cust_a9b20f1ae3",
+  "user_prompt": "订单 ord_cae7172d93 还在运输中，但我现在想直接创建退货退款。请按当前物流状态判断，不要提前退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_cae7172d93"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_cae7172d93"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_cae7172d93"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "订单尚未签收",
+    "不能创建售后退货"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_before_delivery",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_a9b20f1ae3",
+    "order_id": "ord_cae7172d93",
+    "product_id": "prod_897e1d656b",
+    "item_id": "item_01f9027611",
+    "payment_id": "pay_9129273b8e",
+    "shipment_id": "ship_0ceae624c2",
+    "tracking_number": "SF9632192",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "智能音箱",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是李娜，手机号后四位是4821。"
+      }
+    ]
+  }
+}

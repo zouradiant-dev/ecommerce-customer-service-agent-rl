@@ -1,0 +1,80 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "partial_quantity_refund_009",
+  "split": "train",
+  "scenario": "partial_quantity_refund",
+  "user_id": "cust_1d388cb8ef",
+  "user_prompt": "我是张三，手机号后四位1234。订单 ord_f2e72bf2c6 同一商品买了2件，其中1件损坏。只退损坏的1件，不要把两件都退掉。我确认退掉其中1件并原路退款。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_edd1831a40"
+      },
+      "equals": {
+        "status": "refunded",
+        "quantity": 1
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_f2e72bf2c6"
+      },
+      "equals": {
+        "amount_cents": 4599
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_edd1831a40"
+      },
+      "equals": {
+        "status": "partially_returned"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "45.99"
+  ],
+  "required_intents": [
+    "remaining_quantity_one"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "partial_quantity_refund",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_1d388cb8ef",
+    "order_id": "ord_f2e72bf2c6",
+    "product_id": "prod_c319f2b750",
+    "item_id": "item_edd1831a40",
+    "payment_id": "pay_85601e8f74",
+    "shipment_id": "ship_911d597fb0",
+    "tracking_number": "SF5918332",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "便携投影仪",
+    "refund_amount_cents": 4599,
+    "refund_quantity": 1
+  }
+}

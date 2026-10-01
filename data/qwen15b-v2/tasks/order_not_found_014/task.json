@@ -1,0 +1,69 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "order_not_found_014",
+  "split": "test",
+  "scenario": "order_not_found",
+  "user_id": "cust_49c1b2562b",
+  "user_prompt": "请查询并取消订单 ordmissing_0855f43293。如果我的订单列表里没有它，不要猜测或操作其他订单。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_6e2b730ac7"
+      },
+      "equals": {
+        "status": "paid"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_6e2b730ac7"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [
+    "ordmissing_0855f43293"
+  ],
+  "required_intents": [
+    "order_not_found",
+    "no_operation_executed"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "order_not_found",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_49c1b2562b",
+    "order_id": "ord_6e2b730ac7",
+    "product_id": "prod_90b0f45083",
+    "item_id": "item_158690f3a7",
+    "payment_id": "pay_5166c1603a",
+    "shipment_id": "ship_6da3f5e47f",
+    "tracking_number": "SF6747621",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "电子阅读器",
+    "requested_order_id": "ordmissing_0855f43293",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是张三，手机号后四位是1234。"
+      }
+    ]
+  }
+}

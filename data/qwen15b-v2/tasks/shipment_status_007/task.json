@@ -1,0 +1,53 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "shipment_status_007",
+  "split": "train",
+  "scenario": "shipment_status",
+  "user_id": "cust_06516f02e9",
+  "user_prompt": "我是王伟，手机号后四位7306。请帮我查一下订单 ord_e22f4dbaa3 到哪里了。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_e22f4dbaa3"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "SF5161613"
+  ],
+  "required_intents": [
+    "shipment_in_transit"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_shipment"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "shipment_status",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_06516f02e9",
+    "order_id": "ord_e22f4dbaa3",
+    "product_id": "prod_7a5311f3a8",
+    "item_id": "item_1fc8cdf008",
+    "payment_id": "pay_696b1e5e27",
+    "shipment_id": "ship_eb1c4c8c96",
+    "tracking_number": "SF5161613",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "电子阅读器"
+  }
+}

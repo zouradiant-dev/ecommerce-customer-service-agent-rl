@@ -1,0 +1,91 @@
+{
+  "schema_version": "ecommerce_cs_task_v1",
+  "task_id": "mixed_order_bulk_cancel_018",
+  "split": "test",
+  "scenario": "mixed_order_bulk_cancel",
+  "user_id": "cust_9cbbd1185a",
+  "user_prompt": "请核对并取消订单 ord_0271e76ec5 和 ordalt_00c05be124。我确认取消其中政策允许取消的订单；已发货的不要强行操作。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_0271e76ec5"
+      },
+      "equals": {
+        "status": "cancelled"
+      },
+      "count": null
+    },
+    {
+      "table": "orders",
+      "where": {
+        "id": "ordalt_00c05be124"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_0271e76ec5"
+      },
+      "equals": {},
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ordalt_00c05be124"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_facts": [
+    "ord_0271e76ec5",
+    "已取消",
+    "ordalt_00c05be124",
+    "已发货，无法取消"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "list_orders",
+    "get_order",
+    "cancel_order"
+  ],
+  "allowed_write_tools": [
+    "cancel_order"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "mixed_order_bulk_cancel",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_9cbbd1185a",
+    "order_id": "ord_0271e76ec5",
+    "product_id": "prod_84c01e1cba",
+    "item_id": "item_c29764f3c3",
+    "payment_id": "pay_cd3a02b7dd",
+    "shipment_id": "ship_216ccad82c",
+    "tracking_number": "SF3403008",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "杭州市余杭区文一西路88号",
+    "product_name": "智能音箱",
+    "shipped_order_id": "ordalt_00c05be124",
+    "paid_amount_cents": 13200,
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是李娜，手机号后四位是4821。"
+      }
+    ]
+  }
+}

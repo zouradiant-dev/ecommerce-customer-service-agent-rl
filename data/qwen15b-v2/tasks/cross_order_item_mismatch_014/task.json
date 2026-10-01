@@ -1,0 +1,83 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "cross_order_item_mismatch_014",
+  "split": "test",
+  "scenario": "cross_order_item_mismatch",
+  "user_id": "cust_0778fe243b",
+  "user_prompt": "请从订单 ord_d3993e077a 退款商品项 itemalt_111de4da03。如果商品项属于另一笔订单，请指出不一致并停止。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ord_d3993e077a"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "returns",
+      "where": {
+        "order_id": "ordalt_bb9249a944"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_d3993e077a"
+      },
+      "equals": {},
+      "count": 0
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ordalt_bb9249a944"
+      },
+      "equals": {},
+      "count": 0
+    }
+  ],
+  "required_values": [],
+  "required_intents": [
+    "item_order_mismatch",
+    "refund_not_executed"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "cross_order_item_mismatch",
+    "generation_seed": 7,
+    "identity": {
+      "name": "李娜",
+      "phone_last4": "4821"
+    },
+    "customer_id": "cust_0778fe243b",
+    "order_id": "ord_d3993e077a",
+    "product_id": "prod_8d7ac9b00d",
+    "item_id": "item_1d6edd88c9",
+    "payment_id": "pay_fb4a585a98",
+    "shipment_id": "ship_11d2d47460",
+    "tracking_number": "SF3727517",
+    "customer_name": "李娜",
+    "phone_last4": "4821",
+    "original_address": "上海市浦东新区海科路18号",
+    "product_name": "智能手环",
+    "mismatched_item_id": "itemalt_111de4da03",
+    "mismatched_item_order_id": "ordalt_bb9249a944",
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是李娜，手机号后四位是4821。"
+      }
+    ]
+  }
+}

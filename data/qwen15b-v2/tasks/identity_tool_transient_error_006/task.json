@@ -1,0 +1,65 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "identity_tool_transient_error_006",
+  "split": "train",
+  "scenario": "identity_tool_transient_error",
+  "user_id": "cust_16afebfd48",
+  "user_prompt": "请查询订单 ord_5490b21b08 的物流。如果身份服务首次超时，请重试一次，不要绕过核验。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "orders",
+      "where": {
+        "id": "ord_5490b21b08"
+      },
+      "equals": {
+        "status": "shipped"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "SF0972741"
+  ],
+  "required_intents": [
+    "shipment_in_transit"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_shipment"
+  ],
+  "allowed_write_tools": [],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "identity_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_16afebfd48",
+    "order_id": "ord_5490b21b08",
+    "product_id": "prod_d1f6b4dee6",
+    "item_id": "item_87f18f0469",
+    "payment_id": "pay_126e346329",
+    "shipment_id": "ship_14b3f6e3cd",
+    "tracking_number": "SF0972741",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "深圳市南山区科技园南区36号",
+    "product_name": "电子阅读器",
+    "tool_faults": {
+      "verify_customer_identity": {
+        "failures": 1,
+        "error": "identity_timeout"
+      }
+    },
+    "scripted_user_replies": [
+      {
+        "kind": "identity",
+        "content": "我是张三，手机号后四位是1234。"
+      }
+    ]
+  }
+}

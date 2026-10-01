@@ -1,0 +1,84 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "refund_tool_transient_error_003",
+  "split": "train",
+  "scenario": "refund_tool_transient_error",
+  "user_id": "cust_4e748b82b9",
+  "user_prompt": "我是王伟，手机号后四位7306。订单 ord_6bdffcc696 的商品损坏了，我想退掉这一件并按实付金额退款。我确认退货退款。 如果退款网关首次超时，请核对后安全重试。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_e276754bc8"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_6bdffcc696"
+      },
+      "equals": {
+        "amount_cents": 7499
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_e276754bc8"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "74.99"
+  ],
+  "required_intents": [
+    "refund_to_original_payment"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "王伟",
+      "phone_last4": "7306"
+    },
+    "customer_id": "cust_4e748b82b9",
+    "order_id": "ord_6bdffcc696",
+    "product_id": "prod_ddb64c3911",
+    "item_id": "item_e276754bc8",
+    "payment_id": "pay_21464e2a7b",
+    "shipment_id": "ship_d398a49787",
+    "tracking_number": "SF2681191",
+    "customer_name": "王伟",
+    "phone_last4": "7306",
+    "original_address": "北京市朝阳区望京路66号",
+    "product_name": "电子阅读器",
+    "refund_amount_cents": 7499,
+    "tool_faults": {
+      "create_refund": {
+        "failures": 1,
+        "error": "refund_gateway_timeout"
+      }
+    }
+  }
+}

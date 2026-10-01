@@ -1,0 +1,84 @@
+{
+  "schema_version": "ecommerce_cs_task_v2",
+  "task_id": "refund_tool_transient_error_001",
+  "split": "train",
+  "scenario": "refund_tool_transient_error",
+  "user_id": "cust_05e1f4c179",
+  "user_prompt": "我是张三，手机号后四位1234。订单 ord_6ee2181d1d 的商品损坏了，我想退掉这一件并按实付金额退款。我确认退货退款。 如果退款网关首次超时，请核对后安全重试。",
+  "reference_time": "2026-01-15T12:00:00+00:00",
+  "database": "state.sqlite",
+  "assertions": [
+    {
+      "table": "returns",
+      "where": {
+        "order_item_id": "item_053dcd2738"
+      },
+      "equals": {
+        "status": "refunded"
+      },
+      "count": 1
+    },
+    {
+      "table": "refunds",
+      "where": {
+        "order_id": "ord_6ee2181d1d"
+      },
+      "equals": {
+        "amount_cents": 11999
+      },
+      "count": 1
+    },
+    {
+      "table": "order_items",
+      "where": {
+        "id": "item_053dcd2738"
+      },
+      "equals": {
+        "status": "returned"
+      },
+      "count": null
+    }
+  ],
+  "required_values": [
+    "119.99"
+  ],
+  "required_intents": [
+    "refund_to_original_payment"
+  ],
+  "required_tools": [
+    "verify_customer_identity",
+    "get_order",
+    "search_refund_policy",
+    "create_refund"
+  ],
+  "allowed_write_tools": [
+    "create_refund"
+  ],
+  "allowed_policy_violations": [],
+  "metadata": {
+    "template_id": "refund_tool_transient_error",
+    "generation_seed": 7,
+    "identity": {
+      "name": "张三",
+      "phone_last4": "1234"
+    },
+    "customer_id": "cust_05e1f4c179",
+    "order_id": "ord_6ee2181d1d",
+    "product_id": "prod_1ee43d9f35",
+    "item_id": "item_053dcd2738",
+    "payment_id": "pay_f87c5fbf9c",
+    "shipment_id": "ship_e8c300563c",
+    "tracking_number": "SF5597618",
+    "customer_name": "张三",
+    "phone_last4": "1234",
+    "original_address": "成都市高新区天府三街108号",
+    "product_name": "智能音箱",
+    "refund_amount_cents": 11999,
+    "tool_faults": {
+      "create_refund": {
+        "failures": 1,
+        "error": "refund_gateway_timeout"
+      }
+    }
+  }
+}
