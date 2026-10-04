@@ -31,7 +31,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--train", type=Path, required=True)
     parser.add_argument("--dev", type=Path)
     parser.add_argument("--base-model", default="Qwen/Qwen2.5-7B-Instruct")
+    parser.add_argument("--model-revision", help="immutable model repository commit used for reproducible loading")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--init-adapter",
+        type=Path,
+        help="existing adapter used only to initialize weights; optimizer, scheduler, and step counters start fresh",
+    )
     parser.add_argument("--resume-from", type=Path, help="adapter checkpoint containing training_state.pt")
     parser.add_argument("--max-steps", type=int, default=200)
     parser.add_argument("--batch-size", type=int, default=1)
@@ -51,11 +57,40 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--load-in-4bit", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--bf16", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument(
+        "--model-dtype",
+        choices=("float16", "bfloat16", "float32"),
+        help="explicit base-model dtype; overrides --bf16/--no-bf16",
+    )
+    parser.add_argument(
+        "--trainable-params-fp32",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="store trainable adapter parameters and accumulated gradients in float32",
+    )
+    parser.add_argument(
+        "--defer-gradient-accumulation-scaling",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="backpropagate each raw loss, then average accumulated gradients before clipping",
+    )
     parser.add_argument("--gradient-checkpointing", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument(
+        "--gradient-checkpointing-reentrant",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+    )
     parser.add_argument("--lora-r", type=int, default=16)
     parser.add_argument("--lora-alpha", type=int, default=32)
     parser.add_argument("--lora-dropout", type=float, default=0.05)
     parser.add_argument("--lora-target-modules", default=DEFAULT_TARGETS)
+    parser.add_argument("--attn-implementation", choices=("sdpa", "eager"), default="sdpa")
+    parser.add_argument(
+        "--diagnose-gradients-until",
+        type=int,
+        default=0,
+        help="check every trainable gradient through this many micro-batches; zero disables the diagnostic",
+    )
     parser.add_argument("--validate-data-only", action="store_true")
     return parser
 
@@ -104,6 +139,10 @@ def encode_rows(rows: list[dict[str, Any]], tokenizer: Any, args: argparse.Names
 
 def main() -> int:
     args = build_parser().parse_args()
+    if args.init_adapter and args.resume_from:
+        raise SystemExit("--init-adapter and --resume-from are mutually exclusive")
+    if args.defer_gradient_accumulation_scaling and not args.trainable_params_fp32:
+        raise SystemExit("deferred gradient scaling requires --trainable-params-fp32")
     train_rows = load_jsonl(args.train)
     dev_rows = load_jsonl(args.dev) if args.dev else []
     dev_source_rows = len(dev_rows)
@@ -136,7 +175,12 @@ def main() -> int:
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     device = torch.device("cuda", args.device)
-    tokenizer = AutoTokenizer.from_pretrained(args.base_model, trust_remote_code=True, use_fast=True)
+    tokenizer = AutoTokenizer.from_pretrained(
+        args.base_model,
+        revision=args.model_revision,
+        trust_remote_code=True,
+        use_fast=True,
+    )
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
 
@@ -153,6 +197,7 @@ def main() -> int:
             attention_mask.append(example["attention_mask"] + [0] * padding)
             labels.append(example["labels"] + [-100] * padding)
         return {
+            "example_ids": [example["id"] for example in examples],
             "input_ids": torch.tensor(input_ids, dtype=torch.long),
             "attention_mask": torch.tensor(attention_mask, dtype=torch.long),
             "labels": torch.tensor(labels, dtype=torch.long),
@@ -161,12 +206,19 @@ def main() -> int:
     train_loader = DataLoader(train_examples, batch_size=args.batch_size, shuffle=False, collate_fn=collate)
     dev_loader = DataLoader(dev_examples, batch_size=args.batch_size, shuffle=False, collate_fn=collate) if dev_examples else None
 
-    compute_dtype = torch.bfloat16 if args.bf16 else torch.float16
+    dtype_by_name = {
+        "float16": torch.float16,
+        "bfloat16": torch.bfloat16,
+        "float32": torch.float32,
+    }
+    resolved_model_dtype = args.model_dtype or ("bfloat16" if args.bf16 else "float16")
+    compute_dtype = dtype_by_name[resolved_model_dtype]
     model_kwargs: dict[str, Any] = {
+        "revision": args.model_revision,
         "trust_remote_code": True,
         "low_cpu_mem_usage": True,
         "torch_dtype": compute_dtype,
-        "attn_implementation": "sdpa",
+        "attn_implementation": args.attn_implementation,
     }
     if args.load_in_4bit:
         model_kwargs.update(
@@ -182,12 +234,20 @@ def main() -> int:
         )
     model = AutoModelForCausalLM.from_pretrained(args.base_model, **model_kwargs)
     model.config.use_cache = False
+    gradient_checkpointing_kwargs = {"use_reentrant": args.gradient_checkpointing_reentrant}
     if args.load_in_4bit:
-        model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=args.gradient_checkpointing)
+        model = prepare_model_for_kbit_training(
+            model,
+            use_gradient_checkpointing=args.gradient_checkpointing,
+            gradient_checkpointing_kwargs=gradient_checkpointing_kwargs,
+        )
     elif args.gradient_checkpointing:
-        model.gradient_checkpointing_enable()
-    if args.resume_from:
-        model = PeftModel.from_pretrained(model, args.resume_from, is_trainable=True)
+        model.gradient_checkpointing_enable(gradient_checkpointing_kwargs=gradient_checkpointing_kwargs)
+        if args.gradient_checkpointing_reentrant:
+            model.enable_input_require_grads()
+    adapter_source = args.resume_from or args.init_adapter
+    if adapter_source:
+        model = PeftModel.from_pretrained(model, adapter_source, is_trainable=True)
     else:
         model = get_peft_model(
             model,
@@ -200,11 +260,30 @@ def main() -> int:
                 target_modules=[value.strip() for value in args.lora_target_modules.split(",") if value.strip()],
             ),
         )
+    if args.trainable_params_fp32:
+        for parameter in model.parameters():
+            if parameter.requires_grad:
+                if not parameter.is_floating_point():
+                    raise TypeError(f"trainable parameter is not floating point: {parameter.dtype}")
+                parameter.data = parameter.data.to(dtype=torch.float32)
     if not args.load_in_4bit:
         model.to(device)
     model.print_trainable_parameters()
 
     parameters = [parameter for parameter in model.parameters() if parameter.requires_grad]
+    trainable_parameter_dtypes: dict[str, int] = {}
+    for parameter in parameters:
+        key = str(parameter.dtype)
+        trainable_parameter_dtypes[key] = trainable_parameter_dtypes.get(key, 0) + parameter.numel()
+    if args.trainable_params_fp32 and set(trainable_parameter_dtypes) != {"torch.float32"}:
+        raise RuntimeError(f"trainable_parameter_dtype_mismatch:{trainable_parameter_dtypes}")
+    print(
+        json.dumps(
+            {"trainable_parameter_elements_by_dtype": trainable_parameter_dtypes},
+            ensure_ascii=False,
+        ),
+        flush=True,
+    )
     optimizer = torch.optim.AdamW(parameters, lr=args.learning_rate)
     warmup_steps = math.ceil(args.max_steps * args.warmup_ratio)
     scheduler = get_linear_schedule_with_warmup(optimizer, warmup_steps, args.max_steps)
@@ -225,8 +304,11 @@ def main() -> int:
         values = []
         with torch.no_grad():
             for batch in dev_loader:
-                output = model(**{key: value.to(device) for key, value in batch.items()})
-                values.append(float(output.loss.detach().cpu()))
+                output = model(**model_inputs(batch))
+                value = float(output.loss.detach().cpu())
+                if not math.isfinite(value):
+                    fail_nonfinite("non_finite_dev_loss", batch, value)
+                values.append(value)
         model.train()
         return sum(values) / len(values) if values else None
 
@@ -248,32 +330,134 @@ def main() -> int:
 
     args.output.mkdir(parents=True, exist_ok=True)
     trace: list[dict[str, Any]] = []
+
+    def model_inputs(batch: dict[str, Any]) -> dict[str, Any]:
+        return {key: value.to(device) for key, value in batch.items() if key != "example_ids"}
+
+    def fail_nonfinite(kind: str, batch: dict[str, Any], value: float, **details: Any) -> None:
+        failure = {
+            "stage": "sft",
+            "reason": kind,
+            "value": value,
+            "optimizer_step": optimizer_step,
+            "micro_batches_seen": micro_batches_seen,
+            "example_ids": list(batch.get("example_ids") or []),
+            "base_model": args.base_model,
+            "base_model_revision": args.model_revision,
+            "model_dtype": resolved_model_dtype,
+            "trainable_parameter_elements_by_dtype": trainable_parameter_dtypes,
+            "gradient_accumulation_scaling": (
+                "after_backward" if args.defer_gradient_accumulation_scaling else "before_backward"
+            ),
+            "gradient_accumulation_storage": (
+                "separate_fp32_buffers"
+                if args.defer_gradient_accumulation_scaling
+                else "parameter_grad"
+            ),
+            **details,
+        }
+        (args.output / "failure.json").write_text(
+            json.dumps(failure, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        raise RuntimeError(f"{kind}: examples={failure['example_ids']}")
+
     initial_dev_loss = evaluate()
     latest_dev_loss = initial_dev_loss
     model.train()
     optimizer.zero_grad(set_to_none=True)
+    gradient_accumulators = (
+        [torch.zeros_like(parameter, dtype=torch.float32) for parameter in parameters]
+        if args.defer_gradient_accumulation_scaling
+        else []
+    )
+    gradient_accumulator_used = [False] * len(parameters)
     accumulation = 0
+    accumulation_example_ids: list[str] = []
     started = time.time()
     while optimizer_step < args.max_steps:
         for batch in train_loader:
             micro_batches_seen += 1
             if micro_batches_seen <= resume_micro_batches:
                 continue
-            output = model(**{key: value.to(device) for key, value in batch.items()})
-            loss = output.loss / args.gradient_accumulation
+            output = model(**model_inputs(batch))
+            raw_loss = float(output.loss.detach().cpu())
+            if not math.isfinite(raw_loss):
+                fail_nonfinite("non_finite_train_loss", batch, raw_loss)
+            loss = (
+                output.loss
+                if args.defer_gradient_accumulation_scaling
+                else output.loss / args.gradient_accumulation
+            )
             loss.backward()
             accumulation += 1
+            accumulation_example_ids.extend(str(value) for value in batch.get("example_ids") or [])
+            if args.diagnose_gradients_until and micro_batches_seen <= args.diagnose_gradients_until:
+                named_gradients = [
+                    (name, parameter.grad)
+                    for name, parameter in model.named_parameters()
+                    if parameter.requires_grad and parameter.grad is not None
+                ]
+                finite_flags = torch.stack(
+                    [torch.isfinite(gradient).all() for _, gradient in named_gradients]
+                )
+                if not bool(finite_flags.all().item()):
+                    flags = finite_flags.detach().cpu().tolist()
+                    non_finite_parameters = [
+                        name for (name, _), finite in zip(named_gradients, flags) if not finite
+                    ]
+                    fail_nonfinite(
+                        "non_finite_microbatch_gradient",
+                        batch,
+                        raw_loss,
+                        accumulation_example_ids=list(accumulation_example_ids),
+                        non_finite_gradient_parameters=non_finite_parameters[:32],
+                    )
+            if args.defer_gradient_accumulation_scaling:
+                with torch.no_grad():
+                    for index, (parameter, accumulator) in enumerate(
+                        zip(parameters, gradient_accumulators)
+                    ):
+                        if parameter.grad is None:
+                            continue
+                        accumulator.add_(parameter.grad)
+                        gradient_accumulator_used[index] = True
+                        parameter.grad = None
             if accumulation < args.gradient_accumulation:
                 continue
-            torch.nn.utils.clip_grad_norm_(parameters, 1.0)
+            if args.defer_gradient_accumulation_scaling:
+                with torch.no_grad():
+                    for parameter, accumulator, used in zip(
+                        parameters,
+                        gradient_accumulators,
+                        gradient_accumulator_used,
+                    ):
+                        parameter.grad = (
+                            accumulator.div_(args.gradient_accumulation) if used else None
+                        )
+            gradient_norm = float(torch.nn.utils.clip_grad_norm_(parameters, 1.0).detach().cpu())
+            if not math.isfinite(gradient_norm):
+                fail_nonfinite(
+                    "non_finite_gradient_norm",
+                    batch,
+                    gradient_norm,
+                    raw_loss=raw_loss,
+                    accumulation_example_ids=list(accumulation_example_ids),
+                )
             optimizer.step()
             scheduler.step()
             optimizer.zero_grad(set_to_none=True)
+            if args.defer_gradient_accumulation_scaling:
+                for accumulator in gradient_accumulators:
+                    accumulator.zero_()
+                gradient_accumulator_used = [False] * len(parameters)
             accumulation = 0
+            accumulation_example_ids = []
             optimizer_step += 1
             row = {
                 "step": optimizer_step,
-                "train_loss": float(output.loss.detach().cpu()),
+                "train_loss": raw_loss,
+                "gradient_norm": gradient_norm,
                 "learning_rate": scheduler.get_last_lr()[0],
             }
             if args.eval_every and optimizer_step % args.eval_every == 0:
@@ -294,6 +478,22 @@ def main() -> int:
     metrics = {
         "stage": "sft",
         "base_model": args.base_model,
+        "base_model_revision": args.model_revision,
+        "adapter_initialization": (
+            "resume_checkpoint" if args.resume_from else "existing_adapter" if args.init_adapter else "new_lora"
+        ),
+        "initial_adapter": str(args.init_adapter.resolve()) if args.init_adapter else None,
+        "resume_checkpoint": str(args.resume_from.resolve()) if args.resume_from else None,
+        "model_dtype": resolved_model_dtype,
+        "trainable_parameter_elements_by_dtype": trainable_parameter_dtypes,
+        "gradient_accumulation_scaling": (
+            "after_backward" if args.defer_gradient_accumulation_scaling else "before_backward"
+        ),
+        "gradient_accumulation_storage": (
+            "separate_fp32_buffers"
+            if args.defer_gradient_accumulation_scaling
+            else "parameter_grad"
+        ),
         "train_rows": len(train_examples),
         "dev_rows": len(dev_examples),
         "dev_source_rows": dev_source_rows,

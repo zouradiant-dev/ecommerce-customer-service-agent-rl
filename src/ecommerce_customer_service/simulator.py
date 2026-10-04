@@ -5,6 +5,7 @@ from http.client import RemoteDisconnected
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import tempfile
 import time
@@ -17,6 +18,9 @@ from .rewards import score_verification
 from .training import canonicalize_tool_schemas
 from .tools import CustomerServiceTools
 from .verifier import VERIFIER_VERSION, verify_task
+
+
+USER_REPLY_PROTOCOL_VERSION = "scripted_user_replies_v2"
 
 
 SYSTEM_PROMPT = """你是电商售后客服Agent，必须通过工具完成业务操作，不能只用文字描述将要执行的动作。
@@ -407,6 +411,7 @@ class OpenAICompatibleAgent:
         correction_retries: int = 3,
         timeout_seconds: int = 180,
         retries: int = 3,
+        system_prompt: str | None = None,
     ) -> None:
         self.model = model
         self.api_base = api_base.rstrip("/")
@@ -419,6 +424,7 @@ class OpenAICompatibleAgent:
         self.correction_retries = correction_retries
         self.timeout_seconds = timeout_seconds
         self.retries = retries
+        self.system_prompt = SYSTEM_PROMPT if system_prompt is None else system_prompt
 
     @staticmethod
     def _parse_sse_message(body: str) -> dict[str, Any]:
@@ -522,12 +528,29 @@ class OpenAICompatibleAgent:
 
     @staticmethod
     def _assistant_requests_reply(kind: str, content: str) -> bool:
-        normalized = content.replace(" ", "")
+        normalized = re.sub(r"[\s*_]", "", content)
         if kind == "identity":
-            fields = any(marker in normalized for marker in ("姓名", "名字", "手机号", "手机号码", "后四位"))
-            request = any(marker in normalized for marker in ("请提供", "请告诉", "需要您提供", "麻烦提供"))
-            return fields and request
+            # Require an explicit request attached to an identity field. A
+            # confirmation about a refund plus a separate identity mention must
+            # not leak the scripted credentials into the model's conversation.
+            request = (
+                r"(?:请(?:您)?(?:提供|告诉(?:我|我们)?|告知|确认|核对)"
+                r"|需要(?:您)?提供|麻烦(?:您)?(?:提供|告诉|告知|确认))"
+            )
+            fields = r"(?:姓名|名字|手机号|手机号码|后四位)"
+            match = re.search(request + r"[^。！？!?；;，,]{0,16}" + fields, normalized)
+            return bool(match) and not any(
+                marker in match.group(0) for marker in ("不要", "无需", "不必", "不用", "不需要", "不提供")
+            )
         if kind == "confirmation":
+            if any(field in normalized for field in ("姓名", "名字", "手机号", "手机号码", "后四位")) and not re.search(
+                r"(?:请(?:您)?确认|确认是否|是否确认|确认要)"
+                r"(?:是否|要|继续|执行|办理|修改|本次|这个|该|这笔|订单|操作){0,3}"
+                r"(?:退款|退货|取消|地址)",
+                normalized,
+            ):
+                # Asking to confirm identity must never authorize a write.
+                return False
             confirmation = any(marker in normalized for marker in ("确认", "确定"))
             request = any(
                 marker in normalized
@@ -609,7 +632,7 @@ class OpenAICompatibleAgent:
 
     def run(self, task: TaskSpec, tools: CustomerServiceTools) -> AgentRun:
         messages: list[dict[str, Any]] = [
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": self.system_prompt},
             {"role": "user", "content": task.user_prompt},
         ]
         scripted_replies = [dict(item) for item in task.metadata.get("scripted_user_replies") or []]
@@ -658,7 +681,8 @@ class OpenAICompatibleAgent:
         return AgentRun(tuple(messages), final, "max_steps")
 
 
-def run_task(task: TaskSpec, agent: Agent, *, trial: int = 0) -> RolloutRecord:
+def run_task(task: TaskSpec, agent: Agent, *, trial: int = 0,
+             verifier_version: str = VERIFIER_VERSION) -> RolloutRecord:
     with tempfile.TemporaryDirectory(prefix="ecommerce-cs-") as temporary:
         trial_db = Path(temporary) / "state.sqlite"
         shutil.copy2(task.database_path, trial_db)
@@ -668,7 +692,8 @@ def run_task(task: TaskSpec, agent: Agent, *, trial: int = 0) -> RolloutRecord:
         try:
             run = agent.run(isolated_task, tools)
             execution_rows = tuple(item.to_dict() for item in tools.executions)
-            verification = verify_task(isolated_task, run.final_response, execution_rows)
+            verification = verify_task(isolated_task, run.final_response, execution_rows,
+                                       verifier_version=verifier_version)
             reward_components = score_verification(verification)
             return RolloutRecord(
                 task_id=task.task_id,
@@ -680,7 +705,7 @@ def run_task(task: TaskSpec, agent: Agent, *, trial: int = 0) -> RolloutRecord:
                 tool_executions=execution_rows,
                 final_response=run.final_response,
                 verifier=verification,
-                verifier_version=VERIFIER_VERSION,
+                verifier_version=verifier_version,
                 reward_components=reward_components.to_dict(),
                 stopped_reason=run.stopped_reason,
             )
@@ -697,7 +722,7 @@ def run_task(task: TaskSpec, agent: Agent, *, trial: int = 0) -> RolloutRecord:
                 tool_executions=tuple(item.to_dict() for item in tools.executions),
                 final_response="",
                 verifier=verification,
-                verifier_version=VERIFIER_VERSION,
+                verifier_version=verifier_version,
                 reward_components=reward_components.to_dict(),
                 stopped_reason="worker_error",
                 error=f"{type(exc).__name__}: {exc}",

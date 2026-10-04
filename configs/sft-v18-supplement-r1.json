@@ -1,0 +1,65 @@
+{
+  "profile_version": "ecommerce_cs_sft_v18_supplement_r1",
+  "status": "data_ready_training_not_started",
+  "gpu": {
+    "minimum_reported_memory_gib": 22.0,
+    "single_gpu": true,
+    "bf16_required": true
+  },
+  "model": {
+    "id": "Qwen/Qwen2.5-7B-Instruct",
+    "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "load_in_4bit": true
+  },
+  "initial_adapter": {
+    "path": "outputs/v18-sft-full-newgpu-r1",
+    "adapter_model_sha256": "f41c98a583a6ca66e18f1d6f8743029cb3a363cf96f43d80dbf0d29b74876b6c",
+    "adapter_config_sha256": "d3c421aa3bc1b4ae4cefe760a9db5dda54fa42a2a54fa491372233d2c3c7b094"
+  },
+  "training": {
+    "max_sequence_length": 4096,
+    "model_dtype": "bfloat16",
+    "micro_batch_size": 1,
+    "gradient_accumulation_steps": 16,
+    "effective_batch_size": 16,
+    "learning_rate": 0.00001,
+    "warmup_ratio": 0.05,
+    "trainable_parameters_fp32": true,
+    "defer_gradient_accumulation_scaling": true,
+    "gradient_checkpointing_reentrant": false,
+    "attention_implementation": "sdpa"
+  },
+  "phases": {
+    "smoke": {
+      "max_steps": 8,
+      "eval_every": 4,
+      "save_every": 4,
+      "max_dev_examples": 30,
+      "diagnose_gradients_until": 64
+    },
+    "full": {
+      "max_steps": 118,
+      "nominal_epochs": 1.0,
+      "eval_every": 59,
+      "save_every": 30,
+      "max_dev_examples": 60,
+      "diagnose_gradients_until": 0
+    }
+  },
+  "data": {
+    "summary": {
+      "path": "data/v18-sft-supplement-r1/summary.json",
+      "sha256": "9b4c4e5ca1d3352e1580cbf62923162cfd48417d511ef44ea1d530a1421bb05c"
+    },
+    "train": {
+      "path": "data/v18-sft-supplement-r1/train.jsonl",
+      "rows": 1880,
+      "sha256": "bcb140ae74f6bca75e66edbad0827bf0ad78b286c005ee58a40497a3afa4f71f"
+    },
+    "dev": {
+      "path": "data/v18-sft-reference-r1/dev.jsonl",
+      "rows": 2960,
+      "sha256": "a1b246662715aaa8f72a8cdb234d218a19ff2d94fbe2164572d5eb8d4efae5d0"
+    }
+  }
+}

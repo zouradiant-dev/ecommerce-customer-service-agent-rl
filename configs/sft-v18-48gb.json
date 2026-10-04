@@ -1,0 +1,96 @@
+{
+  "profile_version": "ecommerce_cs_sft_v18_48gb_r1",
+  "status": "data_ready_training_not_started",
+  "gpu": {
+    "memory_class_gib": 48,
+    "minimum_reported_memory_gib": 45,
+    "single_gpu": true,
+    "bf16_required": true
+  },
+  "model": {
+    "id": "Qwen/Qwen2.5-7B-Instruct",
+    "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "revision_source": "https://huggingface.co/api/models/Qwen/Qwen2.5-7B-Instruct",
+    "revision_resolved_at": "2026-10-03",
+    "method": "qlora_nf4",
+    "load_in_4bit": true,
+    "double_quant": true
+  },
+  "training": {
+    "max_sequence_length": 4096,
+    "model_dtype": "bfloat16",
+    "micro_batch_size": 1,
+    "gradient_accumulation_steps": 16,
+    "effective_batch_size": 16,
+    "learning_rate": 0.00005,
+    "warmup_ratio": 0.1,
+    "lora_rank": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "attention_implementation": "sdpa",
+    "trainable_parameters_fp32": true,
+    "defer_gradient_accumulation_scaling": true,
+    "gradient_checkpointing": true,
+    "gradient_checkpointing_reentrant": false,
+    "assistant_only_loss": true
+  },
+  "phases": {
+    "smoke": {
+      "max_steps": 20,
+      "eval_every": 10,
+      "save_every": 10,
+      "max_dev_examples": 120,
+      "diagnose_gradients_until": 128
+    },
+    "full": {
+      "max_steps": 925,
+      "nominal_epochs": 1.0,
+      "eval_every": 100,
+      "save_every": 100,
+      "max_dev_examples": 300
+    }
+  },
+  "data": {
+    "reference_summary": {
+      "path": "data/v18-sft-reference-r1/summary.json",
+      "sha256": "e1a333f62e70aa89c5cbec73b8f76f5dd3e5cb1fdcd1026649ae5a09cd4bed50"
+    },
+    "task_summary": {
+      "path": "data/v18-train-dev-r1/summary.json",
+      "sha256": "4e405cb9bb56fe7547dee3f6cef3a2684175353c9a14a515e9c7923f50085137"
+    },
+    "task_manifest": {
+      "path": "data/v18-train-dev-r1/tasks.jsonl",
+      "sha256": "b2564f4ed0d28dab405e6a3cfa19cff85ec29f3451b4f204926f0ee5c2c17c30",
+      "rows": 3600
+    },
+    "train": {
+      "path": "data/v18-sft-reference-r1/train.jsonl",
+      "sha256": "2fbaaa34a8618fb00d4ed90081ed0bd478d46b633af5eb9efc34a432ce955f4f",
+      "rows": 14800
+    },
+    "dev": {
+      "path": "data/v18-sft-reference-r1/dev.jsonl",
+      "sha256": "a1b246662715aaa8f72a8cdb234d218a19ff2d94fbe2164572d5eb8d4efae5d0",
+      "rows": 2960
+    },
+    "task_generator": {
+      "path": "src/ecommerce_customer_service/tasks_v18.py",
+      "sha256": "8755417b9b3b46c38116f6f12402b1266e103b4cb036d2bbe7a6dc1af512e0d0"
+    },
+    "reference_generator": {
+      "path": "src/ecommerce_customer_service/reference_v18.py",
+      "sha256": "88afc2a65e2958aba05c62a2e4e95d54b09e098af9e4923bbb88ece07d7e0d5b"
+    }
+  },
+  "execution_policy": {
+    "requires_v18_cpu_tests": true,
+    "requires_frozen_train_dev_manifest": true,
+    "requires_smoke_before_full": true,
+    "requires_zero_test_v2_rows_in_sft": true,
+    "requires_reward_calibration_before_grpo_only": true,
+    "automatic_oom_retry": false,
+    "historical_v13_v17_artifacts_read_only": true
+  },
+  "note": "Reference rows are deterministic verified controller traces used as an SFT seed, not learned-model results. The 48G selection provides headroom and stability; smoke and full are separate explicit commands."
+}

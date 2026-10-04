@@ -2,7 +2,7 @@
 # environment from the legacy Transformers <5 SFT stack until the SFT script
 # has been validated against Transformers 5.x on the target GPU image.
 transformers>=5.13.0,<6
-trl>=1.8.0,<2
+trl==1.14.1
 datasets>=3.0.0,<6
 accelerate>=1.0.0,<2
 peft>=0.13.0,<0.20
@@ -10,3 +10,4 @@ bitsandbytes>=0.43.0
 safetensors>=0.4.5
 sentencepiece>=0.2.0
 protobuf>=5.0.0
+jmespath>=1.0.1

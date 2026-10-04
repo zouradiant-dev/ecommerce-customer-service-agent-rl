@@ -6,12 +6,17 @@ from typing import Any, Iterable
 import unicodedata
 from decimal import Decimal, InvalidOperation
 
-from .communication import missing_communication_intents
+from .communication import INTENT_RULES, missing_communication_intents
+from .communication_facts import grounded_communication_failures
 from .database import connect
 from .models import StateAssertion, TaskSpec, VerificationResult
 
 
-VERIFIER_VERSION = "deterministic_semantic_v8"
+LEGACY_VERIFIER_VERSION = "deterministic_semantic_v11"
+VERIFIER_VERSION = "deterministic_semantic_v12"
+# Explicit opt-in only: existing evaluation/training defaults stay frozen v12.
+V13_VERIFIER_VERSION = "deterministic_semantic_v13"
+SUPPORTED_VERIFIER_VERSIONS = {LEGACY_VERIFIER_VERSION, VERIFIER_VERSION, V13_VERIFIER_VERSION}
 IDENTIFIER_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 WRITE_TOOLS = {"cancel_order", "update_shipping_address", "create_refund", "escalate_to_human"}
 SUCCESS_CLAIMS = {
@@ -64,9 +69,13 @@ def _required_value_present(value: str, response: str, folded_response: str) -> 
     return _fold_text(value) in folded_response
 
 
-def communication_failures(task: TaskSpec, final_response: str) -> tuple[str, ...]:
+def communication_failures(
+    task: TaskSpec, final_response: str, *, verifier_version: str = VERIFIER_VERSION,
+) -> tuple[str, ...]:
     """Return versioned deterministic communication failures without inspecting state."""
 
+    if verifier_version not in SUPPORTED_VERIFIER_VERSIONS:
+        raise ValueError(f"unsupported_verifier_version:{verifier_version}")
     folded_response = _fold_text(final_response)
     missing_values = [
         value
@@ -74,12 +83,29 @@ def communication_failures(task: TaskSpec, final_response: str) -> tuple[str, ..
         if not _required_value_present(value, final_response, folded_response)
     ]
     missing_facts = [fact for fact in task.required_facts if not _required_fact_present(fact, folded_response)]
-    missing_intents = missing_communication_intents(task.required_intents, final_response)
+    missing_intents = missing_communication_intents(
+        task.required_intents, final_response, legacy_v11=verifier_version == LEGACY_VERIFIER_VERSION,
+    )
     return tuple(
         [f"missing_value:{value}" for value in missing_values]
         + [f"missing_communication:{fact}" for fact in missing_facts]
         + [f"missing_intent:{intent}" for intent in missing_intents]
     )
+
+
+def grounded_fact_failures(
+    task: TaskSpec, final_response: str, tool_executions: Iterable[dict[str, Any]],
+    *, verifier_version: str = VERIFIER_VERSION,
+) -> tuple[str, ...]:
+    if verifier_version == LEGACY_VERIFIER_VERSION:
+        return ()
+    if verifier_version == VERIFIER_VERSION:
+        return grounded_communication_failures(task, final_response, tool_executions)
+    if verifier_version == V13_VERIFIER_VERSION:
+        # Historical v12 deployment bundles do not need the opt-in v13 module.
+        from .communication_facts_v13 import grounded_communication_failures_v13
+        return grounded_communication_failures_v13(task, final_response, tool_executions)
+    raise ValueError(f"unsupported_verifier_version:{verifier_version}")
 
 
 def required_tool_failures(
@@ -109,13 +135,59 @@ def required_tool_failures(
     return tuple(missing)
 
 
+def _read_supports_historical_result(
+    task: TaskSpec, tool_name: str, final_response: str, executions: list[dict[str, Any]],
+) -> bool:
+    """A recorded read can support an existing result, never a new action claim.
+
+    Only cancellation/refund status is eligible. Address changes, return creation
+    and escalation still require a successful write. Evidence must be for the
+    task's actual order and customer, not a different order's historical refund.
+    """
+    if tool_name not in {"cancel_order", "create_refund"}:
+        return False
+    # Conservative: first-person/current-run attribution is not a status report.
+    new_action = (
+        r"(?:我(?:们)?(?:已(?:经)?|刚刚|刚才|为您|帮您)|(?:本次|这次|刚刚|刚才|现在)(?:已(?:经)?)?"
+        r"|已(?:经)?(?:为您|帮您))[^。！？!?；;\r\n]{0,16}(?:取消|退款|退货)"
+    )
+    if re.search(new_action, _fold_text(final_response)):
+        return False
+    if tool_name == "create_refund" and any(
+        _fold_text(marker) in _fold_text(final_response)
+        for marker in SUCCESS_CLAIMS[tool_name] if marker != "退款成功"
+    ):
+        return False
+    target_order = task.metadata.get("order_id")
+    if not target_order:
+        return False
+    for execution in executions:
+        if execution.get("name") != "get_order" or not execution.get("ok"):
+            continue
+        output = execution.get("output") or {}
+        order = output.get("order") or {}
+        if order.get("id") != target_order or order.get("customer_id") != task.user_id:
+            continue
+        if tool_name == "cancel_order" and order.get("status") == "cancelled":
+            return True
+        if tool_name == "create_refund" and any(
+            refund.get("order_id") == target_order and refund.get("status") == "completed"
+            for refund in output.get("refunds") or []
+        ):
+            return True
+    return False
+
+
 def policy_failures(
     task: TaskSpec,
     final_response: str,
     tool_executions: Iterable[dict[str, Any]],
+    *, verifier_version: str = VERIFIER_VERSION,
 ) -> tuple[str, ...]:
     """Recompute policy and tool-recovery failures from a recorded trajectory."""
 
+    if verifier_version not in SUPPORTED_VERIFIER_VERSIONS:
+        raise ValueError(f"unsupported_verifier_version:{verifier_version}")
     executions = list(tool_executions)
     failures: list[str] = []
     folded_response = _fold_text(final_response)
@@ -140,7 +212,13 @@ def policy_failures(
         if tool_name in successful_names:
             continue
         if any(_fold_text(marker) in folded_response for marker in markers):
-            failures.append(f"unsupported_success_claim:{tool_name}")
+            if not _read_supports_historical_result(task, tool_name, final_response, executions):
+                failures.append(f"unsupported_success_claim:{tool_name}")
+
+    if (verifier_version != LEGACY_VERIFIER_VERSION and "escalate_to_human" not in successful_names
+            and INTENT_RULES["human_escalation_created"].matches(final_response)
+            and "unsupported_success_claim:escalate_to_human" not in failures):
+        failures.append("unsupported_success_claim:escalate_to_human")
 
     for index, item in enumerate(executions):
         name = str(item.get("name") or "")
@@ -212,6 +290,7 @@ def verify_task(
     task: TaskSpec,
     final_response: str,
     tool_executions: Iterable[dict[str, Any]],
+    *, verifier_version: str = VERIFIER_VERSION,
 ) -> VerificationResult:
     executions = list(tool_executions)
     failures: list[str] = []
@@ -220,13 +299,16 @@ def verify_task(
             failures.extend(_check_assertion(connection, assertion))
     state_passed = not any(item.startswith("state_") for item in failures)
 
-    communication_failure_rows = communication_failures(task, final_response)
+    communication_failure_rows = communication_failures(task, final_response, verifier_version=verifier_version)
+    communication_failure_rows += grounded_fact_failures(
+        task, final_response, executions, verifier_version=verifier_version,
+    )
     failures.extend(communication_failure_rows)
     communication_passed = not communication_failure_rows
 
     required_failure_rows = required_tool_failures(task, executions)
     failures.extend(required_failure_rows)
-    policy_failure_rows = policy_failures(task, final_response, executions)
+    policy_failure_rows = policy_failures(task, final_response, executions, verifier_version=verifier_version)
     failures.extend(policy_failure_rows)
     policy_passed = not policy_failure_rows
     required_tools_passed = not required_failure_rows

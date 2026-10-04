@@ -1,0 +1,22 @@
+# Featurize official PyTorch 2 image, checked on 2026-10-01:
+# Python 3.11.8, torch 2.2.2+cu121, RTX 4090, BF16 supported.
+# Use with requirements-training.txt; this is a compatibility profile,
+# not a lockfile for every transitive dependency or a GPU validation result.
+# Preserve the image's installed CUDA-enabled PyTorch build. Conda's
+# distribution metadata may report 2.2.2 while torch.__version__ includes
+# +cu121. A public-version pin accepts both, without forcing a wheel lookup
+# for +cu121 on the configured PyPI mirror.
+torch==2.2.2
+numpy==1.26.4
+transformers==4.51.3
+accelerate==1.6.0
+peft==0.15.2
+bitsandbytes==0.45.5
+tokenizers==0.21.4
+huggingface-hub==0.30.2
+# TensorFlow 2.16.1 is inherited from the server image and requires <5.
+protobuf==4.25.8
+# The image inherits nbclassic 0.2.8 alongside jupyter-server 2.14.0.
+# Install this overlay in the training venv to resolve its pip-check error:
+# python -m pip install -r requirements-training.txt -c constraints-featurize-torch22.txt nbclassic
+nbclassic==1.3.3

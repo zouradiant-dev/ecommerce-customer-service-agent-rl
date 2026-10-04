@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import re
 import unicodedata
 
@@ -34,13 +34,23 @@ class IntentRule:
 
     groups: tuple[tuple[str, ...], ...]
     forbidden: tuple[str, ...] = ()
+    patterns: tuple[str, ...] = ()
+    reject_patterns: tuple[str, ...] = ()
 
     def matches(self, response: str) -> bool:
+        # New synonyms must not accept negated, future or contradictory claims.
+        # These guards are opt-in per intent; unrelated v8 rules stay unchanged.
+        folded_response = normalize_communication(response)
+        if any(re.search(pattern, folded_response) for pattern in self.reject_patterns):
+            return False
         forbidden = tuple(normalize_communication(phrase) for phrase in self.forbidden)
         return any(
-            all(
-                any(normalize_communication(phrase) in segment for phrase in alternatives)
-                for alternatives in self.groups
+            (
+                all(
+                    any(normalize_communication(phrase) in segment for phrase in alternatives)
+                    for alternatives in self.groups
+                )
+                or any(re.search(pattern, segment) for pattern in self.patterns)
             )
             and not any(phrase in segment for phrase in forbidden)
             for segment in _communication_segments(response)
@@ -67,9 +77,17 @@ INTENT_RULES: dict[str, IntentRule] = {
                 "已成功取消",
                 "已为您取消",
                 "已取消",
+                "已经被取消",
+                "已被取消",
             ),
         ),
+        patterns=(r"订单[a-z0-9]{0,80}已(?:经)?于(?:\d{4}年\d{1,2}月\d{1,2}日|\d{8})取消",),
         forbidden=("取消失败", "未取消", "没有取消", "尚未取消", "取消流程已取消", "取消请求已取消"),
+        reject_patterns=(
+            r"(?:并非|不是|未|尚未)(?:已(?:经)?)?被取消",
+            r"(?:并非|不是)已(?:经)?于[0-9年月日]{6,14}取消",
+            r"已(?:经)?于[0-9年月日]{6,14}取消.{0,40}(?:实际上|其实)(?:该)?订单(?:尚未|未|没有)取消",
+        ),
     ),
     "payment_not_captured": IntentRule(
         (
@@ -105,7 +123,30 @@ INTENT_RULES: dict[str, IntentRule] = {
         )
     ),
     "refund_already_completed": IntentRule(
-        (("已经退款", "已退款", "退款已经完成", "退款已完成", "已有退款记录"),)
+        (("已经退款", "已退款", "退款已经完成", "退款已完成", "已有退款记录", "已经有退款记录", "退款成功"),),
+        patterns=(
+            r"已(?:经)?(?:成功)?(?:取消并(?:且)?)?完成退款",
+            r"已(?:经)?完成取消和退款(?:流程)?",
+            r"退款已(?:经)?成功(?:完成|处理)",
+            r"退款已(?:经)?处理完成",
+            # Processing alone is not completion: require a refunded status
+            # or an explicit statement that the funds were returned.
+            r"退款已(?:经)?处理(?:(?!订单|物流|支付|商品|发货|签收|运输).){0,80}(?:状态(?:为|是)?refunded|已退回(?:到)?)",
+            r"退款状态(?:为|是)?(?:completed|已完成)",
+            # Associate a structured status with the refund record/amount, not
+            # another object's completed shipping/payment status.
+            r"退款(?:记录|金额)(?:(?!订单|物流|支付|商品|发货|签收|运输).){0,160}状态(?:为|是)?(?:completed|已完成)",
+        ),
+        reject_patterns=(
+            r"(?:未|尚未|还未|没有|并未|并非|不是)(?:已(?:经)?)?(?:成功)?(?:完成退款|退款(?:已(?:经)?)?完成|已退款|退款成功|已(?:经)?有退款记录)",
+            r"(?:如果|假如|若|待|等待|计划|将|即将|准备)(?:已(?:经)?)?(?:完成退款|退款(?:已(?:经)?)?完成|退款成功)",
+            r"退款(?:状态)?(?:为|是)?(?:待处理|处理中|未完成|失败)",
+            r"退款(?:记录|金额)(?:(?!订单|物流|支付|商品|发货|签收|运输).){0,160}状态(?:为|是)?(?:pending|processing|failed|待处理|处理中|未完成|失败)",
+            r"(?:如果|假如|若|将|即将|准备)(?:退款状态(?:为|是)?(?:completed|已完成)|已(?:经)?完成取消和退款)",
+            r"退款(?:尚未|还未|未|没有|并未)(?:处理完成|退回)",
+            r"(?:并非|不是|如果|假如|假设|若)(?:退款)?已(?:经)?处理(?:完成|.{0,80}(?:状态(?:为|是)?refunded|已退回))",
+            r"退款已(?:经)?处理(?:完成)?(?:(?!订单|物流|支付|商品|发货|签收|运输).){0,80}状态(?:为|是)?(?:pending|processing|failed|待处理|处理中|未完成|失败)",
+        ),
     ),
     "no_duplicate_action": IntentRule(
         (
@@ -117,9 +158,18 @@ INTENT_RULES: dict[str, IntentRule] = {
                 "无需进行任何重复",
                 "不再重复",
                 "不需要进行任何重复",
+                "不需要重复",
+                "不必重复",
+                "无需再次",
+                "不用再次",
+                "不需要再次",
             ),
             ("操作", "处理", "退款", "取消"),
-        )
+        ),
+        reject_patterns=(
+            r"(?:并非|不是)(?:不需要|不必)(?:重复|再次)",
+            r"(?:但|但是|不过|然而)(?:我(?:们)?)?(?:会|将|仍然|仍|继续|正在)(?:进行)?(?:重复|再次)(?:取消|退款|操作|处理)",
+        ),
     ),
     "shipped_order_cannot_cancel": IntentRule(
         (
@@ -253,17 +303,34 @@ INTENT_RULES: dict[str, IntentRule] = {
                 "实际购买数量只有1件",
                 "购买数量为1件",
                 "购买数量确实是1件",
+                "购买数量是1件",
                 "购买了1件",
                 "最多1件",
             ),
-        )
+        ),
+        patterns=(r"(?:实际)?购买数量(?:确实)?(?:是|为|只有)(?:1|一)件", r"(?:只|仅)(?:购买|买)了?(?:1|一)件"),
+        reject_patterns=(
+            r"(?:并非|不是|不只|不仅|没有|未)(?:实际)?(?:购买(?:数量)?|买).{0,8}(?:1|一)件",
+            r"(?:订单数量为|最多)1\d+",
+        ),
     ),
     "refund_quantity_two_rejected": IntentRule(
         (
             ("不能", "无法", "不允许", "不可以", "不支持", "拒绝"),
             ("2件", "两件", "数量2"),
             ("退款", "退货"),
-        )
+        ),
+        # A hard upper limit of ONE item rejects a request for TWO. Merely
+        # suggesting one item, or asking why two are wanted, is not a refusal.
+        patterns=(r"(?:只|仅)(?:能|允许)申请(?:1|一)件(?:商品)?(?:的)?(?:退款|退货)",),
+        reject_patterns=(
+            r"(?:并非|不是|不只|不仅)(?:只|仅)(?:能|允许)申请(?:1|一)件",
+            r"(?<!不)(?<!无法)(?<!不能)(?:可以|允许|支持|能够)(?:按|申请|办理|退还)?(?:2|两|二)件(?:商品)?(?:数量)?(?:的)?(?:退款|退货)",
+            r"(?:并非|不是)(?:不能|无法|不允许|不可以|不支持)(?:按|申请)?(?:2|两|二)件(?:数量)?退款",
+            r"(?:我(?:们)?)(?:将|会|已(?:经)?|现在就)?(?:按|申请|办理|退还)(?:2|两|二)件(?:商品)?(?:数量)?(?:的)?(?:退款|退货)",
+            r"(?<!如果)(?<!假如)(?<!若)您(?:现在)?(?:提到|表示)(?:只)?想按(?:1|一)件数量申请退款",
+            r"(?:不存在|没有|并未)(?:超额退款|超额退货)",
+        ),
     ),
     "operation_stopped": IntentRule(
         (
@@ -277,18 +344,46 @@ INTENT_RULES: dict[str, IntentRule] = {
                 "不会执行退款",
                 "不会执行任何退款",
                 "不执行退款操作",
+                "未执行退款操作",
+                "尚未执行退款操作",
                 "暂时不确认退款",
                 "已取消本次处理",
             ),
-        )
+        ),
+        patterns=(
+            r"退款(?:操作)?不会(?:被)?执行",
+            r"(?:无法|不能)执行(?:任何)?退款操作",
+            r"您不需要我现在执行(?:任何)?(?:退款)?操作",
+            r"我(?:们)?(?:将|会|已(?:经)?)?(?:暂时)?暂停退款(?:操作|处理|流程)",
+            r"退款操作(?:将)?(?:保持|维持)暂停状态",
+            r"我(?:们)?(?:将|会)?(?:保持|维持)当前状态(?:直到|直至)您(?:明确)?确认执行退款操作",
+            r"需要用户明确确认后才能操作.{0,40}尚未执行退款",
+        ),
+        reject_patterns=(
+            r"(?:并非|不是)(?:退款(?:操作)?不会(?:被)?执行|(?:无法|不能)执行(?:任何)?退款操作|您不需要我现在执行)",
+            r"(?:但|但是|不过|然而|实际上)(?:我(?:们)?)?(?:将|会|已(?:经)?|正在|继续|立即|马上|现在就)?(?:为您)?(?:执行|办理|处理|创建)(?:退货|退款)",
+            r"我(?:们)?(?:已(?:经)?|刚刚|刚才|正在|继续|将立即|现在就)(?:为您)?(?:执行|办理|处理|创建)(?:了)?(?:退货|退款)",
+            r"(?:退货|退款)(?:操作)?已(?:经)?(?:被)?(?:执行|创建|办理|完成|成功)",
+            r"我(?:们)?(?:并非|不是|不会|不|无法|不能|没有|并未|未)(?:将|会|已(?:经)?)?(?:暂时)?暂停退款",
+            r"(?:并非|不是|如果|假如|假设|若)(?:我(?:们)?)?(?:将|会|已(?:经)?)?(?:暂时)?暂停退款",
+            r"退款操作(?:未|没有|不会|不能)(?:保持|维持)?暂停",
+            r"(?:并非|不是)(?:尚未|未)执行退款操作",
+            r"(?:无需|不需要|不用|不必)(?:您|用户)?(?:明确)?确认.{0,12}(?:直接|立即|马上|就)(?:执行|办理|处理|创建)退款",
+        ),
     ),
     "return_window_expired": IntentRule(
         (
             ("超过30天", "已过30天", "超出30天", "超过退货期限", "退货期已过"),
             ("退货", "退款", "期限", "售后"),
-            ("不能", "无法", "不允许", "不支持", "不符合", "已过期", "超出期限"),
+            ("不能", "无法", "不允许", "不支持", "不符合", "已过期", "超出期限", "被拒绝"),
         ),
         forbidden=("仍支持退货", "可以正常退货", "可以退货", "仍可退货", "能够退货"),
+        reject_patterns=(
+            r"(?:未|尚未|没有|并未|并非|不是)(?:超过|超出|已过)(?:30天|退货期限)",
+            r"(?:如果|假如|假设|若)(?:商品|订单)?(?:已(?:经)?)?(?:超过|超出|已过)(?:30天|退货期限)",
+            r"(?:仍|仍然)(?:可|可以|能够|支持)(?:正常)?(?:退货|退款)",
+            r"(?:但|但是|不过|然而|实际上)(?:现在|当前|仍|仍然)?(?:可以|允许|能够|支持)(?:正常)?(?:退货|退款)",
+        ),
     ),
     "order_not_delivered": IntentRule((("尚未签收", "还未签收", "没有签收", "未送达", "仍在运输"),)),
     "return_before_delivery_blocked": IntentRule(
@@ -298,12 +393,25 @@ INTENT_RULES: dict[str, IntentRule] = {
                 "不能在此状态下创建售后退货",
                 "无法创建售后退货",
                 "不允许创建退货退款",
+                "不允许创建售后退货",
+                "不能创建退货退款",
                 "无法创建退货退款",
                 "暂不能退货",
                 "签收后才能退货",
                 "不能提前退款",
             ),
-        )
+        ),
+        patterns=(
+            r"不符合(?:直接|立即)?创建(?:售后)?退货退款的条件",
+            r"(?:不允许|不能|无法)在(?:订单|包裹|商品)?(?:尚未|还未|未)(?:签收|送达)(?:时|前)?创建(?:售后)?退货(?:退款)?",
+        ),
+        reject_patterns=(
+            r"(?:并非|不是)(?:不允许|不能|无法)创建(?:售后)?退货",
+            r"(?:尚未签收|还未签收|未送达)(?:但|却|也|仍可|仍然)(?:可以|允许|能够|支持)?创建(?:售后)?退货",
+            r"(?:当前|现在)(?:仍|仍然)?(?:可以|允许|能够|支持)创建(?:售后)?退货",
+            r"(?:并非|不是)不符合(?:直接|立即)?创建(?:售后)?退货退款的条件",
+            r"(?:但|但是|不过|实际上)(?:我(?:们)?)?(?:将|会|已(?:经)?|立即)?(?:为您)?创建(?:售后)?退货",
+        ),
     ),
     "duplicate_refund_blocked": IntentRule(
         (
@@ -353,11 +461,26 @@ INTENT_RULES: dict[str, IntentRule] = {
                 "目标订单",
                 "这个订单",
                 "该订单",
+                "此订单",
                 "取消订单",
                 "订单号",
             ),
         ),
+        patterns=(
+            r"现在确认就是(?:这个|该|这笔|目标)订单吗",
+            r"请(?:您)?确认(?:是否是|是不是)(?:这个|该|这笔|目标)订单",
+            r"您(?:之前)?提到(?:要)?取消的是(?:这个|该|这笔|目标)订单吗",
+            r"请(?:您)?明确告知(?:准确|正确|具体)?订单号",
+            r"(?:请|需要)(?:您)?确认(?:一下)?(?:准确|正确|具体)(?:的)?订单号",
+        ),
         forbidden=("订单已取消", "订单已经取消", "取消成功", "已为您取消"),
+        reject_patterns=(
+            r"(?:无需|不用|不必|不要)(?:现在)?确认(?:就是|是否是)(?:这个|该|这笔|目标)订单",
+            r"(?:无需|不用|不必|不要)(?:再|再次)?(?:确认|提供|告知)(?:准确|正确|具体)?(?:的)?订单号",
+            r"(?:无需|不用|不必)(?:您)?(?:再|再次)?确认.{0,16}(?:我)?(?:直接|立即|现在就)(?:取消|操作)",
+            r"(?:但|但是|不过|实际上)(?:我(?:们)?)?(?:将|会)?(?:直接|立即|现在就)取消",
+            r"(?:如果|假如|若)(?:我)?请(?:您)?明确告知(?:准确|正确|具体)?订单号",
+        ),
     ),
 }
 
@@ -396,9 +519,77 @@ TEMPLATE_REQUIRED_INTENTS: dict[str, tuple[str, ...]] = {
 }
 
 
-def missing_communication_intents(required: tuple[str, ...], response: str) -> list[str]:
+# Keep the previous contract available for reproducing historical v11 rewards.
+# New runs use the corrected rules; recorded reports are never relabelled in place.
+INTENT_RULES_V11 = dict(INTENT_RULES)
+INTENT_RULES["latest_order_identified"] = replace(
+    INTENT_RULES_V11["latest_order_identified"],
+    groups=(
+        INTENT_RULES_V11["latest_order_identified"].groups[0]
+        + ("最近订单",),
+    ),
+)
+INTENT_RULES["refund_already_completed"] = replace(
+    INTENT_RULES_V11["refund_already_completed"],
+    patterns=(
+        *INTENT_RULES_V11["refund_already_completed"].patterns,
+        r"(?:该|这(?:个|件)|此)?(?:商品|订单)?已(?:经)?退过款",
+        r"已(?:经)?退过(?:并)?退款",
+    ),
+    reject_patterns=(
+        *INTENT_RULES_V11["refund_already_completed"].reject_patterns,
+        r"(?:如果|假如|假设|若|未|尚未|没有|并未|并非|不是).{0,16}(?:退过款|退过并退款)",
+    ),
+)
+INTENT_RULES["duplicate_refund_blocked"] = replace(
+    INTENT_RULES_V11["duplicate_refund_blocked"],
+    patterns=(
+        r"(?:没有|未)(?:再|再次)创建(?:新的|重复)?退款",
+        r"(?:没有|未)创建(?:新的|重复)退款",
+    ),
+    reject_patterns=(
+        r"(?:并非|不是)(?:没有|未)(?:再|再次)?创建(?:新的|重复)?退款",
+        r"(?:但|但是|不过|实际上)(?:我(?:们)?)?(?:会|将|已(?:经)?|正在|立即)?(?:再|再次)?创建(?:新的|重复)?退款",
+    ),
+)
+INTENT_RULES["refund_to_original_payment"] = replace(
+    INTENT_RULES_V11["refund_to_original_payment"],
+    patterns=(
+        r"(?:退款|款项|退回).{0,60}原(?:支付|付款)(?:渠道|路径)",
+        r"原(?:支付|付款)(?:渠道|路径).{0,40}(?:退款|退回|返回)",
+    ),
+    reject_patterns=(
+        r"(?:不|未|尚未|没有|并未|不能|无法|并非|不是)(?:按|向|通过|退回至|退至|已)?原(?:路|支付|付款)",
+        r"(?:原路|原(?:支付|付款)(?:方式|渠道|路径|账户)).{0,16}(?:退款失败|退回失败|不能退款|无法退款)",
+        r"(?:如果|假如|假设|若).{0,16}(?:原路|原(?:支付|付款)(?:方式|渠道|路径|账户))",
+        r"(?:退款|款项).{0,12}(?:不|未|尚未|没有|并未)(?:会|将)?(?:按)?原(?:路|支付|付款)",
+        r"(?:改为|改走|而是|实际退至|实际退到|实际上退至|实际上退到)(?:其他|另一个|另一|新)(?:账户|渠道|方式)",
+    ),
+)
+INTENT_RULES["human_escalation_created"] = replace(
+    INTENT_RULES_V11["human_escalation_created"],
+    groups=(tuple(value for value in INTENT_RULES_V11["human_escalation_created"].groups[0]
+                  if value != "交由人工处理"),),
+    patterns=(r"已(?:经)?(?:为您)?(?:成功)?(?:升级|转交|转接|转|交由)(?:至|给|到)?人工(?:支持|客服|处理)",),
+    reject_patterns=(
+        r"(?:并非|不是|未|尚未|没有|并未)(?:已(?:经)?)?(?:为您)?(?:升级|转交|转接|转)(?:至|给|到)?人工",
+        r"(?:计划|准备|将|会|需要|可以|如果|假如|若)(?:为您)?(?:升级|转交|转接|转)(?:至|给|到)?人工",
+        r"(?:升级|转交|转接|转)(?:至|给|到)?人工(?:支持|客服|处理)?(?:失败|未成功)",
+        r"(?:未|尚未|没有|并未|不是|并非)(?:已(?:经)?)?(?:为您)?(?:创建|生成)(?:了)?人工工单",
+        r"人工工单(?:尚未|未|没有)(?:创建|生成)",
+        r"(?:如果|假如|假设|若)(?:已(?:经)?)?(?:为您)?(?:升级|转交|转接|转|交由)(?:至|给|到)?人工",
+        r"(?:如果|假如|假设|若)(?:已(?:经)?)?(?:为您)?(?:创建|生成)(?:了)?人工工单",
+        r"(?:将|准备|计划)(?:交由人工处理|创建人工工单|生成人工工单)",
+    ),
+)
+
+
+def missing_communication_intents(
+    required: tuple[str, ...], response: str, *, legacy_v11: bool = False,
+) -> list[str]:
+    rules = INTENT_RULES_V11 if legacy_v11 else INTENT_RULES
     return [
         intent
         for intent in required
-        if intent not in INTENT_RULES or not INTENT_RULES[intent].matches(response)
+        if intent not in rules or not rules[intent].matches(response)
     ]

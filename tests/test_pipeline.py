@@ -56,7 +56,7 @@ from ecommerce_customer_service.training import (
     save_base_model_configs,
     validate_training_row,
 )
-from ecommerce_customer_service.verifier import required_tool_failures, verify_task
+from ecommerce_customer_service.verifier import VERIFIER_VERSION, required_tool_failures, verify_task
 from ecommerce_customer_service.webapp import DemoApplication
 
 
@@ -830,7 +830,7 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(summary["passed_before"], 0)
         self.assertEqual(summary["passed_after"], 1)
         self.assertEqual(rescored["schema_version"], "ecommerce_cs_rollout_v2")
-        self.assertEqual(rescored["verifier_version"], "deterministic_semantic_v8")
+        self.assertEqual(rescored["verifier_version"], VERIFIER_VERSION)
         self.assertTrue(rescored["verifier"]["passed"])
         self.assertEqual(raw_path.read_text(encoding="utf-8"), raw_before)
 

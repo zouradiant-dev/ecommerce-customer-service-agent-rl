@@ -12,7 +12,21 @@ from .models import TaskSpec, VerificationResult
 from .rewards import RewardBreakdown, score_verification, select_reward
 from .simulator import SYSTEM_PROMPT
 from .tools import CustomerServiceTools
-from .verifier import verify_task
+from .verifier import SUPPORTED_VERIFIER_VERSIONS, VERIFIER_VERSION, verify_task
+
+
+TOOL_OBSERVATION_VERSION = "strict_json_v1"
+
+
+class JsonToolObservation(dict):
+    """Keep structured results while TRL 1.14.1's str(result) emits valid JSON.
+
+    This only serializes trusted tool *outputs*. Invalid model tool calls are
+    still rejected by the original strict parser, never repaired or executed.
+    """
+
+    def __str__(self) -> str:
+        return json.dumps(self, ensure_ascii=False, allow_nan=False)
 
 
 class EcommerceCustomerServiceEnv:
@@ -23,7 +37,8 @@ class EcommerceCustomerServiceEnv:
     task database, so parallel rollouts never share mutable business state.
     """
 
-    def __init__(self, *, task_path: Path, reward_mode: str = "strict_binary") -> None:
+    def __init__(self, *, task_path: Path, reward_mode: str = "strict_binary",
+                 verifier_version: str = VERIFIER_VERSION) -> None:
         self._task_path = Path(task_path).resolve()
         self._reward_mode = reward_mode
         self._temporary: tempfile.TemporaryDirectory[str] | None = None
@@ -31,12 +46,17 @@ class EcommerceCustomerServiceEnv:
         self._tools: CustomerServiceTools | None = None
         self._last_verification: VerificationResult | None = None
         self._last_breakdown: RewardBreakdown | None = None
+        if verifier_version not in SUPPORTED_VERIFIER_VERSIONS:
+            raise ValueError(f"unsupported_verifier_version:{verifier_version}")
+        self._verifier_version = verifier_version
 
     def reset(self, **_: Any) -> None:
         """Reset the isolated SQLite snapshot before a rollout."""
 
         self._cleanup()
         source = TaskSpec.from_file(self._task_path)
+        if source.split != "train" or source.metadata.get("scripted_user_replies"):
+            raise ValueError("online environment requires inline train tasks")
         self._temporary = tempfile.TemporaryDirectory(prefix="ecommerce-cs-online-")
         database_path = Path(self._temporary.name) / "state.sqlite"
         shutil.copy2(source.database_path, database_path)
@@ -212,17 +232,20 @@ class EcommerceCustomerServiceEnv:
         if self._tools is None:
             raise RuntimeError("environment_not_reset")
         execution = self._tools.execute(name, arguments)
-        return {
+        return JsonToolObservation({
             "ok": execution.ok,
             "tool": execution.name,
             **execution.output,
-        }
+        })
 
-    def _evaluate(self, final_response: str) -> float:
+    def _evaluate(self, final_response: str, *, verifier_version: str | None = None) -> float:
         if self._task is None or self._tools is None:
             raise RuntimeError("environment_not_reset")
         executions = tuple(item.to_dict() for item in self._tools.executions)
-        self._last_verification = verify_task(self._task, final_response, executions)
+        self._last_verification = verify_task(
+            self._task, final_response, executions,
+            verifier_version=self._verifier_version if verifier_version is None else verifier_version,
+        )
         self._last_breakdown = score_verification(self._last_verification)
         return select_reward(self._last_breakdown, self._reward_mode)
 
@@ -239,6 +262,7 @@ def build_environment_factories(
     task_paths: Iterable[Path],
     *,
     reward_mode: str = "strict_binary",
+    verifier_version: str = VERIFIER_VERSION,
 ) -> dict[str, Callable[[], EcommerceCustomerServiceEnv]]:
     factories: dict[str, Callable[[], EcommerceCustomerServiceEnv]] = {}
     for task_path in task_paths:
@@ -247,11 +271,12 @@ def build_environment_factories(
             EcommerceCustomerServiceEnv,
             task_path=Path(task_path).resolve(),
             reward_mode=reward_mode,
+            verifier_version=verifier_version,
         )
     return factories
 
 
-def build_online_rows(task_paths: Iterable[Path]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def build_online_rows(task_paths: Iterable[Path], *, system_prompt: str = SYSTEM_PROMPT) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Build one routed TRL row per inline-dialogue training task.
 
     TRL's generic tool loop does not synthesize additional user turns. Tasks
@@ -263,8 +288,8 @@ def build_online_rows(task_paths: Iterable[Path]) -> tuple[list[dict[str, Any]],
     excluded: list[str] = []
     for task_path in task_paths:
         task = TaskSpec.from_file(task_path)
-        if task.split == "test":
-            raise ValueError("test tasks must not enter online GRPO")
+        if task.split != "train":
+            raise ValueError("only train tasks may enter online GRPO")
         if task.metadata.get("scripted_user_replies"):
             excluded.append(task.task_id)
             continue
@@ -273,7 +298,7 @@ def build_online_rows(task_paths: Iterable[Path]) -> tuple[list[dict[str, Any]],
                 "task_id": task.task_id,
                 "environment": task.task_id,
                 "prompt": [
-                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "system", "content": system_prompt},
                     {"role": "user", "content": task.user_prompt},
                 ],
             }
@@ -308,5 +333,7 @@ def _final_response(completion: Any) -> str:
     if isinstance(completion, list):
         for item in reversed(completion):
             if isinstance(item, dict) and item.get("role") == "assistant":
+                if item.get("tool_calls"):
+                    return ""
                 return str(item.get("content") or "")
     return json.dumps(completion, ensure_ascii=False, default=str)

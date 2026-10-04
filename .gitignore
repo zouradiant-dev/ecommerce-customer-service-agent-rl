@@ -14,3 +14,14 @@ models/
 *.sqlite-shm
 *.sqlite-wal
 *.log
+*.tar.gz
+
+# Reproducible generated v18 datasets and deployment bundles.  Keep their
+# builders, configs, hashes and documentation in Git; store generated payloads
+# and model artifacts outside the repository.
+packages/
+data/v18-train-dev-r1/
+data/v18-sft-reference-r1/
+data/v18-sft-supplement-r1/
+data/v18-sft-rebalance-r2/
+data/v18-sft-full-replay-r3/

@@ -6,6 +6,22 @@
 
 当前仓库已经实现可离线验证的数据、工具、环境、奖励和评测闭环，提供 ABCD 外部对话转换入口，并区分两条训练路线：静态轨迹上的离线 group-AWR 基线，以及基于 TRL 状态环境、每个 completion 独立 SQLite 快照的在线 GRPO。脚本 Agent 只用来验证环境正确性，不能当作真实模型训练结果；真实基线、SFT 和 GRPO 数字仍必须上 GPU 服务器测量。
 
+v18 的 CPU 改造和新 train/dev 数据阶段已作为独立 opt-in 入口落地：业务状态机、证据绑定的结构化终态、`strict_binary_v18` / `train_shaped_v18` 双轨奖励、3,600 个新任务和 17,760 条严格验证的参考 SFT 样本均不改变历史默认路径。48G QLoRA 已完成 20 步 smoke 和 925 步 full；最终 LoRA 在修正后的 600 题 dev 上为 530/600（88.33%），仍有 13 条硬安全失败，因此它是研究候选而非生产版本。证据、失败迭代、r4 回退原因、r5 修复和后续验收标准见 [v18 项目问题、解决方案与交接记录](docs/v18-project-issues-solutions-and-handoff.md)。
+
+## v18 当前状态
+
+- 冻结基座：`Qwen/Qwen2.5-7B-Instruct@a09a35458c702b33eeacc393d103063234e8bc28`。
+- 原始 v18 LoRA：925 个优化器步，adapter SHA256 `f41c98a583a6ca66e18f1d6f8743029cb3a363cf96f43d80dbf0d29b74876b6c`。
+- 600 题 dev：原始 508/600；只修正评测器派生字段后为 530/600，模型回复和工具轨迹未重生成。
+- 针对性补训、再平衡和 full replay 均出现能力干扰，没有替代原始 adapter。
+- policy controller r4 在定向题通过，但 150 题宽测只有 111/150 且 `hard=6`，已淘汰。
+- policy controller r5 已恢复训练时提示词并通过本地 CPU 回归，尚待 GPU 运行 70 题风险筛查与 150 题宽测。
+- 当前可运行 CPU 环境/网页审计演示；真实 7B LoRA 推理仍需要 GPU 或兼容的远程推理服务。
+
+## 当前实验结论
+
+2026-10-03 的冻结 v17 最终 test 中，原 SFT 与探索性 GRPO checkpoint-25 均为 48/160（30.0%）；配对差值为 0，95% 置信区间为 `[-0.05, 0.05]`，没有证明 GRPO 优于 SFT。正式 RL Gate 未通过，当前模型不具备生产上线证据。失败原因、证据边界以及不污染旧 test 的 v18 改进路线见 [v17 最终 Test 失败复盘与 v18 改进计划](docs/final-test-v17-postmortem-and-v18-plan.md)，下一版严格评测/训练双轨奖励、硬安全门控和校准要求见 [v18 奖励机制设计](docs/reward-v18-design.md)。
+
 ## 基座模型
 
 项目统一使用 **`Qwen/Qwen2.5-7B-Instruct`** 作为基础策略模型：baseline 从原始 Qwen 7B 开始，SFT 使用验证通过的客服工具轨迹进行 QLoRA，GRPO 再从 SFT checkpoint 继续训练，避免三个阶段更换基座导致对比失真。
@@ -38,6 +54,8 @@ ecommerce-customer-service-agent-rl/
 ├── scripts/run_local_demo.py        # 无模型依赖的端到端环境自检
 ├── scripts/run_web_demo.py          # 轻量网页审计演示
 ├── scripts/train_sft.py             # QLoRA SFT、checkpoint 与断点恢复
+├── scripts/train_sft_v18_48gb.py    # v18 48G 哈希/显存预检与 smoke/full 门禁
+├── scripts/build_v18_sft_package.py # 构建便携 v18 SFT 训练包
 ├── scripts/train_grpo.py            # TRL 状态环境在线 GRPO
 ├── scripts/train_offline_group_awr.py # 静态轨迹离线对照，不冒充 GRPO
 ├── scripts/summarize_algorithm_experiments.py # 配对算法实验汇总
@@ -47,8 +65,15 @@ ecommerce-customer-service-agent-rl/
 │   ├── database.py                  # 自建 SQLite schema
 │   ├── tasks.py                     # 组合任务与独立数据库快照
 │   ├── tools.py                     # 9 个客服工具与业务保护
+│   ├── tools_v18.py                 # v18 证据绑定业务状态机（独立 opt-in）
 │   ├── online_env.py                # 每条在线 rollout 的隔离状态环境
+│   ├── online_env_v18.py            # v18 双轨奖励环境（独立 opt-in）
 │   ├── rewards.py                   # 严格/安全塑形奖励分解
+│   ├── terminal_v18.py              # v18 结构化终态协议与工具证据核验
+│   ├── verifier_v18.py              # v18 严格评测、训练奖励和硬安全门控
+│   ├── tasks_v18.py                 # 新 v18 train/dev 生成与防泄漏验证
+│   ├── reference_v18.py             # 严格通过的确定性 SFT 协议种子
+│   ├── sft_v18_48gb.py              # 冻结输入、来源与 48G 硬件预检
 │   ├── webapp.py                    # 零前端依赖演示服务
 │   ├── simulator.py                 # 脚本 Agent + OpenAI 兼容模型 Agent
 │   ├── verifier.py                  # 状态/沟通/政策/工具联合奖励
