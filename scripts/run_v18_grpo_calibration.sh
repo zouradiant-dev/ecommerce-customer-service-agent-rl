@@ -3,10 +3,14 @@ set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$root"
+calibration_python="${GRPO_V18_PYTHON:-/home/featurize/grpo-env-v12/bin/python}"
 run="v18-grpo-calibration-r1"
 output="outputs/$run"
 log="$run.log"
 
+[[ -x "$calibration_python" ]] || {
+  printf 'STOP: v18 GRPO Python is missing or not executable: %s\n' "$calibration_python"; exit 2;
+}
 [[ ! -e "$output" ]] || { printf 'STOP: output already exists: %s\n' "$output"; exit 2; }
 [[ -f outputs/v18-sft-full-newgpu-r1/adapter_model.safetensors ]] || {
   printf 'STOP: frozen v18 SFT adapter is missing.\n'; exit 2;
@@ -23,13 +27,14 @@ export HF_HOME="${HF_HOME:-/home/featurize/hf-cache}"
 export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 USE_TF=0 USE_TORCH=1
 export TOKENIZERS_PARALLELISM=false CUDA_VISIBLE_DEVICES=0 PYTHONNOUSERSITE=1
 
-python -u scripts/sample_grpo_v18_calibration.py \
+"$calibration_python" -c 'import peft, torch, transformers'
+"$calibration_python" -u scripts/sample_grpo_v18_calibration.py \
   --manifest data/v18-train-dev-r1/tasks.jsonl \
   --adapter outputs/v18-sft-full-newgpu-r1 \
   --output "$output.preflight-unused" \
   --validate-only
 
-nohup python -u scripts/sample_grpo_v18_calibration.py \
+nohup "$calibration_python" -u scripts/sample_grpo_v18_calibration.py \
   --manifest data/v18-train-dev-r1/tasks.jsonl \
   --adapter outputs/v18-sft-full-newgpu-r1 \
   --output "$output" \

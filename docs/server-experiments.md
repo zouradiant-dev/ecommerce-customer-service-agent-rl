@@ -223,6 +223,9 @@ v18 不复用 `train_grpo.py` 或 `train_grpo_experiment_v13.py`。先在现有 
 bash scripts/run_v18_grpo_calibration.sh
 ```
 
+校准脚本默认使用 `/home/featurize/grpo-env-v12/bin/python`，避免新实例的
+`base` 环境缺少 PEFT；需要更换时通过 `GRPO_V18_PYTHON` 显式指定。
+
 该脚本固定原始 v18 SFT adapter SHA256、基础模型 revision、训练提示和 10 个风险/
 关键写入场景，默认生成 20 个任务 × 4 次采样。它不加载 r6 policy controller，
 因为控制器会遮蔽策略模型自身的奖励分布。完成后将 `review-pending.jsonl` 复制成
