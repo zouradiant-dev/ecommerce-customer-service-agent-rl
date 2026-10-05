@@ -212,6 +212,10 @@ python scripts/train_grpo.py \
 
 ### 6.1 v18 的受控训练入口
 
+源码接口包不包含生成的任务数据库。新实例还必须上传
+`v18-grpo-train-data-r1.tar.gz`；该独立数据包只包含冻结的 3,000 个 train
+任务和对应 SQLite，不包含 dev/test 任务。缺少这些文件时，启动脚本会在加载模型前停止。
+
 v18 不复用 `train_grpo.py` 或 `train_grpo_experiment_v13.py`。先在现有 SFT
 环境中生成 train-only 校准轨迹：
 
