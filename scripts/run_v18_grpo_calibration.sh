@@ -35,6 +35,7 @@ nohup python -u scripts/sample_grpo_v18_calibration.py \
   --output "$output" \
   >"$log" 2>&1 < /dev/null &
 pid=$!
+touch "$log"
 printf 'PID=%s\n日志：%s\n结果：%s\n' "$pid" "$log" "$output"
 printf '完成后先人工填写 %s/review-pending.jsonl，再生成校准收据。\n' "$output"
-tail --pid="$pid" -n 30 -f "$log"
+tail --pid="$pid" -n 30 -F "$log"
