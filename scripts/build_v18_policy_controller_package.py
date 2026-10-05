@@ -24,6 +24,7 @@ FILES = (
     "scripts/evaluate_sft_v18.py",
     "scripts/run_v18_policy_controller_screen_r6.sh",
     "scripts/run_v18_policy_controller_calibration_r6.sh",
+    "scripts/run_v18_policy_controller_full_dev_r6.sh",
     "scripts/summarize_v18_full_replay_screen_r3.py",
     "tests/test_v18.py",
 )

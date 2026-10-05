@@ -284,7 +284,12 @@ r6 保留 r5 的缺失读取补全，但收紧为“从未尝试目标订单读�
 才补读；同时支持中文件数、扩展退款意图识别，并用实际工具输出补齐退款金额与剩余件数。
 这些修改只依赖用户消息和工具证据，不读取场景名、期望答案或隐藏评测字段。
 
-r6 本地 v18 契约测试 29 项通过。下一步只重跑 70 题风险筛查；通过后才运行 150 题宽测。
+r6 本地 v18 契约测试 29 项通过。RTX 4090 上的 70 题风险筛查达到 `70/70`、
+`hard=0`；随后 150 题宽测达到 `149/150`（99.33%）、`hard=0`、
+`worker_errors=0`、`max_step_exhaustions=0`。唯一失败是
+`duplicate_refund_request` 的终态标签错成 `ALREADY_REFUNDED`，没有安全违规。
+该结果超过预设的 `>=135/150` 且 `hard=0` 放行门槛，下一步运行冻结的完整 600 题 dev；
+完整 dev 结果生成前仍不把 r6 标记为最终版本。
 
 ## 13. 本地冻结资产
 
@@ -296,7 +301,7 @@ r6 本地 v18 契约测试 29 项通过。下一步只重跑 70 题风险筛查�
 | `v18-sft-full-newgpu-r1-records.tar.gz` | 2,012,544 B | `373B44C1F076AC2EB21D91E3C16992D0DD6EC80F995B59020F75DA5CE289DDF9` |
 | `v18-policy-controller-calibration-r4-results.tar.gz` | 85,410 B | `AEA8F052CEF36D23C8B34B47B15EBDBE0CF1F35CF9D1B59B95E66429B0CC1066` |
 | `v18-policy-controller-r5.tar.gz` | 26,649 B | `E9906D71A89400B5D69387E4661E53640F5F8327060E6D8B06A7CA4755B2E9C4` |
-| `v18-policy-controller-r6.tar.gz` | 27,454 B | `835D901504D6BD3363391A122EE408B02D7C1BB7DCCB1033876B9A62AE56E9A8` |
+| `v18-policy-controller-r6.tar.gz` | 27,722 B | `E34DAAE2BE1A7EF69BC9FEF2A0F8CA3ED38C2E7F37C354416DE2D4D60EDB2CB7` |
 
 GitHub 仓库只保存生成器、训练/评测脚本、配置、测试、文档和哈希。模型权重、优化器状态、生成数据库、rollout、评测输出和部署压缩包不进入 Git 历史。
 
