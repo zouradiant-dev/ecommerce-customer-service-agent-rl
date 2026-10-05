@@ -289,6 +289,96 @@ class V18ContractTest(unittest.TestCase):
         self.assertIsNotNone(result)
         self.assertEqual(result.decision, "QUANTITY_REJECTED")
 
+    def test_policy_controller_normalizes_chinese_excess_quantity_request(self) -> None:
+        task = self.isolated("refund_quantity_exceeds")
+        tools = CustomerServiceToolsV18(task.database_path, task)
+        tools.observe_user_message(task.user_prompt)
+        identity = tools.execute("verify_customer_identity", task.metadata["identity"])
+        customer_id = identity.output["customer_id"]
+        tools.execute("list_orders", {"customer_id": customer_id})
+        tools.execute(
+            "get_order", {"customer_id": customer_id, "order_id": task.metadata["order_id"]}
+        )
+        tools.execute(
+            "search_refund_policy",
+            {"customer_id": customer_id, "order_item_id": task.metadata["item_id"]},
+        )
+        result = resolve_from_evidence(
+            [
+                {"role": "user", "content": task.user_prompt},
+                {
+                    "role": "assistant",
+                    "content": json.dumps(
+                        {
+                            "decision": "DUPLICATE_CHECK_FAILED",
+                            "action_taken": False,
+                            "action_id": None,
+                            "message": "订单只买了一件，不能按两件退款。",
+                        },
+                        ensure_ascii=False,
+                    ),
+                },
+            ],
+            tools.executions,
+        )
+        self.assertIsNotNone(result)
+        self.assertEqual(result.decision, "QUANTITY_REJECTED")
+        self.assertEqual(
+            missing_communication_intents(task.required_intents, result.message), []
+        )
+
+    def test_policy_controller_enriches_partial_refund_result_facts(self) -> None:
+        task = self.isolated("partial_quantity_refund")
+        tools = CustomerServiceToolsV18(task.database_path, task)
+        tools.observe_user_message(task.user_prompt)
+        tools.observe_user_message("我确认退款一件，请执行。")
+        identity = tools.execute("verify_customer_identity", task.metadata["identity"])
+        customer_id = identity.output["customer_id"]
+        tools.execute("list_orders", {"customer_id": customer_id})
+        tools.execute(
+            "get_order", {"customer_id": customer_id, "order_id": task.metadata["order_id"]}
+        )
+        tools.execute(
+            "search_refund_policy",
+            {"customer_id": customer_id, "order_item_id": task.metadata["item_id"]},
+        )
+        refunded = tools.execute(
+            "create_refund",
+            {
+                "customer_id": customer_id,
+                "order_id": task.metadata["order_id"],
+                "order_item_id": task.metadata["item_id"],
+                "quantity": 1,
+                "reason": "一件商品损坏",
+                "confirmed": True,
+            },
+        )
+        self.assertTrue(refunded.ok)
+        result = resolve_from_evidence(
+            [
+                {"role": "user", "content": task.user_prompt},
+                {
+                    "role": "assistant",
+                    "content": json.dumps(
+                        {
+                            "decision": "REFUND_CREATED",
+                            "action_taken": True,
+                            "action_id": refunded.output["refund_id"],
+                            "message": "已经按单件退款。",
+                        },
+                        ensure_ascii=False,
+                    ),
+                },
+            ],
+            tools.executions,
+        )
+        self.assertIsNotNone(result)
+        amount = f"{int(refunded.output['amount_cents']) / 100:.2f}"
+        self.assertIn(amount, result.message)
+        self.assertEqual(
+            missing_communication_intents(task.required_intents, result.message), []
+        )
+
     def test_policy_controller_uses_mismatch_rejection_as_terminal_evidence(self) -> None:
         task = self.isolated("cross_order_item_mismatch")
         tools = CustomerServiceToolsV18(task.database_path, task)
@@ -708,6 +798,82 @@ class V18ContractTest(unittest.TestCase):
         self.assertTrue(result.passed, result.failures)
         self.assertEqual(reward.train_shaped_v18, 1.0)
         self.assertNotIn("repeated_failed_call", reward.cap_reasons)
+
+    def test_policy_controller_does_not_read_after_successful_escalation(self) -> None:
+        source = self.isolated("persistent_tool_error_escalation")
+        task = replace(
+            source,
+            required_tools=(
+                "verify_customer_identity",
+                "list_orders",
+                "get_order",
+                "escalate_to_human",
+            ),
+            metadata={
+                **source.metadata,
+                "required_tool_sequence_v18": [
+                    "verify_customer_identity",
+                    "list_orders",
+                    "get_order",
+                    "get_order",
+                    "escalate_to_human",
+                ],
+                "terminal_v18": {
+                    "decision": "HUMAN_ESCALATED",
+                    "action_taken": True,
+                    "action_tool": "escalate_to_human",
+                    "action_id_field": "ticket_id",
+                },
+            },
+        )
+        tools = CustomerServiceToolsV18(task.database_path, task)
+        tools.observe_user_message(task.user_prompt)
+
+        class RetriesThenEscalates:
+            def run(self, current_task, current_tools):
+                identity = current_tools.execute(
+                    "verify_customer_identity", current_task.metadata["identity"]
+                )
+                customer_id = identity.output["customer_id"]
+                current_tools.execute("list_orders", {"customer_id": customer_id})
+                for _ in range(2):
+                    current_tools.execute(
+                        "get_order",
+                        {
+                            "customer_id": customer_id,
+                            "order_id": current_task.metadata["order_id"],
+                        },
+                    )
+                escalation = current_tools.execute(
+                    "escalate_to_human",
+                    {"issue": "电商售后请求", "reason": "订单查询服务连续失败"},
+                )
+                final = json.dumps(
+                    {
+                        "decision": "HUMAN_ESCALATED",
+                        "action_taken": True,
+                        "action_id": escalation.output["ticket_id"],
+                        "message": "订单查询服务持续异常，已经创建人工工单。",
+                    },
+                    ensure_ascii=False,
+                )
+                return AgentRun(
+                    (
+                        {"role": "user", "content": current_task.user_prompt},
+                        {"role": "assistant", "content": final},
+                    ),
+                    final,
+                    "model_finished",
+                )
+
+        controlled = PolicyControlledAgent(RetriesThenEscalates())
+        run = controlled.run(task, tools)
+        self.assertEqual(sum(item.name == "get_order" for item in tools.executions), 2)
+        self.assertIsNone(controlled.last_audit["controller_read"])
+        result = verify_task_v18(
+            task, run.final_response, [item.to_dict() for item in tools.executions]
+        )
+        self.assertTrue(result.passed, result.failures)
 
     def test_structured_self_report_cannot_fake_action_and_is_hard_gated(self) -> None:
         source = self.isolated("cancel_unshipped")

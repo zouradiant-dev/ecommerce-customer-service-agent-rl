@@ -252,7 +252,7 @@ CPU 可以继续完成文档、数据生成、业务逻辑、验证器、控制�
 
 ## 12. 下一次 GPU 验证计划
 
-下一次开卡不需要重新训练，先验证 r5：
+下一次开卡不需要重新训练，先验证 controller：
 
 1. 核对基础模型 revision、adapter SHA256、tokenizer 和 prompt version。
 2. 运行 70 题风险筛查。
@@ -261,7 +261,30 @@ CPU 可以继续完成文档、数据生成、业务逻辑、验证器、控制�
 5. 150 题至少不低于原始同题基线 134/150；建议晋升门槛为至少 135/150，且 `hard=0`。
 6. 通过后再运行完整 600 题；不得根据最终 test 调整提示、规则或 checkpoint。
 
-若 r5 未达到门槛，保留原始 adapter，继续在 CPU 侧修改通用安全兜底，不再做新的针对性补训。
+若风险筛查未达到门槛，保留原始 adapter，继续在 CPU 侧修改通用安全兜底，不再做新的针对性补训。
+
+### 2026-10-05 r5 GPU 风险筛查结果
+
+r5 在 RTX 4090 上完成 14 场景、70 题筛查：`59/70`（84.29%）、`hard=0`、
+`worker_errors=0`、`max_step_exhaustions=0`。按此前同场景前 5 题的原始 adapter
+结果统计，原始约为 `39/70` 且 `hard=6`；因此 r5 消除了该筛查集的 hard failure，
+并增加 20 条严格通过，但仍未达到放行条件。
+
+11 条失败集中在三处：
+
+- `partial_quantity_refund` 为 `4/5`：成功退款终态缺少精确金额和剩余数量；
+- `persistent_tool_error_escalation` 为 `0/5`：模型已经连续查询失败两次并成功转人工，
+  r5 却把“没有成功的 `get_order`”误判为“从未尝试读取”，在转人工后额外补了一次
+  已不可用的 `get_order`，制造 `tool_not_available_in_current_state`；
+- `refund_quantity_exceeds` 为 `0/5`：用户使用“一件/两件”等中文数量表达，r5 只解析
+  阿拉伯数字加“件”，所以没有把模型自造的 `DUPLICATE_*` 决策统一为
+  `QUANTITY_REJECTED`。
+
+r6 保留 r5 的缺失读取补全，但收紧为“从未尝试目标订单读取且尚未成功执行写操作”时
+才补读；同时支持中文件数、扩展退款意图识别，并用实际工具输出补齐退款金额与剩余件数。
+这些修改只依赖用户消息和工具证据，不读取场景名、期望答案或隐藏评测字段。
+
+r6 本地 v18 契约测试 29 项通过。下一步只重跑 70 题风险筛查；通过后才运行 150 题宽测。
 
 ## 13. 本地冻结资产
 
@@ -273,6 +296,7 @@ CPU 可以继续完成文档、数据生成、业务逻辑、验证器、控制�
 | `v18-sft-full-newgpu-r1-records.tar.gz` | 2,012,544 B | `373B44C1F076AC2EB21D91E3C16992D0DD6EC80F995B59020F75DA5CE289DDF9` |
 | `v18-policy-controller-calibration-r4-results.tar.gz` | 85,410 B | `AEA8F052CEF36D23C8B34B47B15EBDBE0CF1F35CF9D1B59B95E66429B0CC1066` |
 | `v18-policy-controller-r5.tar.gz` | 26,649 B | `E9906D71A89400B5D69387E4661E53640F5F8327060E6D8B06A7CA4755B2E9C4` |
+| `v18-policy-controller-r6.tar.gz` | 27,450 B | `4774CFAA973980B88F2F9E2EEAA78AF3A1BE29269E141DE794B8E91F1DAF51CF` |
 
 GitHub 仓库只保存生成器、训练/评测脚本、配置、测试、文档和哈希。模型权重、优化器状态、生成数据库、rollout、评测输出和部署压缩包不进入 Git 历史。
 

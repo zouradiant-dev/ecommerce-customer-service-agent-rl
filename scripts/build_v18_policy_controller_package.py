@@ -22,8 +22,8 @@ FILES = (
     "src/ecommerce_customer_service/evaluation_v18.py",
     "src/ecommerce_customer_service/policy_controller_v18.py",
     "scripts/evaluate_sft_v18.py",
-    "scripts/run_v18_policy_controller_screen_r5.sh",
-    "scripts/run_v18_policy_controller_calibration_r5.sh",
+    "scripts/run_v18_policy_controller_screen_r6.sh",
+    "scripts/run_v18_policy_controller_calibration_r6.sh",
     "scripts/summarize_v18_full_replay_screen_r3.py",
     "tests/test_v18.py",
 )
@@ -39,7 +39,7 @@ def build(output: Path) -> dict[str, object]:
         for name, path in sorted(payload.items())
     ]
     receipt = {
-        "schema_version": "ecommerce_cs_v18_policy_controller_package_r5",
+        "schema_version": "ecommerce_cs_v18_policy_controller_package_r6",
         "learned_adapter_changed": False,
         "training_required": False,
         "controller_uses_frozen_terminal_answer": False,
@@ -53,7 +53,7 @@ def build(output: Path) -> dict[str, object]:
     with tarfile.open(output, "w:gz") as archive:
         for name, path in sorted(payload.items()):
             archive.add(path, arcname=name, recursive=False)
-        info = tarfile.TarInfo("V18-POLICY-CONTROLLER-R5-PACKAGE-MANIFEST.json")
+        info = tarfile.TarInfo("V18-POLICY-CONTROLLER-R6-PACKAGE-MANIFEST.json")
         info.size = len(receipt_bytes)
         archive.addfile(info, io.BytesIO(receipt_bytes))
     with tarfile.open(output, "r:gz") as archive:
@@ -72,7 +72,7 @@ def build(output: Path) -> dict[str, object]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Package v18 evidence-only policy controller")
-    parser.add_argument("--output", type=Path, default=ROOT.parent / "v18-policy-controller-r5.tar.gz")
+    parser.add_argument("--output", type=Path, default=ROOT.parent / "v18-policy-controller-r6.tar.gz")
     args = parser.parse_args()
     print(json.dumps(build(args.output.resolve()), ensure_ascii=False, indent=2))
     return 0

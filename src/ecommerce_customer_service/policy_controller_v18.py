@@ -18,7 +18,7 @@ from .terminal_v18 import parse_terminal_response
 from .tools import ToolExecution
 
 
-POLICY_CONTROLLER_V18_VERSION = "ecommerce_cs_policy_controller_v18_r5"
+POLICY_CONTROLLER_V18_VERSION = "ecommerce_cs_policy_controller_v18_r6"
 _CONTROLLED_WRITES = {"cancel_order", "update_shipping_address", "create_refund"}
 
 
@@ -222,9 +222,39 @@ def _intent(text: str) -> str | None:
         return "address"
     if "取消" in compact:
         return "cancel"
-    if any(value in compact for value in ("退款", "退货", "退回")):
+    if any(value in compact for value in ("退款", "退货", "退回", "多退", "都退")) or (
+        "退" in compact and "件" in compact
+    ):
         return "refund"
     return None
+
+
+def _chinese_integer(value: str) -> int | None:
+    """Parse the small Chinese quantities used in customer requests."""
+
+    digits = {"零": 0, "〇": 0, "一": 1, "二": 2, "两": 2, "三": 3, "四": 4,
+              "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
+    if value.isdigit():
+        return int(value)
+    if value in digits:
+        return digits[value]
+    if "十" not in value or value.count("十") != 1:
+        return None
+    left, right = value.split("十")
+    tens = 1 if not left else digits.get(left)
+    ones = 0 if not right else digits.get(right)
+    if tens is None or ones is None:
+        return None
+    return tens * 10 + ones
+
+
+def _requested_item_quantities(text: str) -> list[int]:
+    values: list[int] = []
+    for raw in re.findall(r"(?<![A-Za-z0-9])(\d{1,3}|[零〇一二两三四五六七八九十]{1,3})\s*件", text):
+        parsed = _chinese_integer(raw)
+        if parsed is not None:
+            values.append(parsed)
+    return values
 
 
 def _latest_order_output(executions: list[Any]) -> dict[str, Any] | None:
@@ -270,7 +300,11 @@ def _successful_write_resolution(executions: list[Any], fallback_message: str | 
         amount = _money(output.get("amount_cents"))
         remaining = output.get("remaining_quantity")
         message = fallback_message or f"已创建退货并按原支付路径退款{(' ' + amount + ' 元') if amount else ''}。"
-        if not fallback_message and isinstance(remaining, int) and remaining > 0:
+        if fallback_message and amount and amount not in message:
+            message += f"退款金额为 {amount} 元。"
+        if isinstance(remaining, int) and remaining > 0 and not re.search(
+            rf"(?:还剩|剩余)\s*{remaining}\s*件", message
+        ):
             message += f"订单中还剩 {remaining} 件未退。"
         return PolicyResolution("REFUND_CREATED", True, str(output.get("refund_id")), message, "create_refund")
     identity_failed = any(
@@ -368,9 +402,7 @@ def resolve_from_evidence(
                 "order_status_fulfilled",
             )
         if intent == "refund":
-            requested_quantities = [
-                int(value) for value in re.findall(r"(?<!\d)(\d{1,3})\s*件", text)
-            ]
+            requested_quantities = _requested_item_quantities(text)
             if requested_quantities:
                 remaining = []
                 returned_by_item: dict[str, int] = {}
@@ -387,7 +419,8 @@ def resolve_from_evidence(
                 if remaining and max(requested_quantities) > max(remaining):
                     return PolicyResolution(
                         "QUANTITY_REJECTED", False, None,
-                        f"申请退款 {max(requested_quantities)} 件，但实际最多只能退款 {max(remaining)} 件；"
+                        f"订单记录显示实际购买数量为 {max(remaining)} 件；"
+                        f"不能按 {max(requested_quantities)} 件退款，"
                         "我没有创建超额退款。",
                         "requested_quantity_exceeds_order_evidence",
                     )
@@ -429,9 +462,10 @@ def _complete_required_read(
         return None
     requested_order = next(iter(requested_orders))
     tools = guarded._tools
+    if any(item.ok and item.is_write for item in tools.executions):
+        return None
     if any(
-        item.ok
-        and item.name == "get_order"
+        item.name == "get_order"
         and str(item.arguments.get("order_id") or "").lower() == requested_order
         for item in tools.executions
     ):
