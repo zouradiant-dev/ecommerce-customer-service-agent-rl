@@ -200,6 +200,30 @@ ecommerce-cs rl-gate `
 
 ### 5. 在线 GRPO 与离线算法对照
 
+v18 使用独立的、失效即停止的训练链，不能调用历史 v13/v17 入口：
+
+```bash
+# 1. 冻结 SFT 在 train-only 任务上做 4 次采样，不使用 policy controller
+bash scripts/run_v18_grpo_calibration.sh
+
+# 2. 人工逐条填写输出目录中的 reviewed-rollouts.jsonl 后生成绑定源码和协议的收据
+python scripts/audit_v18_reward_calibration.py \
+  --rollouts outputs/v18-grpo-calibration-r1/reviewed-rollouts.jsonl \
+  --protocol outputs/v18-grpo-calibration-r1/protocol.json \
+  --output outputs/v18-grpo-calibration-r1/calibration-receipt.json
+
+# 3. 先跑 10 个 optimizer step；只有组内方差、梯度、权重更新和显存门槛全过才保留
+bash scripts/run_grpo_v18.sh qualification \
+  outputs/v18-grpo-calibration-r1/calibration-receipt.json \
+  outputs/v18-grpo-calibration-r1/reviewed-rollouts.jsonl \
+  outputs/v18-grpo-calibration-r1/protocol.json
+```
+
+100 步实验必须显式传入成功的 qualification 目录，并从原始 SFT adapter 重新开始，
+不会续训 10 步产物。训练使用 `train_shaped_v18`；最终晋升仍使用
+`strict_binary_v18`，并要求同控制器、同评测协议下的 SFT/GRPO held-out 配对比较。
+校准采样、10 步和 100 步本身都不会把 `formal_rl_gate_passed` 写成 true。
+
 先做不加载模型的环境预检：
 
 ```powershell

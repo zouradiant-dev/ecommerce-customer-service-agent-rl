@@ -341,3 +341,20 @@ GitHub 仓库只保存生成器、训练/评测脚本、配置、测试、文档
 6. 任何追加训练都必须与原始 adapter 配对比较，并检查非目标场景。
 7. GPU 训练前要验证权重数据完整性，不能只检查 OOM 和 NaN。
 8. 失败实验应保留并写明原因；负结果比未经验证的“提升”更有价值。
+
+## 16. v18 GRPO 训练接口（2026-10-05）
+
+仓库现已补齐 v18 专用在线 GRPO 链：
+
+- `sample_grpo_v18_calibration.py`：只从冻结 train split 采样，生成待人工复核材料；
+- `audit_v18_reward_calibration.py`：把人工复核轨迹、采样协议、奖励源码哈希绑定成收据；
+- `train_grpo_v18.py`：使用 `online_env_v18` 与 `train_shaped_v18`，拒绝 test、旧 adapter、
+  未校准奖励和被修改的源码/数据库；
+- `run_grpo_v18.sh`：分别启动 10 步 qualification 与从原 SFT 重启的 100 步实验。
+
+资格验证会核实在线组内方差、真实非零梯度、LoRA tensor 更新、冻结 reference、保存/
+重载一致性和 4090 显存余量。任何一项失败都会保留证据并停止，不会自动重试。
+
+当前仍不能写“RL gate 已通过”。训练接口完成只消除了 v18 无法合法启动 GRPO 的工程
+缺口；还需完成奖励人工校准、10 步资格验证、100 步训练，以及独立 held-out 上相同
+controller 条件的 SFT/GRPO 配对比较。

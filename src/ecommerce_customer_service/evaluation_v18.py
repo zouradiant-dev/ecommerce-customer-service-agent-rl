@@ -191,7 +191,7 @@ def audit_tool_call_format(messages: Iterable[dict[str, Any]]) -> dict[str, Any]
     return {"passed": not failures, "calls": calls, "failures": failures}
 
 
-def run_task_v18(
+def _run_task_v18(
     task: TaskSpec,
     agent: Agent,
     *,
@@ -199,11 +199,14 @@ def run_task_v18(
     stage: str,
     model: str,
     prompt_version: str = V18_PROMPT_VERSION,
+    required_split: str,
 ) -> dict[str, Any]:
     """Run one learned-model episode against an isolated v18 database."""
 
-    if task.split != "dev":
-        raise ValueError(f"v18 learned evaluation accepts dev only:{task.task_id}:{task.split}")
+    if task.split != required_split:
+        raise ValueError(
+            f"v18 learned rollout requires {required_split}:{task.task_id}:{task.split}"
+        )
     with tempfile.TemporaryDirectory(prefix="ecommerce-v18-eval-") as temporary:
         database = Path(temporary) / "state.sqlite"
         shutil.copy2(task.database_path, database)
@@ -261,6 +264,50 @@ def run_task_v18(
             "tools_version": TOOLS_V18_VERSION,
             "learned_model_result": True,
         }
+
+
+def run_task_v18(
+    task: TaskSpec,
+    agent: Agent,
+    *,
+    trial: int,
+    stage: str,
+    model: str,
+    prompt_version: str = V18_PROMPT_VERSION,
+) -> dict[str, Any]:
+    """Run one frozen-dev episode. Train/test rows remain forbidden here."""
+
+    return _run_task_v18(
+        task,
+        agent,
+        trial=trial,
+        stage=stage,
+        model=model,
+        prompt_version=prompt_version,
+        required_split="dev",
+    )
+
+
+def run_train_task_v18(
+    task: TaskSpec,
+    agent: Agent,
+    *,
+    trial: int,
+    stage: str,
+    model: str,
+    prompt_version: str = V18_PROMPT_VERSION,
+) -> dict[str, Any]:
+    """Run one train-only calibration episode without opening dev or test."""
+
+    return _run_task_v18(
+        task,
+        agent,
+        trial=trial,
+        stage=stage,
+        model=model,
+        prompt_version=prompt_version,
+        required_split="train",
+    )
 
 
 def _safe_rate(numerator: int | float, denominator: int) -> float:

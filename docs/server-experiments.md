@@ -210,6 +210,63 @@ python scripts/train_grpo.py \
 
 若要保留原静态 rollout 算法作为对照，使用 `scripts/train_offline_group_awr.py`。它是 offline group-AWR，不是 GRPO。严格奖励、安全塑形、group size 和 KL 消融按 `configs/algorithm-experiments.json` 执行，完成后用 `scripts/summarize_algorithm_experiments.py` 统一生成配对报告。
 
+### 6.1 v18 的受控训练入口
+
+v18 不复用 `train_grpo.py` 或 `train_grpo_experiment_v13.py`。先在现有 SFT
+环境中生成 train-only 校准轨迹：
+
+```bash
+bash scripts/run_v18_grpo_calibration.sh
+```
+
+该脚本固定原始 v18 SFT adapter SHA256、基础模型 revision、训练提示和 10 个风险/
+关键写入场景，默认生成 20 个任务 × 4 次采样。它不加载 r6 policy controller，
+因为控制器会遮蔽策略模型自身的奖励分布。完成后将 `review-pending.jsonl` 复制成
+`reviewed-rollouts.jsonl`，人工填写每条记录的 `human_review.safe`、
+`human_review.communication_passed` 和证据。模型或自动审计不能代替这一人工字段。
+
+生成不可手写的校准收据：
+
+```bash
+python scripts/audit_v18_reward_calibration.py \
+  --rollouts outputs/v18-grpo-calibration-r1/reviewed-rollouts.jsonl \
+  --protocol outputs/v18-grpo-calibration-r1/protocol.json \
+  --output outputs/v18-grpo-calibration-r1/calibration-receipt.json
+```
+
+只有命令退出码为 0 且 `reward_calibrated=true` 才能进入 10 步资格验证。独立 GRPO
+环境必须符合 `requirements-online-grpo.txt`，默认路径为
+`/home/featurize/grpo-env-v12/bin/python`，也可通过 `GRPO_V18_PYTHON` 指定：
+
+```bash
+bash scripts/run_grpo_v18.sh qualification \
+  outputs/v18-grpo-calibration-r1/calibration-receipt.json \
+  outputs/v18-grpo-calibration-r1/reviewed-rollouts.jsonl \
+  outputs/v18-grpo-calibration-r1/protocol.json
+```
+
+qualification 固定 10 个 optimizer step、每组 4 个 generation、每批 2 组，要求：
+
+- 80 条在线 rollout 均使用独立 SQLite；
+- 在线 mixed-group rate 至少 0.20，连续 3 批零方差立即停止；
+- 每步梯度有限，至少一步非零，并且 LoRA tensor 实际改变；
+- 冻结 SFT reference 未改变，adapter 保存后逐 tensor 重载一致；
+- 各 CUDA 阶段保留至少 1 GiB 保守余量。
+
+资格验证通过后，100 步实验仍从原始 SFT 开始：
+
+```bash
+bash scripts/run_grpo_v18.sh experiment \
+  outputs/v18-grpo-calibration-r1/calibration-receipt.json \
+  outputs/v18-grpo-calibration-r1/reviewed-rollouts.jsonl \
+  outputs/v18-grpo-calibration-r1/protocol.json \
+  outputs/grpo-v18-qualification-YYYYMMDD.xxxxxx/training
+```
+
+这两个阶段只证明训练链、奖励信号和参数更新有效。正式 RL gate 还需要使用独立
+held-out 集，在完全相同的 r6 controller 条件下配对比较原 SFT 与 GRPO，且安全指标
+不能退化。
+
 ## 7. 最低报告标准
 
 - Base、SFT、GRPO 使用同一个冻结 test manifest；
