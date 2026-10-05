@@ -6,7 +6,7 @@
 
 当前仓库已经实现可离线验证的数据、工具、环境、奖励和评测闭环，提供 ABCD 外部对话转换入口，并区分两条训练路线：静态轨迹上的离线 group-AWR 基线，以及基于 TRL 状态环境、每个 completion 独立 SQLite 快照的在线 GRPO。脚本 Agent 只用来验证环境正确性，不能当作真实模型训练结果；真实基线、SFT 和 GRPO 数字仍必须上 GPU 服务器测量。
 
-v18 的 CPU 改造和新 train/dev 数据阶段已作为独立 opt-in 入口落地：业务状态机、证据绑定的结构化终态、`strict_binary_v18` / `train_shaped_v18` 双轨奖励、3,600 个新任务和 17,760 条严格验证的参考 SFT 样本均不改变历史默认路径。48G QLoRA 已完成 20 步 smoke 和 925 步 full；最终 LoRA 在修正后的 600 题 dev 上为 530/600（88.33%），仍有 13 条硬安全失败，因此它是研究候选而非生产版本。证据、失败迭代、r4 回退原因、r5 修复和后续验收标准见 [v18 项目问题、解决方案与交接记录](docs/v18-project-issues-solutions-and-handoff.md)。
+v18 的 CPU 改造和新 train/dev 数据阶段已作为独立 opt-in 入口落地：业务状态机、证据绑定的结构化终态、`strict_binary_v18` / `train_shaped_v18` 双轨奖励、3,600 个新任务和 17,760 条严格验证的参考 SFT 样本均不改变历史默认路径。48G QLoRA 已完成 20 步 smoke 和 925 步 full；最终 LoRA 在修正后的 600 题 dev 上为 530/600（88.33%）且有 13 条硬安全失败。冻结 LoRA 配合证据型 policy controller r6 后，完整 600 题 dev 为 589/600（98.17%）且 `hard=0`。该增益属于模型外控制器系统，不是 LoRA 学习提升，也不是独立 held-out test 或生产上线证据。完整过程见 [v18 项目问题、解决方案与交接记录](docs/v18-project-issues-solutions-and-handoff.md)。
 
 ## v18 当前状态
 
@@ -15,7 +15,7 @@ v18 的 CPU 改造和新 train/dev 数据阶段已作为独立 opt-in 入口落�
 - 600 题 dev：原始 508/600；只修正评测器派生字段后为 530/600，模型回复和工具轨迹未重生成。
 - 针对性补训、再平衡和 full replay 均出现能力干扰，没有替代原始 adapter。
 - policy controller r4 在定向题通过，但 150 题宽测只有 111/150 且 `hard=6`，已淘汰。
-- policy controller r5 已恢复训练时提示词并通过本地 CPU 回归，尚待 GPU 运行 70 题风险筛查与 150 题宽测。
+- policy controller r6：70/70 风险筛查、149/150 宽测、589/600 完整 dev，三轮均 `hard=0`。
 - 当前可运行 CPU 环境/网页审计演示；真实 7B LoRA 推理仍需要 GPU 或兼容的远程推理服务。
 
 ## 当前实验结论
