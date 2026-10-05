@@ -296,7 +296,7 @@ r6 本地 v18 契约测试 29 项通过。下一步只重跑 70 题风险筛查�
 | `v18-sft-full-newgpu-r1-records.tar.gz` | 2,012,544 B | `373B44C1F076AC2EB21D91E3C16992D0DD6EC80F995B59020F75DA5CE289DDF9` |
 | `v18-policy-controller-calibration-r4-results.tar.gz` | 85,410 B | `AEA8F052CEF36D23C8B34B47B15EBDBE0CF1F35CF9D1B59B95E66429B0CC1066` |
 | `v18-policy-controller-r5.tar.gz` | 26,649 B | `E9906D71A89400B5D69387E4661E53640F5F8327060E6D8B06A7CA4755B2E9C4` |
-| `v18-policy-controller-r6.tar.gz` | 27,450 B | `4774CFAA973980B88F2F9E2EEAA78AF3A1BE29269E141DE794B8E91F1DAF51CF` |
+| `v18-policy-controller-r6.tar.gz` | 27,454 B | `835D901504D6BD3363391A122EE408B02D7C1BB7DCCB1033876B9A62AE56E9A8` |
 
 GitHub 仓库只保存生成器、训练/评测脚本、配置、测试、文档和哈希。模型权重、优化器状态、生成数据库、rollout、评测输出和部署压缩包不进入 Git 历史。
 
