@@ -1,5 +1,7 @@
 # 基于 SFT 与 GRPO 的业务规则约束型售后客服 Agent
 
+**Project paper:** [English (primary)](PROJECT_PAPER_EN.md) | [中文](PROJECT_PAPER_ZH.md)
+
 这是一个面向“电商退款与订单修改”的可验证 Agent 项目。它不依赖下载好的对话数据，而是先定义业务数据库、状态、政策和任务模板，再生成隔离任务，收集工具调用轨迹，完成：
 
 > 基线评测 → 数据构建 → SFT → Bad Case 诊断 → RL Gate → 在线 GRPO → 配对统计验证
