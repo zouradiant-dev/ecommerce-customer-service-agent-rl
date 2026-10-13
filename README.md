@@ -2,6 +2,10 @@
 
 **Project paper:** [English (primary)](PROJECT_PAPER_EN.md) | [中文](PROJECT_PAPER_ZH.md)
 
+**多轮 Agent 迭代：** 已补充预算化上下文、结构化业务状态、十五个在线多轮开发回归用例和分层调用追踪。运行 `python scripts/evaluate_online_agent.py --mode smoke --output outputs/online-agent-smoke` 验证工程行为；真实模型、上下文对照与追踪报告用法见 [记忆、评测与追踪说明](docs/online-agent-memory-evaluation-tracing.zh-CN.md)。Smoke 使用测试替身，不代表 SFT 模型效果。
+
+**在线工程原型：** 新增持续会话、共享订单后台、用户确认、幂等取消和重启恢复。运行 `python scripts/run_customer_service.py` 后访问 `http://127.0.0.1:8766`；默认手动业务验证模式无需 GPU，模型模式需配置实际推理接口。启动步骤、接口契约与验证边界见 [在线客服工程说明](docs/customer-service-online.zh-CN.md)。这是独立入口，不改变原有训练及评测路径，也不代表已经接入真实订单或支付系统。
+
 这是一个面向“电商退款与订单修改”的可验证 Agent 项目。它不依赖下载好的对话数据，而是先定义业务数据库、状态、政策和任务模板，再生成隔离任务，收集工具调用轨迹，完成：
 
 > 基线评测 → 数据构建 → SFT → Bad Case 诊断 → RL Gate → 在线 GRPO → 配对统计验证

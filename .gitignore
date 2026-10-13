@@ -5,6 +5,8 @@ __pycache__/
 .venv-*/
 .env
 .env.*
+demo-auth.json
+service.lock
 *.egg-info/
 outputs/
 models/
