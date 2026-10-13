@@ -57,7 +57,9 @@ path = snapshot_download(
 print(path)  # 将 snapshots/revision 路径作为 BASE_SNAPSHOT
 ```
 
-启动复核 revision 标识、Qwen 配置、tokenizer 字节哈希和分片完整性；这不等于基础权重逐片官方 SHA 校验。先做无 GPU 检查：
+启动复核 revision 标识、Qwen 配置、基座与 SFT tokenizer 的语义兼容性和分片完整性；这不等于基础权重逐片官方 SHA 校验。SFT tokenizer 继续使用固定字节哈希，基座 tokenizer 比较词表/ID、特殊 token、BPE 合并顺序和预处理结构，允许 JSON 排版和合并规则字符串/数组表示变化。先做无 GPU 检查：
+
+2026-10-13 修正：初版错误要求基座 tokenizer.json/merges.txt 与训练保存的副本逐字节一致，导致已保存镜像启动时报 base_tokenizer_mismatch。读取固定 revision 的官方 tokenizer 文件后，基座 tokenizer.json 的 SHA 为 `c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539`，merges.txt 为 `599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3`，均与 SFT 保存副本不同，但完整语义校验通过。修复后 24 项部署测试通过，真实 SFT tokenizer 与官方基座 tokenizer 的兼容校验也通过；尚未据此声明服务器模型已加载。官方文件：[tokenizer.json](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct/resolve/a09a35458c702b33eeacc393d103063234e8bc28/tokenizer.json)、[merges.txt](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct/resolve/a09a35458c702b33eeacc393d103063234e8bc28/merges.txt)。
 
 ```bash
 python scripts/serve_v18_sft.py --base-model-dir BASE_SNAPSHOT --check-only

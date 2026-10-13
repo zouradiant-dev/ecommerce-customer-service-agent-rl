@@ -12,7 +12,7 @@ from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
-from ecommerce_customer_service.serving.artifacts import BASE_REVISION, extract_verified_archive, file_sha256, verify_adapter, verify_local_base
+from ecommerce_customer_service.serving.artifacts import BASE_REVISION, extract_verified_archive, file_sha256, verify_adapter, verify_local_base, verify_tokenizer_compatibility
 from ecommerce_customer_service.serving.connection_check import check_endpoint
 from ecommerce_customer_service.serving.context_builder import HFTokenCounter
 from ecommerce_customer_service.serving.inference import BoundedGenerator, InferenceServer
@@ -161,7 +161,7 @@ class ArtifactAndProtocolTests(unittest.TestCase):
             root = Path(temporary)
             (root / "config.json").write_text(json.dumps({"model_type": "qwen2", "vocab_size": 152064}))
             with self.assertRaisesRegex(ValueError, "revision_unverified"):
-                verify_local_base(root)
+                verify_local_base(root, root)
 
     def test_pinned_base_still_requires_matching_tokenizer(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -170,7 +170,67 @@ class ArtifactAndProtocolTests(unittest.TestCase):
             (root / "config.json").write_text(json.dumps({"model_type": "qwen2", "vocab_size": 152064}))
             (root / "tokenizer.json").write_text("{}")
             with self.assertRaisesRegex(ValueError, "base_tokenizer_mismatch"):
-                verify_local_base(root)
+                verify_local_base(root, root)
+
+    @staticmethod
+    def tokenizer_fixture(directory, *, pretty=False, pair_merges=False, added_defaults=False):
+        directory.mkdir(parents=True, exist_ok=True)
+        vocab = {"a": 0, "b": 1, "ab": 2, "#": 4, "##": 5}
+        added = {"id": 3, "content": "<end>"}
+        if added_defaults:
+            added.update(single_word=False, lstrip=False, rstrip=False, normalized=True, special=False)
+        tokenizer = {"model": {"type": "BPE", "vocab": vocab,
+                    "merges": [["a", "b"], ["#", "#"]] if pair_merges else ["a b", "# #"]}, "added_tokens": [added]}
+        if added_defaults:
+            tokenizer["model"].update(byte_fallback=False, ignore_merges=False)
+        (directory / "tokenizer.json").write_text(json.dumps(tokenizer, indent=2 if pretty else None), encoding="utf-8")
+        (directory / "vocab.json").write_text(json.dumps(vocab, indent=2 if pretty else None), encoding="utf-8")
+        (directory / "merges.txt").write_text("#version: 0.2\na b\n# #\n", encoding="utf-8")
+
+    def test_tokenizer_reserialization_preserves_compatibility(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base, adapter = Path(temporary) / "base", Path(temporary) / "adapter"
+            self.tokenizer_fixture(base)
+            self.tokenizer_fixture(adapter, pretty=True, pair_merges=True, added_defaults=True)
+            self.assertNotEqual(file_sha256(base / "tokenizer.json"), file_sha256(adapter / "tokenizer.json"))
+            verify_tokenizer_compatibility(base, adapter)
+
+    def test_tokenizer_changed_token_id_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base, adapter = Path(temporary) / "base", Path(temporary) / "adapter"
+            self.tokenizer_fixture(base)
+            self.tokenizer_fixture(adapter)
+            tokenizer = json.loads((base / "tokenizer.json").read_text())
+            tokenizer["model"]["vocab"].update(a=1, b=0)
+            (base / "tokenizer.json").write_text(json.dumps(tokenizer))
+            (base / "vocab.json").write_text(json.dumps(tokenizer["model"]["vocab"]))
+            with self.assertRaisesRegex(ValueError, "base_tokenizer_mismatch:vocab"):
+                verify_tokenizer_compatibility(base, adapter)
+
+    def test_tokenizer_changed_special_token_or_preprocessing_is_rejected(self):
+        for change in ("added_tokens", "pre_tokenizer"):
+            with self.subTest(change=change), tempfile.TemporaryDirectory() as temporary:
+                base, adapter = Path(temporary) / "base", Path(temporary) / "adapter"
+                self.tokenizer_fixture(base)
+                self.tokenizer_fixture(adapter)
+                tokenizer = json.loads((base / "tokenizer.json").read_text())
+                if change == "added_tokens":
+                    tokenizer["added_tokens"][0]["id"] = 4
+                else:
+                    tokenizer["pre_tokenizer"] = {"type": "Whitespace"}
+                (base / "tokenizer.json").write_text(json.dumps(tokenizer))
+                with self.assertRaisesRegex(ValueError, "base_tokenizer_mismatch:" + change):
+                    verify_tokenizer_compatibility(base, adapter)
+
+    def test_missing_base_shard_still_rejected_after_tokenizer_check(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base, adapter = Path(temporary) / BASE_REVISION, Path(temporary) / "adapter"
+            self.tokenizer_fixture(base)
+            self.tokenizer_fixture(adapter, pair_merges=True)
+            (base / "config.json").write_text(json.dumps({"model_type": "qwen2", "vocab_size": 152064}))
+            (base / "model.safetensors.index.json").write_text(json.dumps({"weight_map": {"weight": "missing.safetensors"}}))
+            with self.assertRaisesRegex(ValueError, "missing_or_invalid_base_weight_shards"):
+                verify_local_base(base, adapter)
 
     def test_generation_limit_restored_after_failure(self):
         class Completer:

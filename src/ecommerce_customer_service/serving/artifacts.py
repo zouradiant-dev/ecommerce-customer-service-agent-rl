@@ -89,7 +89,55 @@ def extract_verified_archive(archive: Path, destination: Path) -> dict:
     return {**report, "archive_sha256": ARCHIVE_SHA256}
 
 
-def verify_local_base(directory: Path) -> None:
+def _tokenizer_signature(directory: Path) -> dict:
+    """Compare tokenizer behavior, not version-dependent JSON formatting."""
+    tokenizer = json.loads((directory / "tokenizer.json").read_text(encoding="utf-8"))
+    model = tokenizer.get("model") or {}
+    vocab = model.get("vocab")
+    if (model.get("type") != "BPE" or not isinstance(vocab, dict) or not vocab
+            or any(not isinstance(token, str) or type(index) is not int or not 0 <= index < 152064
+                   for token, index in vocab.items()) or len(set(vocab.values())) != len(vocab)):
+        raise ValueError("base_tokenizer_mismatch:invalid_vocabulary")
+    merges = []
+    for value in model.get("merges", []):
+        pair = value.split(" ") if isinstance(value, str) else value
+        if not isinstance(pair, list) or len(pair) != 2 or not all(isinstance(token, str) for token in pair):
+            raise ValueError("base_tokenizer_mismatch:invalid_merges")
+        merges.append(pair)
+    added = []
+    defaults = {"single_word": False, "lstrip": False, "rstrip": False, "normalized": True, "special": False}
+    for token in tokenizer.get("added_tokens", []):
+        if (not isinstance(token, dict) or not isinstance(token.get("content"), str)
+                or type(token.get("id")) is not int or not 0 <= token["id"] < 152064):
+            raise ValueError("base_tokenizer_mismatch:invalid_added_tokens")
+        added.append({"id": token["id"], "content": token["content"],
+                      **{key: token.get(key, default) for key, default in defaults.items()}})
+    if len({token["id"] for token in added}) != len(added) or len({token["content"] for token in added}) != len(added):
+        raise ValueError("base_tokenizer_mismatch:duplicate_added_tokens")
+    if json.loads((directory / "vocab.json").read_text(encoding="utf-8")) != vocab:
+        raise ValueError("base_tokenizer_mismatch:inconsistent_vocab_file")
+    merge_lines = (directory / "merges.txt").read_text(encoding="utf-8").splitlines()
+    if merge_lines and merge_lines[0].startswith("#version:"):
+        merge_lines = merge_lines[1:]
+    # '#' is a real vocabulary token; '# #' is a merge rule, not a comment.
+    file_merges = [line.split(" ") for line in merge_lines if line.strip()]
+    if file_merges != merges:
+        raise ValueError("base_tokenizer_mismatch:inconsistent_merges_file")
+    model_defaults = {"unk_token": None, "continuing_subword_prefix": None, "end_of_word_suffix": None,
+                      "dropout": None, "fuse_unk": False, "byte_fallback": False, "ignore_merges": False}
+    return {"vocab": vocab, "merges": merges, "added_tokens": sorted(added, key=lambda token: token["id"]),
+            "model_options": {key: model.get(key, default) for key, default in model_defaults.items()},
+            **{key: tokenizer.get(key) for key in ("normalizer", "pre_tokenizer", "post_processor", "decoder")}}
+
+
+def verify_tokenizer_compatibility(base: Path, adapter: Path) -> None:
+    expected, actual = _tokenizer_signature(adapter), _tokenizer_signature(base)
+    for field in expected:
+        if actual[field] != expected[field]:
+            raise ValueError(f"base_tokenizer_mismatch:{field}")
+
+
+def verify_local_base(directory: Path, adapter: Path) -> None:
     """Require the pinned HF snapshot and matching vocabulary, without downloading."""
     directory = directory.resolve(strict=True)
     config = json.loads((directory / "config.json").read_text(encoding="utf-8"))
@@ -97,9 +145,9 @@ def verify_local_base(directory: Path) -> None:
         raise ValueError("base_revision_unverified; use the pinned Hugging Face snapshot directory")
     if config.get("model_type") != "qwen2" or config.get("vocab_size") != 152064:
         raise ValueError("base_configuration_mismatch")
-    for name in ("tokenizer.json", "vocab.json", "merges.txt"):
-        if file_sha256(directory / name) != FILE_HASHES[name]:
-            raise ValueError(f"base_tokenizer_mismatch:{name}")
+    # Training's save_pretrained can change formatting and string/pair merge
+    # representation. The actual inference tokenizer remains the SHA-pinned adapter.
+    verify_tokenizer_compatibility(directory, adapter)
     if not (directory / "model.safetensors").is_file():
         index = json.loads((directory / "model.safetensors.index.json").read_text(encoding="utf-8"))
         shards = set(index.get("weight_map", {}).values())

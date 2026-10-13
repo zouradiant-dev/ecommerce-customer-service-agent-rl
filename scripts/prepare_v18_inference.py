@@ -21,7 +21,7 @@ def main() -> int:
     report = (extract_verified_archive(args.archive, args.adapter_dir) if args.archive
               else verify_adapter(args.adapter_dir))
     if args.base_model_dir:
-        verify_local_base(args.base_model_dir)
+        verify_local_base(args.base_model_dir, args.adapter_dir)
     versions = {}
     for package in ("torch", "transformers", "peft", "accelerate", "bitsandbytes", "safetensors"):
         try:

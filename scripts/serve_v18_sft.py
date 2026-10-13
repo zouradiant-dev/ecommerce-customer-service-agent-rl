@@ -27,9 +27,9 @@ def main() -> int:
     if args.host not in {"127.0.0.1", "localhost", "::1"} and len(api_key) < 24:
         parser.error("Remote binding requires MODEL_API_KEY of at least 24 characters; prefer SSH forwarding")
     verify_adapter(args.adapter_dir)
-    verify_local_base(args.base_model_dir)
+    verify_local_base(args.base_model_dir, args.adapter_dir)
     if args.check_only:
-        print("Pinned adapter/base files verified. GPU inference has not been tested.")
+        print("Adapter hashes verified; pinned base/tokenizer compatibility checked. GPU inference has not been tested.")
         return 0
     # No network fetch: both the base and adapter are explicit, verified local directories.
     import torch
