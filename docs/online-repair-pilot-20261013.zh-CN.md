@@ -72,3 +72,5 @@ CPU 验证：实际 trainer 编码 512/128 条，0 跳过、目标标签与已�
 续评测入口为 `scripts/resume_online_repair_evaluation.py`。它只对原实验仓库中已知旧哈希的 artifacts.py 打补丁并保留原代码备份；其余业务运行时源码、prompt、工具、原 baseline 结果和 pilot 权重不改。检查原训练确实为 64 步、baseline 完整后，用新输出目录重新评测候选并严格配对。该恢复流程的训练步数为 0、旧模型评测不重复，仍然不使用正式 test。
 
 补丁包及准确命令在 `packages/online-repair-eval-fix-20261013-r1`；此次原实验路径由截图确认是 `/home/featurize/work/ecommerce-repair.VyMdGD`，不另建一套新训练。评测结束仍恢复原 v18 服务，通过只读实验摘要接口获取最终指标。
+
+首次续评测又被源码哈希保护拦住，尚未进入 GPU 评测。已核对实际上传归档：其 artifacts.py 是 CRLF，SHA256 为 `089e1f4c10097a577671febcaf9eecec902277e3652d3f394676ac2bca66af23`；Git 的 LF blob 为 `f7402097c4c1582d7c9ec00a925d34a323310987d95fc665ee2c2c7865690e37`。归一化换行后完整字节相同，这是打包/校验格式遗漏，不是未知源码变动。恢复器现允许仅换行不同的已知原源码，内容差异仍拒绝覆盖。已用原始训练归档及已上传修复归档完整模拟通过；远端可直接校正已上传 helper 的已知哈希常量后续跑，无须再次上传或训练。原权重与 baseline 未修改。

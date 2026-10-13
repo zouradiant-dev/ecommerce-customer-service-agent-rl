@@ -33,5 +33,15 @@ class ResumeSafetyTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'no_overwrite'): resume.install_patch(repo,patch)
             self.assertEqual(b'separate user edit',target.read_bytes())
 
+    def test_windows_newlines_are_accepted_but_content_changes_are_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            repo=Path(temporary)/'repo';target=repo/'src/ecommerce_customer_service/serving/artifacts.py';target.parent.mkdir(parents=True)
+            target.write_bytes(b'known\r\nsource\r\n')
+            patch=Path(temporary)/'patch.py';patch.write_bytes(b'fixed\nsource\n')
+            expected=sha256(b'known\nsource\n').hexdigest()
+            receipt=resume.install_patch(repo,patch,expected_old=expected)
+            self.assertEqual(expected,receipt['before_lf_normalized_sha256'])
+            self.assertEqual(b'known\r\nsource\r\n',target.with_name('artifacts.pre-tokenizer-format-fix.py').read_bytes())
+
 
 if __name__=='__main__': unittest.main()

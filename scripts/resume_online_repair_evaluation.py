@@ -17,7 +17,9 @@ def install_patch(repo: Path, source: Path, *, expected_old: str = EXPECTED_OLD_
     before=target.read_bytes();after=source.read_bytes()
     old,new=sha256(before).hexdigest(),sha256(after).hexdigest()
     if old!=new:
-        if old!=expected_old: raise ValueError('unexpected_existing_artifacts_source_no_overwrite')
+        normalized_old=sha256(before.replace(b'\r\n',b'\n')).hexdigest()
+        if old!=expected_old and normalized_old!=expected_old:
+            raise ValueError('unexpected_existing_artifacts_source_no_overwrite')
         backup=target.with_name('artifacts.pre-tokenizer-format-fix.py')
         if backup.exists(): raise FileExistsError('compatibility_backup_already_exists')
         with backup.open('xb') as output: output.write(before)
@@ -25,6 +27,7 @@ def install_patch(repo: Path, source: Path, *, expected_old: str = EXPECTED_OLD_
         with temporary.open('xb') as output: output.write(after)
         temporary.replace(target)
     return {'before_sha256':old,'after_sha256':new,'only_changed_file':'serving/artifacts.py',
+            'before_lf_normalized_sha256':sha256(before.replace(b'\r\n',b'\n')).hexdigest(),
             'training_or_weights_modified':False}
 
 
