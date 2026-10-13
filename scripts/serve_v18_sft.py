@@ -20,6 +20,8 @@ def main() -> int:
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--context-budget", type=int, default=8192)
     parser.add_argument("--check-only", action="store_true", help="Verify files without importing torch or loading GPU")
+    parser.add_argument("--diagnostics-dir", type=Path, default=ROOT / "outputs" / "inference-diagnostics")
+    parser.add_argument("--capture-invalid-output", action="store_true", help="Explicitly retain bounded raw FAILED generations in private diagnostics (never stdout)")
     args = parser.parse_args()
     if not 512 <= args.context_budget <= 32768:
         parser.error("--context-budget must be 512..32768")
@@ -54,7 +56,8 @@ def main() -> int:
     completer = TransformersCompleter(model, tokenizer, torch, generation,
                                      device="cuda:0", max_input_tokens=args.context_budget)
     server = InferenceServer((args.host, args.port), BoundedGenerator(completer),
-                             api_key=api_key, precision=args.precision)
+                             api_key=api_key, precision=args.precision, diagnostics_dir=args.diagnostics_dir,
+                             capture_invalid_output=args.capture_invalid_output)
     print(f"Loaded {MODEL_ID}; inference URL http://{args.host}:{server.server_port}/v1", flush=True)
     print("Online task quality is unverified. No business operations run in this process.", flush=True)
     try:

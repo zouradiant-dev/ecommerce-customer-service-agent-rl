@@ -6,20 +6,26 @@ import hmac
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import threading
+from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
 from ..training import normalize_messages
 from .artifacts import BASE_MODEL, BASE_REVISION, FILE_HASHES, MODEL_ID
 from .model import online_protocol_metadata
+from .diagnostics import DIAGNOSTICS_VERSION, DiagnosticStore, classify_failure
 
 
 class InferenceServer(ThreadingHTTPServer):
     daemon_threads = True
     request_queue_size = 8
 
-    def __init__(self, address: tuple[str, int], generator: Any, *, api_key: str = "", precision: str = "bf16"):
+    def __init__(self, address: tuple[str, int], generator: Any, *, api_key: str = "", precision: str = "bf16",
+                 diagnostics_dir: Path | None = None, capture_invalid_output: bool = False):
         self.generator, self.api_key, self.precision = generator, api_key, precision
+        if capture_invalid_output and diagnostics_dir is None:
+            raise ValueError("raw_capture_requires_private_diagnostics_directory")
+        self.diagnostics = DiagnosticStore(diagnostics_dir, capture_raw=capture_invalid_output) if diagnostics_dir else None
         self.inference_lock = threading.Lock()
         super().__init__(address, InferenceHandler)
 
@@ -30,6 +36,9 @@ class InferenceServer(ThreadingHTTPServer):
                 "tokenizer_config_sha256": FILE_HASHES["tokenizer_config.json"],
                 "transport": "openai_chat_completions", "tool_parser": "strict_qwen_native_tool_tags_v1",
                 "training_protocol": "v18_offline_nine_tools_terminal_json",
+                "diagnostics_version": DIAGNOSTICS_VERSION,
+                "diagnostics_enabled": self.diagnostics is not None,
+                "raw_failure_capture_enabled": bool(self.diagnostics and self.diagnostics.capture_raw),
                 "online_quality_verified": False, **online_protocol_metadata()}
 
 
@@ -63,8 +72,32 @@ class InferenceHandler(BaseHTTPRequestHandler):
             self.reply(200, self.server.metadata())
         elif self.path == "/v1/models":
             self.reply(200, {"object": "list", "data": [{"id": MODEL_ID, "object": "model", "owned_by": "local"}]})
+        elif self.path.startswith("/v1/diagnostics/") and self.server.diagnostics:
+            try:
+                value = self.server.diagnostics.read(self.path.removeprefix("/v1/diagnostics/"))
+                self.reply(200, value)
+            except (ValueError, FileNotFoundError):
+                self.reply(404, {"error": "diagnostic_not_found"})
         else:
             self.reply(404, {"error": "not_found"})
+
+    def failure(self, status: int, code: str, exception_type: str,
+                metadata: dict | None = None, raw: str | None = None, reason: str | None = None) -> None:
+        identifier = None
+        if self.server.diagnostics:
+            try:
+                identifier = self.server.diagnostics.record(code=code, exception_type=exception_type,
+                    metadata=metadata, raw=raw, parse_reason=reason)
+            except Exception as exc:
+                print("Diagnostic persistence failed:", type(exc).__name__, flush=True)
+        # Raw generation is available only through authenticated diagnostic retrieval.
+        detail = {"code": code, "diagnostic_id": identifier, "parse_reason": reason}
+        for source, target in (("local_input_tokens", "input_tokens"), ("local_generated_tokens", "output_tokens")):
+            value = (metadata or {}).get(source)
+            if type(value) is int and value >= 0:
+                detail[target] = value
+        print("Inference request failed:", code, identifier or "not_recorded", flush=True)
+        self.reply(status, {"error": detail})
 
     def do_POST(self) -> None:
         if not self.authorized():
@@ -120,7 +153,8 @@ class InferenceHandler(BaseHTTPRequestHandler):
             result = self.server.generator(messages, tools, max_tokens)
             finish = result.get("local_finish_reason", "stop")
             if finish == "length":
-                self.reply(422, {"error": "generation_truncated; output_not_executed"})
+                self.failure(422, "generation_truncated", "GenerationLimit", result,
+                             result.get("local_raw_generation"))
                 return
             message = {k: result[k] for k in ("role", "content", "tool_calls") if k in result}
             prompt = result["local_input_tokens"]
@@ -131,9 +165,8 @@ class InferenceHandler(BaseHTTPRequestHandler):
                             "usage": {"prompt_tokens": prompt, "completion_tokens": completion,
                                       "total_tokens": prompt + completion}})
         except Exception as exc:
-            # Return no prompt, raw generation, internal paths or credentials in errors.
-            print("Inference request failed:", type(exc).__name__, flush=True)
-            self.reply(422, {"error": "inference_or_tool_parse_failed"})
+            status, code, reason, metadata, raw = classify_failure(exc)
+            self.failure(status, code, type(exc).__name__, metadata, raw, reason)
         finally:
             self.server.inference_lock.release()
 

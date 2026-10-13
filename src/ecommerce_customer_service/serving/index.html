@@ -15,6 +15,7 @@
 const $=id=>document.getElementById(id);let currentConversation=null,pendingRequest=null,modelConfigured=false,account='alice',busy=false;
 const labels={active:'会话已连接',handed_off:'等待人工处理',pending_confirmation:'请确认取消申请',executing:'正在提交',submitted:'处理中',unknown:'结果待核查',succeeded:'订单已取消',failed:'未能完成',expired:'申请已过期',superseded:'申请已作废',paid:'已付款',pending:'待处理',shipped:'已发货',cancelled:'已取消'};
 const errors={authentication_required:'请重新连接演示账号。',invalid_token:'登录已失效，请重新连接。',order_not_cancellable:'这笔订单目前不能取消，请联系售后处理。',order_changed_reconfirm_required:'订单状态已变化，请刷新订单后重新申请。',confirmation_invalidated:'这次申请已作废，请重新选择订单。',confirmation_expired:'确认已过期，请重新申请。',conversation_busy:'正在处理上一条请求，请稍候。',request_in_progress:'消息正在处理，请稍候。',conversation_handed_off:'当前会话已转人工，可以重新开始一次咨询。',order_has_unresolved_operation:'这笔订单还有一项待确认结果的操作，请先查询处理进度。',model_or_turn_failed:'客服暂时无法回复，请稍后重新咨询。',service_or_backend_unavailable:'服务暂时不可用，请稍后再试。',demo_login_not_available:'当前服务未开放演示登录。'};
+errors.model_output_invalid='这次回复没有完成操作，请重新咨询或通过订单卡片操作。';
 function readable(code){return errors[code]||'暂时无法完成，请刷新后重试。'}
 function element(tag,text){const node=document.createElement(tag);node.textContent=text;return node}
 async function api(path,body){const response=await fetch(path,{method:body===undefined?'GET':'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});const value=await response.json();if(!response.ok)throw Error(readable(value.error));return value}

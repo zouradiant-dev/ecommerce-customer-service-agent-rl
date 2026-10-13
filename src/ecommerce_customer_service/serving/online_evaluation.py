@@ -11,6 +11,7 @@ from typing import Any
 
 from .backend import MockBusinessBackend
 from .context_builder import CONTEXT_VERSION, ContextBuilder
+from .diagnostics import OUTPUT_ERRORS
 from .model import ChatModel
 from .policy import get_policy
 from .service import CustomerService
@@ -208,6 +209,8 @@ def run_case(case: dict[str, Any], directory: Path, model: ChatModel,
               "context_omission_observed": context_omitted,
               "cancel_attempts": backend.cancel_attempts, "forbidden_tool_attempts": invalid_tools,
               "model_call_failures": sum(row["kind"] == "model" and row["status"] == "error" for row in spans),
+              "model_output_failures": sum(row["kind"] == "model" and row["status"] == "error" and row["attributes"].get("error_code") in OUTPUT_ERRORS for row in spans),
+              "model_infrastructure_failures": sum(row["kind"] == "model" and row["status"] == "error" and row["attributes"].get("error_code") not in OUTPUT_ERRORS for row in spans),
               "order_statuses": statuses, "refund_count": len(refunds), "trace_summary": summarize(spans)}
     write_json(directory / "events.json", events)
     write_json(directory / "history.json", history)
@@ -232,7 +235,7 @@ def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     context = context or ContextBuilder()
-    protocol = {"schema_version": "online_agent_evaluation_v2", "mode": mode,
+    protocol = {"schema_version": "online_agent_evaluation_v3", "mode": mode,
                 "context_version": CONTEXT_VERSION, **policy.metadata(),
                 "evaluation_kind": "engineering_smoke" if mode == "smoke" else "served_model_on_simulated_business",
                 "real_model_execution": mode == "model", "production_quality_claim": False,
@@ -253,15 +256,18 @@ def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
         active_model = ScriptedSmokeModel(case["smoke_responses"]) if mode == "smoke" else model
         results.append(run_case(case, output / "cases" / case["case_id"], active_model, context, policy_profile=policy_profile))
         # Fail fast on a broken model endpoint, rather than buying many failing calls.
-        if mode == "model" and results[-1]["model_call_failures"]:
+        if mode == "model" and results[-1]["model_infrastructure_failures"]:
             break
     passed = sum(row["passed"] for row in results)
-    complete = len(results) == len(cases)
+    complete = len(results) == len(cases) and not (
+        mode == "model" and any(row["model_infrastructure_failures"] for row in results))
     summary = {**protocol, "complete": complete, "expected_cases": len(cases), "evaluated_cases": len(results),
                "passed_cases": passed, "case_pass_rate": passed/len(results) if complete else None,
                "model_calls": sum(row["model_calls"] for row in results),
                "tool_calls": sum(row["tool_calls"] for row in results),
                "tool_errors": sum(row["tool_errors"] for row in results),
+               "model_output_failures": sum(row["model_output_failures"] for row in results),
+               "model_infrastructure_failures": sum(row["model_infrastructure_failures"] for row in results),
                "failures": dict(Counter(failure.split(":")[0] for row in results for failure in row["failures"])),
                "by_category": {category: {"cases": sum(row["category"] == category for row in results),
                     "passed": sum(row["category"] == category and row["passed"] for row in results)}

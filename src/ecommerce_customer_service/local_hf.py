@@ -27,6 +27,12 @@ class ToolCallParseError(ValueError):
         self.generation_metadata: dict[str, Any] = {}
 
 
+class ContextBudgetExceeded(RuntimeError):
+    def __init__(self, input_tokens: int, limit: int):
+        self.input_tokens, self.limit = input_tokens, limit
+        super().__init__(f"context_budget_exceeded:{input_tokens}>{limit}; no truncation applied")
+
+
 def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for key, value in pairs:
@@ -152,7 +158,7 @@ class TransformersCompleter:
         inputs = self.tokenizer(prompt, return_tensors="pt", add_special_tokens=False)
         input_tokens = int(inputs["input_ids"].shape[1])
         if input_tokens > self.max_input_tokens:
-            raise RuntimeError(f"context_budget_exceeded:{input_tokens}>{self.max_input_tokens}; no truncation applied")
+            raise ContextBudgetExceeded(input_tokens, self.max_input_tokens)
         inputs = inputs.to(self.device)
         with self.torch.inference_mode():
             result = self.model.generate(**inputs, generation_config=self.generation_config)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from collections.abc import Mapping
 from copy import deepcopy
 import json
 from statistics import mean, pstdev
@@ -61,6 +62,16 @@ def normalize_messages(messages: Iterable[dict[str, Any]]) -> list[dict[str, Any
     return normalized
 
 
+def chat_template_ids(tokenizer: Any, messages: list[dict[str, Any]], **kwargs: Any) -> list[int]:
+    """Transformers 4 list and Transformers 5 BatchEncoding compatibility."""
+    result = tokenizer.apply_chat_template(messages, **kwargs)
+    if isinstance(result, Mapping):
+        result = result.get("input_ids")
+    if not isinstance(result, (list, tuple)) or any(type(token) is not int for token in result):
+        raise ValueError("unsupported_tokenizer_input_ids")
+    return list(result)
+
+
 def validate_training_row(row: dict[str, Any]) -> list[str]:
     failures: list[str] = []
     messages = list(row.get("messages") or [])
@@ -76,7 +87,7 @@ def validate_training_row(row: dict[str, Any]) -> list[str]:
         role = str(message.get("role") or "")
         if role not in {"system", "user", "assistant", "tool"}:
             failures.append(f"invalid_role:{index}:{role}")
-        if loss_mask and loss_mask[index] and role != "assistant":
+        if loss_mask and index < len(loss_mask) and loss_mask[index] and role != "assistant":
             failures.append(f"non_assistant_loss:{index}:{role}")
         for call in message.get("tool_calls") or []:
             call_id = str(call.get("id") or "")
@@ -94,7 +105,22 @@ def validate_training_row(row: dict[str, Any]) -> list[str]:
             if not call_id or call_id not in calls:
                 failures.append(f"orphan_tool_response:{index}:{call_id}")
             responses.add(call_id)
-    missing = sorted(calls - responses)
+    unfinished = calls - responses
+    if row.get("sample_kind") == "assistant_prefix":
+        # A supervised tool request ends before its future tool result by design.
+        # Only the final target may be unfinished; earlier protocol must be complete.
+        valid_prefix = (bool(messages) and messages[-1].get("role") == "assistant"
+            and len(loss_mask) == len(messages) and loss_mask[-1] is True
+            and all(value is False for value in loss_mask[:-1]))
+        if not valid_prefix:
+            failures.append("invalid_assistant_prefix_mask")
+        else:
+            call_ids = [str(call.get("id") or "") for message in messages for call in message.get("tool_calls", [])]
+            if len(call_ids) != len(set(call_ids)):
+                failures.append("reused_assistant_prefix_tool_id")
+            final_calls = {str(call.get("id") or "") for call in messages[-1].get("tool_calls") or []}
+            unfinished -= final_calls
+    missing = sorted(unfinished)
     if missing:
         failures.append("tool_calls_without_response:" + ",".join(missing))
     return failures
@@ -114,7 +140,7 @@ def render_with_assistant_mask(
     normalized_tools = canonicalize_tool_schemas(tools or [])
     if normalized_tools:
         template_kwargs["tools"] = normalized_tools
-    full = list(tokenizer.apply_chat_template(normalized, **template_kwargs))
+    full = chat_template_ids(tokenizer, normalized, **template_kwargs)
     mask = [0] * len(full)
     targets = loss_mask or [message.get("role") == "assistant" for message in normalized]
     if len(targets) != len(normalized):
@@ -126,19 +152,15 @@ def render_with_assistant_mask(
         prefix_kwargs: dict[str, Any] = {"tokenize": True}
         if normalized_tools:
             prefix_kwargs["tools"] = normalized_tools
-        before = list(
-            tokenizer.apply_chat_template(
+        before = chat_template_ids(tokenizer,
                 normalized[:index],
                 add_generation_prompt=True,
                 **prefix_kwargs,
-            )
         )
-        through = list(
-            tokenizer.apply_chat_template(
+        through = chat_template_ids(tokenizer,
                 normalized[: index + 1],
                 add_generation_prompt=False,
                 **prefix_kwargs,
-            )
         )
         lower, upper = len(before), len(through)
         if not (lower < upper <= len(full)) or full[:lower] != before or full[:upper] != through:

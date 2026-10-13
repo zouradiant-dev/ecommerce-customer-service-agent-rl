@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from .backend import BackendRejected, BusinessBackend
 from .context_builder import ContextBuilder
-from .model import ChatModel, ModelProtocolError, terminal_content
+from .model import ChatModel, ModelOutputError, ModelProtocolError, ModelServiceError, terminal_content
 from .policy import get_policy
 from .storage import ServiceError, Store, encode
 from .telemetry import ObservedBackend, Telemetry, traced
@@ -265,9 +265,13 @@ class CustomerService:
             result = self._run_turn(customer, conversation, request)
             status = "completed"
         except Exception as exc:
-            result = ({"error": "model_protocol_mismatch", "message": "模型回复与当前操作流程不兼容，本轮未完成。请通过订单卡片操作。"}
+            result = ({"error": "model_output_invalid", "message": "这次回复没有完成操作，请重新咨询或通过订单卡片操作。"}
+                      if isinstance(exc, ModelOutputError) else
+                      {"error": "model_protocol_mismatch", "message": "模型回复与当前操作流程不兼容，本轮未完成。请通过订单卡片操作。"}
                       if isinstance(exc, ModelProtocolError) else
                       {"error": "model_or_turn_failed", "message": "本轮未完成，请稍后重新发送，或通过订单卡片操作。"})
+            if isinstance(exc, ModelServiceError):
+                self.store.record(conversation, request, "model_failure", {}, {"code": exc.code, **exc.metadata})
             status = "failed"
             with self.store.transaction() as db:
                 db.execute("UPDATE operations SET status='superseded',updated_at=? WHERE conversation_id=? "

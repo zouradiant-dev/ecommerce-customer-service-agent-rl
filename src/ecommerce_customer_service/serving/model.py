@@ -3,15 +3,36 @@ from __future__ import annotations
 import json
 from hashlib import sha256
 from typing import Any, Protocol
+import re
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 from .storage import encode
+from .diagnostics import OUTPUT_ERRORS
 
 ONLINE_PROTOCOL = "online_cancel_preview_v1"
 
 
 class ModelProtocolError(ValueError):
     pass
+
+
+class ModelServiceError(RuntimeError):
+    def __init__(self, code: str, status: int, details: dict[str, Any]):
+        super().__init__(code)
+        self.code, self.http_status = code, status
+        self.metadata: dict[str, Any] = {"http_status": status}
+        identifier = details.get("diagnostic_id")
+        if isinstance(identifier, str) and re.fullmatch(r"[0-9a-f]{32}", identifier):
+            self.metadata["diagnostic_id"] = identifier
+        for key in ("input_tokens", "output_tokens"):
+            value = details.get(key)
+            if type(value) is int and value >= 0:
+                self.metadata[key] = value
+
+
+class ModelOutputError(ModelServiceError):
+    """Rejected generation: a failed model sample, not permission to execute it."""
 
 
 def _unique_terminal_fields(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -59,8 +80,23 @@ class OpenAIChatModel:
             payload.update(tools=tools, tool_choice="auto")
         request = Request(self.base_url + "/chat/completions", data=encode(payload).encode("utf-8"),
                           headers={"Content-Type": "application/json", "Authorization": "Bearer " + self.api_key})
-        with urlopen(request, timeout=self.timeout) as response:
-            raw = response.read(1_048_577)
+        try:
+            with urlopen(request, timeout=self.timeout) as response:
+                raw = response.read(1_048_577)
+        except HTTPError as error:
+            try:
+                body = error.read(65537)
+                detail = json.loads(body) if len(body) <= 65536 else None
+            except (ValueError, OSError):
+                detail = None
+            detail = detail.get("error") if isinstance(detail, dict) else None
+            known = OUTPUT_ERRORS | {"context_budget_exceeded", "cuda_out_of_memory", "inference_failed"}
+            if isinstance(detail, dict) and isinstance(detail.get("code"), str) and detail["code"] in known:
+                code = detail["code"]
+                failure = ModelOutputError if code in OUTPUT_ERRORS and error.code == 422 else ModelServiceError
+                raise failure(code, error.code, detail) from error
+            # Old server's generic 422 is not assumed to be a model-format failure.
+            raise
         if len(raw) > 1_048_576:
             raise ValueError("model_response_too_large")
         envelope = json.loads(raw)
