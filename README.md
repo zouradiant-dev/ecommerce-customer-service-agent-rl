@@ -2,6 +2,8 @@
 
 **Project paper:** [English (primary)](PROJECT_PAPER_EN.md) | [中文](PROJECT_PAPER_ZH.md)
 
+**在线诊断与对照：** 已分析十个预览缺失 Bad Case，增加可切换提示词/工具描述的策略配置及十二个新商品/订单 dev 用例。完整对照仍为 5/15，扩展集合从 7/12 到 8/12 但出现回退，因此网页保留原方案，尚未重训。结果、失败实验和后续数据设计见 [在线策略对照记录](docs/online-policy-ablation-20261013.zh-CN.md)。
+
 **真实 SFT 已接入：** v18 最终 SFT 已在 Featurize RTX 4090 24GB 上运行 BF16 推理，完成本机网页真实订单查询联调。首轮十五个模拟业务多轮 dev 用例通过 5/15；取消预览生成仍需调优，不能把接通模型当成任务效果达标。见 [首次真实回归](docs/v18-online-first-real-evaluation-20261013.zh-CN.md) 与 [接入步骤](docs/v18-sft-online-deployment.zh-CN.md)。
 
 **多轮 Agent 迭代：** 已补充预算化上下文、结构化业务状态、十五个在线多轮开发回归用例和分层调用追踪。运行 `python scripts/evaluate_online_agent.py --mode smoke --output outputs/online-agent-smoke` 验证工程行为；真实模型、上下文对照与追踪报告用法见 [记忆、评测与追踪说明](docs/online-agent-memory-evaluation-tracing.zh-CN.md)。Smoke 使用测试替身，不代表 SFT 模型效果。

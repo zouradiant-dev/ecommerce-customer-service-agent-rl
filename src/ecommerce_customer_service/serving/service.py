@@ -8,7 +8,8 @@ from uuid import uuid4
 
 from .backend import BackendRejected, BusinessBackend
 from .context_builder import ContextBuilder
-from .model import ChatModel, ModelProtocolError, SYSTEM_PROMPT, terminal_content, tool_schemas
+from .model import ChatModel, ModelProtocolError, terminal_content
+from .policy import get_policy
 from .storage import ServiceError, Store, encode
 from .telemetry import ObservedBackend, Telemetry, traced
 
@@ -22,12 +23,13 @@ def identifier(value: Any) -> str:
 class CustomerService:
     def __init__(self, store: Store, backend: BusinessBackend, model: ChatModel | None = None,
                  *, confirmation_ttl: float = 300, max_steps: int = 8,
-                 context_builder: ContextBuilder | None = None) -> None:
+                 context_builder: ContextBuilder | None = None, policy_profile: str = "baseline_v1") -> None:
         self.store, self.model = store, model
         self.telemetry = Telemetry(store)
         self.backend = ObservedBackend(backend, self.telemetry)
         self.context_builder = context_builder or ContextBuilder()
         self.confirmation_ttl, self.max_steps = confirmation_ttl, max_steps
+        self.policy = get_policy(policy_profile)
 
     def recover(self) -> dict[str, int]:
         spans = self.telemetry.recover()
@@ -281,17 +283,16 @@ class CustomerService:
             content = "智能客服暂未连接。您可以先查看订单，并通过订单卡片申请取消。"
             self.store.append(conversation, request, {"role": "assistant", "content": content})
             return {"message": content, "mode": "manual"}
-        messages = [{"role": "system", "content": SYSTEM_PROMPT}] + self.store.model_history(customer, conversation)
-        messages = messages[1:]
-        schemas = tool_schemas()
+        messages = self.store.model_history(customer, conversation)
+        schemas, system = self.policy.tools, self.policy.prompt
         for step in range(self.max_steps):
             with self.telemetry.span("context", "build_context") as span:
-                built = self.context_builder.build(SYSTEM_PROMPT, messages, schemas,
+                built = self.context_builder.build(system, messages, schemas,
                     self.store.context_state(customer, conversation))
                 span.set(**built.metadata)
             with self.telemetry.span("model", "complete", attempt=step + 1,
                     model_id=getattr(self.model, "model", type(self.model).__name__),
-                    prompt_sha256=sha256(SYSTEM_PROMPT.encode()).hexdigest(),
+                    prompt_sha256=sha256(system.encode()).hexdigest(),
                     tools_sha256=sha256(encode(schemas).encode()).hexdigest()) as span:
                 assistant = self.model.complete(built.messages, schemas)
                 metadata = assistant.get("_provider_metadata") or {}

@@ -11,7 +11,8 @@ from typing import Any
 
 from .backend import MockBusinessBackend
 from .context_builder import CONTEXT_VERSION, ContextBuilder
-from .model import ChatModel, SYSTEM_PROMPT, online_protocol_metadata, tool_schemas
+from .model import ChatModel
+from .policy import get_policy
 from .service import CustomerService
 from .storage import ServiceError, Store, encode
 from .telemetry import summarize
@@ -62,13 +63,39 @@ def write_json(path: Path, value: Any) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def initial_orders(case: dict[str, Any], backend: MockBusinessBackend) -> None:
+    if "initial_orders" not in case:
+        return
+    rows = case["initial_orders"]
+    fields = {"id", "customer_id", "product", "status", "paid_cents", "version"}
+    if not isinstance(rows, list) or not 1 <= len(rows) <= 20:
+        raise ValueError("invalid_initial_orders")
+    for row in rows:
+        if (not isinstance(row, dict) or set(row) != fields
+                or not isinstance(row["id"], str) or not 1 <= len(row["id"]) <= 128
+                or row["customer_id"] not in {"customer_alice", "customer_bob"}
+                or not isinstance(row["product"], str) or not 1 <= len(row["product"]) <= 300
+                or row["status"] not in {"pending", "paid", "shipped", "cancelled"}
+                or type(row["paid_cents"]) is not int or row["paid_cents"] < 0
+                or type(row["version"]) is not int or row["version"] < 1):
+            raise ValueError("invalid_initial_order")
+    if len({row["id"] for row in rows}) != len(rows):
+        raise ValueError("duplicate_initial_order")
+    # Only the newly created isolated case database is changed, never the web database.
+    with backend.transaction() as db:
+        db.execute("DELETE FROM orders")
+        db.executemany("INSERT INTO orders VALUES (?,?,?,?,?,?)", [
+            tuple(row[name] for name in ("id", "customer_id", "product", "status", "paid_cents", "version")) for row in rows])
+
+
 def run_case(case: dict[str, Any], directory: Path, model: ChatModel,
-             context: ContextBuilder) -> dict[str, Any]:
+             context: ContextBuilder, *, policy_profile: str = "baseline_v1") -> dict[str, Any]:
     directory.mkdir(parents=True, exist_ok=False)
     store = Store(directory / "sessions.sqlite")
     raw_backend = MockBusinessBackend(directory / "business.sqlite")
+    initial_orders(case, raw_backend)
     backend = FaultBackend(raw_backend)
-    service = CustomerService(store, backend, model, context_builder=context)
+    service = CustomerService(store, backend, model, context_builder=context, policy_profile=policy_profile)
     customer = case.get("customer_id", "customer_alice")
     conversation = service.create_conversation(customer)["conversation_id"]
     aliases: dict[str, str] = {}
@@ -101,7 +128,7 @@ def run_case(case: dict[str, Any], directory: Path, model: ChatModel,
                     with store.transaction() as db:
                         db.execute("UPDATE operations SET expires_at=0 WHERE conversation_id=? AND status='pending_confirmation'", (conversation,))
                 elif name == "restart":
-                    service = CustomerService(Store(directory / "sessions.sqlite"), backend, model, context_builder=context)
+                    service = CustomerService(Store(directory / "sessions.sqlite"), backend, model, context_builder=context, policy_profile=policy_profile)
                     service.recover()
                 elif name in {"lose_ack", "backend_unavailable", "read_timeout_once"}:
                     setattr(backend, {"lose_ack": "lose_ack", "backend_unavailable": "unavailable",
@@ -109,6 +136,20 @@ def run_case(case: dict[str, Any], directory: Path, model: ChatModel,
                 else:
                     raise ValueError("unsupported_event")
                 result = {"event_applied": name}
+            elif kind == "checkpoint":
+                assertions = step["assertions"]
+                if (not isinstance(assertions, dict) or set(assertions) - {"pending_count", "cancellation_count"}
+                        or any(type(value) is not int or value < 0 for value in assertions.values())):
+                    raise ValueError("invalid_checkpoint")
+                with store.transaction() as db:
+                    pending = db.execute("SELECT COUNT(*) FROM operations WHERE conversation_id=? AND status='pending_confirmation' AND expires_at>?",
+                                         (conversation, time.time())).fetchone()[0]
+                with raw_backend.transaction() as db:
+                    cancelled = db.execute("SELECT COUNT(*) FROM cancellations").fetchone()[0]
+                result = {"pending_count": pending, "cancellation_count": cancelled}
+                for key, expected_value in assertions.items():
+                    if result[key] != expected_value:
+                        failures.append("checkpoint:" + key)
             else:
                 raise ValueError("unsupported_step")
             if step.get("expected_error"):
@@ -176,7 +217,8 @@ def run_case(case: dict[str, Any], directory: Path, model: ChatModel,
 
 
 def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
-              model: ChatModel | None = None, context: ContextBuilder | None = None) -> dict[str, Any]:
+              model: ChatModel | None = None, context: ContextBuilder | None = None,
+              policy_profile: str = "baseline_v1") -> dict[str, Any]:
     if mode not in {"smoke", "model"} or (mode == "model" and model is None):
         raise ValueError("invalid_evaluation_mode")
     if not cases:
@@ -186,29 +228,30 @@ def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
         raise ValueError("invalid_or_duplicate_case_id")
     if any(case.get("split") != "dev" for case in cases):
         raise ValueError("this_regression_runner_accepts_dev_only; use_a_separate_frozen_test_protocol")
+    policy = get_policy(policy_profile)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     context = context or ContextBuilder()
     protocol = {"schema_version": "online_agent_evaluation_v2", "mode": mode,
-                "context_version": CONTEXT_VERSION, **online_protocol_metadata(),
+                "context_version": CONTEXT_VERSION, **policy.metadata(),
                 "evaluation_kind": "engineering_smoke" if mode == "smoke" else "served_model_on_simulated_business",
                 "real_model_execution": mode == "model", "production_quality_claim": False,
                 "independent_test_claim": False, "model": getattr(model, "model", None),
                 "case_sha256": sha256(encode(cases).encode()).hexdigest(), "case_ids": ids,
-                "system_prompt_sha256": sha256(SYSTEM_PROMPT.encode()).hexdigest(),
-                "tools_sha256": sha256(encode(tool_schemas()).encode()).hexdigest(),
+                "system_prompt_sha256": sha256(policy.prompt.encode()).hexdigest(),
+                "tools_sha256": sha256(encode(policy.tools).encode()).hexdigest(),
                 "context_counter": context.counter.name, "context_budget": context.max_input_tokens,
                 "context_policy": context.policy,
                 "recent_turns": context.recent_turns, "user_simulation": "fixed_user_turns_and_explicit_confirmation_events",
                 "evaluation_path": "service_runtime_on_isolated_simulated_business",
                 "source_sha256": {name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
                     for name in ("service.py", "context_builder.py", "telemetry.py", "model.py", "online_evaluation.py",
-                                 "backend.py", "storage.py", "online_cases.py", "api.py")}}
+                                 "backend.py", "storage.py", "online_cases.py", "api.py", "policy.py")}}
     write_json(output / "protocol.json", protocol)
     results = []
     for case in cases:
         active_model = ScriptedSmokeModel(case["smoke_responses"]) if mode == "smoke" else model
-        results.append(run_case(case, output / "cases" / case["case_id"], active_model, context))
+        results.append(run_case(case, output / "cases" / case["case_id"], active_model, context, policy_profile=policy_profile))
         # Fail fast on a broken model endpoint, rather than buying many failing calls.
         if mode == "model" and results[-1]["model_call_failures"]:
             break

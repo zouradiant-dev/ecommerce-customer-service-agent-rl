@@ -12,6 +12,7 @@ from ecommerce_customer_service.serving.api import OnlineServer, load_auth
 from ecommerce_customer_service.serving.backend import HttpBusinessBackend, MockBusinessBackend
 from ecommerce_customer_service.serving.model import OpenAIChatModel
 from ecommerce_customer_service.serving.connection_check import check_endpoint
+from ecommerce_customer_service.serving.policy import PROFILES
 from ecommerce_customer_service.serving.context_builder import ContextBuilder, load_token_counter
 from ecommerce_customer_service.serving.runtime import exclusive_runtime
 from ecommerce_customer_service.serving.service import CustomerService
@@ -34,6 +35,7 @@ def main() -> int:
     parser.add_argument("--context-budget", type=int, default=8192, help="Input token budget, or conservative estimate without tokenizer")
     parser.add_argument("--recent-turns", type=int, default=6)
     parser.add_argument("--context-policy", choices=["structured", "full-history"], default="structured")
+    parser.add_argument("--policy-profile", choices=PROFILES, default="baseline_v1")
     args = parser.parse_args()
     if args.mode == "model" and not args.model:
         parser.error("--mode model requires --model")
@@ -56,7 +58,7 @@ def serve(args: argparse.Namespace) -> int:
              if args.mode == "model" else None)
     counter = load_token_counter(args.tokenizer_path) if args.tokenizer_path else None
     context = ContextBuilder(counter=counter, max_input_tokens=args.context_budget, recent_turns=args.recent_turns, policy=args.context_policy)
-    service = CustomerService(Store(args.data_dir / "sessions.sqlite"), backend, model, context_builder=context)
+    service = CustomerService(Store(args.data_dir / "sessions.sqlite"), backend, model, context_builder=context, policy_profile=args.policy_profile)
     recovered = service.recover()
     demo_accounts = ({"alice": "customer_alice", "bob": "customer_bob"}
                      if args.backend == "mock" and args.auth_file is None
@@ -64,6 +66,7 @@ def serve(args: argparse.Namespace) -> int:
     server = OnlineServer((args.host, args.port), service, auth, demo_accounts=demo_accounts)
     print(f"Customer service: http://{args.host}:{server.server_port}")
     print(f"Mode={args.mode}; backend={args.backend}; auth file={auth_path.resolve()}")
+    print(f"Policy={args.policy_profile}")
     print(f"Recovery={recovered}; data directory={args.data_dir.resolve()}")
     print("Local prototype: one service process per data directory. Enterprise identity/TLS/monitoring are not included.")
     try:
