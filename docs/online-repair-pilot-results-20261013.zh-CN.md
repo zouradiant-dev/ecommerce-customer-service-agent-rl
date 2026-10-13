@@ -2,6 +2,8 @@
 
 2026-10-13，从恢复后的服务器只读 `/v1/repair-experiment` 获取完整报告。实验完成，候选未晋升，原 `ecommerce-v18-sft` 服务仍在线。以下指标来自实际 GPU 训练/模型生成，不是脚本参考模型成绩。
 
+后续输入重叠审计发现两个开发案例的实际模型输入与补训输入完全相同。下方原 57 题结果保留为原始开发回归记录，不宣称 57 题全部未在训练出现；审计细节与排除后的辅助统计见文末。
+
 ## 主要结果
 
 同一批 57 个合成在线开发案例、同一 `binding_compact_v3`、BF16、贪心解码、512 生成上限、8192 输入预算及同一业务运行时下，原 v18 adapter 为 40/57（70.18%），补训 adapter 为 51/57（89.47%），净增 11 题、19.30 个百分点。逐题有 14 题改善、3 题回退；候选仍有 6 题失败。已知生成格式失败调用数从 2 降到 0，不能据此声称所有工具/业务错误均已解决。
@@ -56,3 +58,13 @@
 训练后的首轮评测被 tokenizer 旧格式检查中断，续评测修复仅改 artifacts.py，未修改权重、原 baseline 结果或 10 项业务运行时源码。实际原文件 SHA256=089e1f4c10097a577671febcaf9eecec902277e3652d3f394676ac2bca66af23，修复后=67646c595fe2fa02095562172c4c4c8f454548387c551bcc3143a9447adaef16；续评测训练步数为 0。严格配对检查通过，实验摘要 experiment_complete=true、error_type=null、candidate_promoted=false。
 
 完整读取证据保存在本机 ignored 目录 `outputs/online-repair-pilot-server-result-20261013-r3`（health.json、experiment-report.json），原始客户会话不上传 Git。服务器原训练目录 `/home/featurize/work/ecommerce-repair.VyMdGD/outputs/online-repair-pilot-r1`，续评测目录 `/home/featurize/work/ecommerce-repair.VyMdGD/outputs/online-repair-eval-resume-3cc5e3c9`。
+
+## 后续输入重叠审计：纠正未见样本口径
+
+审计本次 512 条 train 与 128 条 dev，先比较消息/tools，再用实际 Qwen chat template 渲染最后目标之前的完整模型输入，确认 `repair_dev_handoff_000` 和 `repair_dev_handoff_001` 与 8 条 train handoff 前缀完全重复。转人工第一轮不查询订单，输入中没有不同商品/订单状态，所以只划分 case ID、订单 ID 或商品目录并不能隔离该场景。这是数据划分遗漏，不能称为全部未见样本验证。
+
+其他新 dev 前缀未发现完整渲染输入重复，但金额澄清、撤回、聊天确认、结果追问等部分用户续话文本共享；场景族和参考策略也共享。原 15 个在线案例和 12 个 binding guards 未发现完整案例 ID 或相同用户话语出现在本次 512 条补训数据中。对可核查的本地旧 v18 reference/full-replay/supplement 训练文件扫描也未找到这些案例 ID 或相同用户话语；该扫描不等同于证明所有历史权重的完整训练/预训练语料均已审计。
+
+两个直接重复的 handoff 案例原模型和候选均通过。保留原始 57 题报告，另提供排除这两题的事后描述性重算：38/55（69.09%）→49/55（89.09%），净增仍为 11 题、20.00 个百分点。它不是新一次模型评测，也不能把其余 55 题直接改称独立盲测；不据此报告正式 test 成绩。
+
+下一轮数据质量控制必须比较真正送入模型的渲染输入，而不只比较案例命名/业务 ID。现有 r3 train/dev/test 和模型权重保持不变；生成器中不依赖订单的其他 split 表达同样需要在使用前做完整输入重叠审计。合成 test 仍未执行。审计证据保存为 ignored `training-overlap-audit.json`。
