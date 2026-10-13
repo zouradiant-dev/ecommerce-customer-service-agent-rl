@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from ecommerce_customer_service.serving.api import OnlineServer, load_auth
 from ecommerce_customer_service.serving.backend import HttpBusinessBackend, MockBusinessBackend
 from ecommerce_customer_service.serving.model import OpenAIChatModel
+from ecommerce_customer_service.serving.connection_check import check_endpoint
 from ecommerce_customer_service.serving.context_builder import ContextBuilder, load_token_counter
 from ecommerce_customer_service.serving.runtime import exclusive_runtime
 from ecommerce_customer_service.serving.service import CustomerService
@@ -26,6 +27,7 @@ def main() -> int:
     parser.add_argument("--mode", choices=["manual", "model"], default="manual")
     parser.add_argument("--model", help="Actual served model/LoRA adapter name; no automatic training or adapter loading")
     parser.add_argument("--api-base", default="http://127.0.0.1:8000/v1")
+    parser.add_argument("--verify-v18-endpoint", action="store_true", help="Require pinned v18 identity and a real read-only tool probe before serving")
     parser.add_argument("--backend", choices=["mock", "http"], default="mock")
     parser.add_argument("--business-base")
     parser.add_argument("--tokenizer-path", help="Local tokenizer directory for exact chat-template token accounting; never downloads")
@@ -35,6 +37,10 @@ def main() -> int:
     args = parser.parse_args()
     if args.mode == "model" and not args.model:
         parser.error("--mode model requires --model")
+    if args.verify_v18_endpoint:
+        if args.mode != "model" or args.model != "ecommerce-v18-sft":
+            parser.error("--verify-v18-endpoint requires --mode model --model ecommerce-v18-sft")
+        check_endpoint(args.api_base, os.environ.get("MODEL_API_KEY", ""), generate=True)
     if args.backend == "http" and (not args.business_base or not args.auth_file or not os.environ.get("BUSINESS_API_KEY")):
         parser.error("HTTP backend requires --business-base, --auth-file and BUSINESS_API_KEY")
     with exclusive_runtime(args.data_dir):

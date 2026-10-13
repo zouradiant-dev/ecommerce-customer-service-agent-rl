@@ -1,10 +1,45 @@
 from __future__ import annotations
 
 import json
+from hashlib import sha256
 from typing import Any, Protocol
 from urllib.request import Request, urlopen
 
 from .storage import encode
+
+ONLINE_PROTOCOL = "online_cancel_preview_v1"
+
+
+class ModelProtocolError(ValueError):
+    pass
+
+
+def _unique_terminal_fields(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate_terminal_key")
+        result[key] = value
+    return result
+
+
+def terminal_content(content: str) -> str:
+    """Accept the old SFT terminal envelope only if it makes no write-success claim."""
+    if not content.lstrip().startswith("{"):
+        return content
+    try:
+        terminal = json.loads(content, object_pairs_hook=_unique_terminal_fields)
+    except ValueError as exc:
+        raise ModelProtocolError("invalid_terminal_json") from exc
+    if (not isinstance(terminal, dict) or set(terminal) != {"decision", "action_taken", "action_id", "message"}
+            or not isinstance(terminal["decision"], str) or not terminal["decision"]
+            or type(terminal["action_taken"]) is not bool
+            or not isinstance(terminal["message"], str) or not terminal["message"].strip()):
+        raise ModelProtocolError("invalid_terminal_schema")
+    # Model has no write capability in this protocol. Never reinterpret action_taken as authorization.
+    if terminal["action_taken"] or terminal["action_id"] is not None:
+        raise ModelProtocolError("unverified_model_write_claim")
+    return terminal["message"]
 
 
 class ChatModel(Protocol):
@@ -63,3 +98,9 @@ def tool_schemas() -> list[dict[str, Any]]:
              "parameters": {"type": "object", "properties": properties,
                             "required": list(properties), "additionalProperties": False}}}
             for name, description, properties in definitions]
+
+
+def online_protocol_metadata() -> dict[str, str]:
+    return {"online_protocol": ONLINE_PROTOCOL,
+            "online_prompt_sha256": sha256(SYSTEM_PROMPT.encode("utf-8")).hexdigest(),
+            "online_tools_sha256": sha256(encode(tool_schemas()).encode("utf-8")).hexdigest()}

@@ -5,9 +5,10 @@ from dataclasses import dataclass
 import json
 from typing import Any, Protocol
 
+from ..training import canonicalize_tool_schemas, normalize_messages
 from .storage import ServiceError, encode
 
-CONTEXT_VERSION = "online_context_v1"
+CONTEXT_VERSION = "online_context_v2"
 
 
 class TokenCounter(Protocol):
@@ -30,8 +31,9 @@ class HFTokenCounter:
         self.tokenizer = tokenizer
 
     def count(self, messages: list[dict[str, Any]], tools: list[dict[str, Any]]) -> int:
-        arguments = {"tools": tools} if tools else {}
-        ids = self.tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=True, **arguments)
+        arguments = {"tools": canonicalize_tool_schemas(tools)} if tools else {}
+        ids = self.tokenizer.apply_chat_template(normalize_messages(messages), tokenize=True,
+                                                add_generation_prompt=True, **arguments)
         return len(ids)
 
 

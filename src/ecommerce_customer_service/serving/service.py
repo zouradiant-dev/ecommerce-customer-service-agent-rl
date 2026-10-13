@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from .backend import BackendRejected, BusinessBackend
 from .context_builder import ContextBuilder
-from .model import ChatModel, SYSTEM_PROMPT, tool_schemas
+from .model import ChatModel, ModelProtocolError, SYSTEM_PROMPT, terminal_content, tool_schemas
 from .storage import ServiceError, Store, encode
 from .telemetry import ObservedBackend, Telemetry, traced
 
@@ -262,8 +262,10 @@ class CustomerService:
         try:
             result = self._run_turn(customer, conversation, request)
             status = "completed"
-        except Exception:
-            result = {"error": "model_or_turn_failed", "message": "本轮未完成，请检查模型服务后使用新的请求 ID 继续。"}
+        except Exception as exc:
+            result = ({"error": "model_protocol_mismatch", "message": "模型回复与当前操作流程不兼容，本轮未完成。请通过订单卡片操作。"}
+                      if isinstance(exc, ModelProtocolError) else
+                      {"error": "model_or_turn_failed", "message": "本轮未完成，请稍后重新发送，或通过订单卡片操作。"})
             status = "failed"
             with self.store.transaction() as db:
                 db.execute("UPDATE operations SET status='superseded',updated_at=? WHERE conversation_id=? "
@@ -346,6 +348,13 @@ class CustomerService:
             if pending:
                 operation = self._public(pending)
                 message["content"] = self._preview_message(operation)
+            else:
+                try:
+                    message["content"] = terminal_content(message["content"])
+                except ModelProtocolError:
+                    self.store.record(conversation, request, "terminal_validation", {},
+                                      {"error": "model_protocol_mismatch"})
+                    raise
             self.store.append(conversation, request, message)
             return {"message": message["content"], "mode": "model", "operation": self._public(pending) if pending else None}
         raise ServiceError("max_model_steps", 502)

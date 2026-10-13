@@ -1,0 +1,10 @@
+# Separate inference environment; do not combine conflicting training constraint files.
+# Install the CUDA-compatible torch build separately for your GPU/driver.
+transformers==4.51.3
+peft==0.15.2
+accelerate==1.6.0
+tokenizers==0.21.4
+huggingface-hub==0.30.2
+safetensors==0.5.3
+# Optional NF4: install a bitsandbytes build compatible with your CUDA environment.
+# These are a candidate deployment profile, not a claimed GPU-validated lockfile.

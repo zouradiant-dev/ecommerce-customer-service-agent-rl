@@ -10,8 +10,8 @@ import time
 from typing import Any
 
 from .backend import MockBusinessBackend
-from .context_builder import ContextBuilder
-from .model import ChatModel, SYSTEM_PROMPT, tool_schemas
+from .context_builder import CONTEXT_VERSION, ContextBuilder
+from .model import ChatModel, SYSTEM_PROMPT, online_protocol_metadata, tool_schemas
 from .service import CustomerService
 from .storage import ServiceError, Store, encode
 from .telemetry import summarize
@@ -189,7 +189,8 @@ def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     context = context or ContextBuilder()
-    protocol = {"schema_version": "online_agent_evaluation_v1", "mode": mode,
+    protocol = {"schema_version": "online_agent_evaluation_v2", "mode": mode,
+                "context_version": CONTEXT_VERSION, **online_protocol_metadata(),
                 "evaluation_kind": "engineering_smoke" if mode == "smoke" else "served_model_on_simulated_business",
                 "real_model_execution": mode == "model", "production_quality_claim": False,
                 "independent_test_claim": False, "model": getattr(model, "model", None),
