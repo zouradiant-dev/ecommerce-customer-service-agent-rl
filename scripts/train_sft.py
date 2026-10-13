@@ -32,6 +32,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--dev", type=Path)
     parser.add_argument("--base-model", default="Qwen/Qwen2.5-7B-Instruct")
     parser.add_argument("--model-revision", help="immutable model repository commit used for reproducible loading")
+    parser.add_argument("--tokenizer-path", type=Path, help="Explicit saved tokenizer, including its training chat template")
+    parser.add_argument("--local-files-only", action="store_true", help="Use only the existing local base, tokenizer and adapter")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument(
         "--init-adapter",
@@ -148,7 +150,8 @@ def main() -> int:
     dev_source_rows = len(dev_rows)
     validate_rows(train_rows, "train")
     validate_rows(dev_rows, "dev")
-    if any((row.get("metadata") or {}).get("split") == "test" for row in train_rows + dev_rows):
+    if any(row.get("split") == "test" or (row.get("metadata") or {}).get("split") == "test"
+           or (row.get("metadata") or {}).get("test_material") is True for row in train_rows + dev_rows):
         raise ValueError("test rows must not enter SFT")
     if args.validate_data_only:
         print(json.dumps({"train_rows": len(train_rows), "dev_rows": len(dev_rows), "valid": True}, indent=2))
@@ -176,9 +179,10 @@ def main() -> int:
     torch.cuda.manual_seed_all(args.seed)
     device = torch.device("cuda", args.device)
     tokenizer = AutoTokenizer.from_pretrained(
-        args.base_model,
-        revision=args.model_revision,
-        trust_remote_code=True,
+        str(args.tokenizer_path) if args.tokenizer_path else args.base_model,
+        revision=None if args.tokenizer_path else args.model_revision,
+        local_files_only=args.local_files_only,
+        trust_remote_code=not args.local_files_only,
         use_fast=True,
     )
     if tokenizer.pad_token_id is None:
@@ -215,9 +219,10 @@ def main() -> int:
     compute_dtype = dtype_by_name[resolved_model_dtype]
     model_kwargs: dict[str, Any] = {
         "revision": args.model_revision,
-        "trust_remote_code": True,
+        "trust_remote_code": not args.local_files_only,
         "low_cpu_mem_usage": True,
         "torch_dtype": compute_dtype,
+        "local_files_only": args.local_files_only,
         "attn_implementation": args.attn_implementation,
     }
     if args.load_in_4bit:
@@ -247,7 +252,7 @@ def main() -> int:
             model.enable_input_require_grads()
     adapter_source = args.resume_from or args.init_adapter
     if adapter_source:
-        model = PeftModel.from_pretrained(model, adapter_source, is_trainable=True)
+        model = PeftModel.from_pretrained(model, adapter_source, is_trainable=True, local_files_only=args.local_files_only)
     else:
         model = get_peft_model(
             model,

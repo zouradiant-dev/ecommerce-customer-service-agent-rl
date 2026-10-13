@@ -21,8 +21,10 @@ class InferenceServer(ThreadingHTTPServer):
     request_queue_size = 8
 
     def __init__(self, address: tuple[str, int], generator: Any, *, api_key: str = "", precision: str = "bf16",
-                 diagnostics_dir: Path | None = None, capture_invalid_output: bool = False):
+                 diagnostics_dir: Path | None = None, capture_invalid_output: bool = False,
+                 repair_experiment_report: dict | None = None):
         self.generator, self.api_key, self.precision = generator, api_key, precision
+        self.repair_experiment_report = repair_experiment_report
         if capture_invalid_output and diagnostics_dir is None:
             raise ValueError("raw_capture_requires_private_diagnostics_directory")
         self.diagnostics = DiagnosticStore(diagnostics_dir, capture_raw=capture_invalid_output) if diagnostics_dir else None
@@ -72,6 +74,8 @@ class InferenceHandler(BaseHTTPRequestHandler):
             self.reply(200, self.server.metadata())
         elif self.path == "/v1/models":
             self.reply(200, {"object": "list", "data": [{"id": MODEL_ID, "object": "model", "owned_by": "local"}]})
+        elif self.path == "/v1/repair-experiment" and self.server.repair_experiment_report is not None:
+            self.reply(200, self.server.repair_experiment_report)
         elif self.path.startswith("/v1/diagnostics/") and self.server.diagnostics:
             try:
                 value = self.server.diagnostics.read(self.path.removeprefix("/v1/diagnostics/"))

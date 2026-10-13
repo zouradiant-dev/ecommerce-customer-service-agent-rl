@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import json
 from pathlib import Path
 import sys
 
@@ -22,6 +23,7 @@ def main() -> int:
     parser.add_argument("--check-only", action="store_true", help="Verify files without importing torch or loading GPU")
     parser.add_argument("--diagnostics-dir", type=Path, default=ROOT / "outputs" / "inference-diagnostics")
     parser.add_argument("--capture-invalid-output", action="store_true", help="Explicitly retain bounded raw FAILED generations in private diagnostics (never stdout)")
+    parser.add_argument("--repair-experiment-report", type=Path, help="Optional fixed, sanitized experiment summary exposed through an authenticated read-only endpoint")
     args = parser.parse_args()
     if not 512 <= args.context_budget <= 32768:
         parser.error("--context-budget must be 512..32768")
@@ -30,6 +32,13 @@ def main() -> int:
         parser.error("Remote binding requires MODEL_API_KEY of at least 24 characters; prefer SSH forwarding")
     verify_adapter(args.adapter_dir)
     verify_local_base(args.base_model_dir, args.adapter_dir)
+    repair_report = None
+    if args.repair_experiment_report:
+        raw = args.repair_experiment_report.read_bytes()
+        if len(raw) > 65536: raise ValueError("experiment_report_too_large")
+        repair_report = json.loads(raw)
+        if not isinstance(repair_report, dict) or repair_report.get("schema_version") != "online_repair_pilot_v1":
+            raise ValueError("unexpected_experiment_report")
     if args.check_only:
         print("Adapter hashes verified; pinned base/tokenizer compatibility checked. GPU inference has not been tested.")
         return 0
@@ -57,7 +66,7 @@ def main() -> int:
                                      device="cuda:0", max_input_tokens=args.context_budget)
     server = InferenceServer((args.host, args.port), BoundedGenerator(completer),
                              api_key=api_key, precision=args.precision, diagnostics_dir=args.diagnostics_dir,
-                             capture_invalid_output=args.capture_invalid_output)
+                             capture_invalid_output=args.capture_invalid_output, repair_experiment_report=repair_report)
     print(f"Loaded {MODEL_ID}; inference URL http://{args.host}:{server.server_port}/v1", flush=True)
     print("Online task quality is unverified. No business operations run in this process.", flush=True)
     try:
