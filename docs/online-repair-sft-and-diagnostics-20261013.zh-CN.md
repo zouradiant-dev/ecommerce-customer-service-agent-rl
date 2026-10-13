@@ -76,3 +76,15 @@ python scripts/replay_online_failure.py --case-dir outputs/online-policy-factori
 后续补 SFT 必须生成新的权重身份及协议校验，不能直接覆盖旧 v18 文件或绕过固定哈希验证。比较补训前后模型时固定运行协议、精度、解码和开发案例，检查新协议任务、格式失败及旧能力回退。只在选型完成后运行冻结 test；当前不报告模型质量提升。
 
 验证：本轮相关工程回归共 122 项独立测试通过（包含原有训练数据兼容检查）；数据另经真实 tokenizer 全量校验与 trainer 的 validate-data-only。这些都是工程和参考数据证据，不是新模型 test 成绩。
+
+## 实际部署与单次诊断更新
+
+2026-10-13 后续：用户在 Featurize 上传并启动 `8ddaef5` 代码包、恢复 SSH 转发后，实际健康检查确认 `ready=true`、`diagnostics_version=inference_diagnostics_v1`、诊断及失败原文捕获均开启，仍为原 v18 adapter、BF16。之前“尚未部署”的段落保留为准备阶段记录，目前新版已经生效。
+
+发送一次之前保存的重建请求（用户先说取消一笔订单，再明确取消键盘）后，实际得到 HTTP 422 `invalid_tool_call_output`，解析原因 `unbalanced_tool_call_tags`。输入 1026 token，输出 22 token，finish_reason=stop。原文包含 `preview_cancel` 和正确的键盘订单 ID，但只有结尾 `</tool_call>`、缺少开头 `<tool_call>`，前缀还有两个 Unicode replacement character。严格解析拒绝该输出；没有执行任何业务工具。完整原文仅在私有 `outputs/inference-failure-diagnostic-20261013-r2` 中保存。
+
+因此这一例已能区分为原生工具格式失败，不能归因为输出达到 512 token 上限、上下文超长或显存不足。原始历史输入未精确捕获，仍只声称本次保存的重建 payload 复现了格式拒绝；不能据此证明全部历史失败具有相同根因，也不能推断异常字符的内部成因。不会自动补标签并执行未经完整解析的请求。
+
+本机网页服务已备份既有两份业务/会话 SQLite 并更新客户端。重启前 running turns、executing operations 均为 0；重启 recovery 三项均为 0，继续使用原数据目录和 baseline_v1。启动阶段的只读真实工具探针通过，网页 HTTP 200，已加载新的格式失败提示。重启会使内存中的演示登录 cookie 失效，刷新页面后如需登录，重新选择演示账号即可；会话和订单数据保留。
+
+本次增加一次失败诊断生成和一次启动探针，未训练、未换权重、未执行正式 test，也没有新的完整开发集成绩。下一步可围绕候选绑定与原生格式做小规模补 SFT，随后固定协议比较开发结果及旧能力回退。
