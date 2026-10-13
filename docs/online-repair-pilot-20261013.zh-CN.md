@@ -1,6 +1,6 @@
 # 在线协议补 SFT：小规模实验执行方案
 
-状态：代码、训练包和 CPU 检查已完成；尚未启动 GPU 训练。Featurize 已有 4090 24GB 和原 v18 权重，复用实例，不重新下载权重或升级依赖。SSH 自动登录仍返回 Permission denied，需要用户在终端输入密码完成上传并执行启动命令。
+当前状态：服务器已完成补训并进入候选评测，在 tokenizer 导出格式校验处中断；兼容修复与零训练步续评测补丁已准备，最终效果对照尚未完成。以下保留首次执行方案，实际进展见文末。Featurize 复用已有 4090 24GB 和原 v18 权重，不重新下载权重或升级依赖；SSH 上传/启动仍由用户在终端输入密码。
 
 ## 解决的问题与实验变量
 
@@ -58,3 +58,17 @@
 恢复原服务后，同一鉴权下只读 `GET /v1/repair-experiment` 可读取固定实验摘要，包括完成状态、实际训练步数、loss/显存记录和配对结果。该接口不执行训练或业务操作，未传报告时不存在。可以通过现有 SSH 转发读取，不用在聊天中提供 SSH 密码。
 
 CPU 验证：实际 trainer 编码 512/128 条，0 跳过、目标标签与已验证 mask 一致；67 项相关工程测试通过，包含实际数值权重变化检查，避免仅因 safetensors 序列化变化误判已训练。GPU 环境、训练是否完成、耗时、显存和新模型提升均必须以服务器执行结果为准，当前不填入训练成绩。
+
+## 首次执行后的 tokenizer 格式兼容修复
+
+用户后续服务器截图显示，流程已进入 candidate 评测，但在模型加载前的校验中因 `pilot/vocab.json` 缺失失败，随后恢复原服务。按执行顺序，64 步训练及其数值权重更新门槛已通过；候选任务评测尚未完成。当前本机 SSH 转发未连接，实际 loss、显存和耗时仍待读取，不从截图编造指标。
+
+本机使用同一保存 tokenizer 在 Transformers 5 下实际复现：只输出 `tokenizer.json`、`tokenizer_config.json` 和 `chat_template.jinja`；词表与合并规则已完整包含在 tokenizer.json，不应要求旧版的两个冗余导出文件必须存在。修复后，这两个文件若存在仍会交叉校验，完整词表/ID、合并顺序、特殊 token、normalizer、编码预处理及模板检查保留。
+
+实际保存还改写了 ByteLevel 的角色未使用字段：pre-tokenizer 的 trim_offsets，以及 decoder 的三个构造字段。根据 [Tokenizers 官方 ByteLevel 实现](https://github.com/huggingface/tokenizers/blob/main/tokenizers/src/pre_tokenizers/byte_level.rs)，前者不参与预分词，decoder 的 decode_chain 不读取后三个字段。仅对这些字段归一化，pre-tokenizer 的 add_prefix_space/use_regex、未知字段及 postprocessor 均继续严格核对。不能整体忽略预处理或解码配置来使检查通过。
+
+修复通过 39 项相关回归检查；真实 v18 tokenizer 保存后重新加载，640 条 train/dev 前缀的完整 token IDs 和 assistant loss mask 与原 tokenizer 一致。校验没有访问合成 test，没有训练或改写权重。
+
+续评测入口为 `scripts/resume_online_repair_evaluation.py`。它只对原实验仓库中已知旧哈希的 artifacts.py 打补丁并保留原代码备份；其余业务运行时源码、prompt、工具、原 baseline 结果和 pilot 权重不改。检查原训练确实为 64 步、baseline 完整后，用新输出目录重新评测候选并严格配对。该恢复流程的训练步数为 0、旧模型评测不重复，仍然不使用正式 test。
+
+补丁包及准确命令在 `packages/online-repair-eval-fix-20261013-r1`；此次原实验路径由截图确认是 `/home/featurize/work/ecommerce-repair.VyMdGD`，不另建一套新训练。评测结束仍恢复原 v18 服务，通过只读实验摘要接口获取最终指标。

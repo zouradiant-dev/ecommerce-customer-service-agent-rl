@@ -89,6 +89,27 @@ def extract_verified_archive(archive: Path, destination: Path) -> dict:
     return {**report, "archive_sha256": ARCHIVE_SHA256}
 
 
+def _bytelevel_signature(component: object, *, decoder: bool = False) -> object:
+    """Ignore only fields unused in these tokenizers Rust encode/decode roles."""
+    if not isinstance(component, dict):
+        return component
+    value = dict(component)
+    if value.get("type") == "Sequence":
+        key = "decoders" if decoder else "pretokenizers"
+        if isinstance(value.get(key), list):
+            value[key] = [_bytelevel_signature(item, decoder=decoder) for item in value[key]]
+    elif value.get("type") == "ByteLevel":
+        # pre_tokenize uses add_prefix_space/use_regex, never trim_offsets.
+        # decode_chain reads none of these three fields. Postprocessors are
+        # deliberately untouched. Unknown fields remain part of the signature.
+        unused = ("trim_offsets", "add_prefix_space", "use_regex") if decoder else ("trim_offsets",)
+        for key in unused:
+            if key in value and type(value[key]) is not bool:
+                raise ValueError("base_tokenizer_mismatch:invalid_bytelevel_option")
+            value.pop(key, None)
+    return value
+
+
 def _tokenizer_signature(directory: Path) -> dict:
     """Compare tokenizer behavior, not version-dependent JSON formatting."""
     tokenizer = json.loads((directory / "tokenizer.json").read_text(encoding="utf-8"))
@@ -114,20 +135,27 @@ def _tokenizer_signature(directory: Path) -> dict:
                       **{key: token.get(key, default) for key, default in defaults.items()}})
     if len({token["id"] for token in added}) != len(added) or len({token["content"] for token in added}) != len(added):
         raise ValueError("base_tokenizer_mismatch:duplicate_added_tokens")
-    if json.loads((directory / "vocab.json").read_text(encoding="utf-8")) != vocab:
-        raise ValueError("base_tokenizer_mismatch:inconsistent_vocab_file")
-    merge_lines = (directory / "merges.txt").read_text(encoding="utf-8").splitlines()
-    if merge_lines and merge_lines[0].startswith("#version:"):
-        merge_lines = merge_lines[1:]
-    # '#' is a real vocabulary token; '# #' is a merge rule, not a comment.
-    file_merges = [line.split(" ") for line in merge_lines if line.strip()]
-    if file_merges != merges:
-        raise ValueError("base_tokenizer_mismatch:inconsistent_merges_file")
+    # Transformers 5 fast-tokenizer saving may emit only tokenizer.json.
+    # That canonical file already contains the complete vocabulary and merges.
+    # Legacy redundant exports remain cross-checked whenever present.
+    if (directory / "vocab.json").exists():
+        if json.loads((directory / "vocab.json").read_text(encoding="utf-8")) != vocab:
+            raise ValueError("base_tokenizer_mismatch:inconsistent_vocab_file")
+    if (directory / "merges.txt").exists():
+        merge_lines = (directory / "merges.txt").read_text(encoding="utf-8").splitlines()
+        if merge_lines and merge_lines[0].startswith("#version:"):
+            merge_lines = merge_lines[1:]
+        # '#' is a real vocabulary token; '# #' is a merge rule, not a comment.
+        file_merges = [line.split(" ") for line in merge_lines if line.strip()]
+        if file_merges != merges:
+            raise ValueError("base_tokenizer_mismatch:inconsistent_merges_file")
     model_defaults = {"unk_token": None, "continuing_subword_prefix": None, "end_of_word_suffix": None,
                       "dropout": None, "fuse_unk": False, "byte_fallback": False, "ignore_merges": False}
     return {"vocab": vocab, "merges": merges, "added_tokens": sorted(added, key=lambda token: token["id"]),
             "model_options": {key: model.get(key, default) for key, default in model_defaults.items()},
-            **{key: tokenizer.get(key) for key in ("normalizer", "pre_tokenizer", "post_processor", "decoder")}}
+            "normalizer": tokenizer.get("normalizer"), "post_processor": tokenizer.get("post_processor"),
+            "pre_tokenizer": _bytelevel_signature(tokenizer.get("pre_tokenizer")),
+            "decoder": _bytelevel_signature(tokenizer.get("decoder"), decoder=True)}
 
 
 def verify_tokenizer_compatibility(base: Path, adapter: Path) -> None:

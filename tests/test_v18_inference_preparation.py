@@ -195,6 +195,51 @@ class ArtifactAndProtocolTests(unittest.TestCase):
             self.assertNotEqual(file_sha256(base / "tokenizer.json"), file_sha256(adapter / "tokenizer.json"))
             verify_tokenizer_compatibility(base, adapter)
 
+    def test_modern_tokenizer_json_only_exports_preserve_semantic_checks(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base, adapter = Path(temporary) / "base", Path(temporary) / "adapter"
+            self.tokenizer_fixture(base)
+            self.tokenizer_fixture(adapter, pair_merges=True)
+            (adapter / "vocab.json").unlink()
+            (adapter / "merges.txt").unlink()
+            verify_tokenizer_compatibility(base, adapter)
+            tokenizer=json.loads((adapter/'tokenizer.json').read_text(encoding='utf-8'))
+            tokenizer['model']['vocab']['a']=9
+            (adapter/'tokenizer.json').write_text(json.dumps(tokenizer),encoding='utf-8')
+            with self.assertRaisesRegex(ValueError,'base_tokenizer_mismatch:vocab'):
+                verify_tokenizer_compatibility(base,adapter)
+
+    def test_legacy_redundant_exports_are_still_checked_when_present(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base, adapter = Path(temporary) / "base", Path(temporary) / "adapter"
+            self.tokenizer_fixture(base);self.tokenizer_fixture(adapter)
+            (adapter/'vocab.json').write_text('{}',encoding='utf-8')
+            with self.assertRaisesRegex(ValueError,'inconsistent_vocab_file'):
+                verify_tokenizer_compatibility(base,adapter)
+            self.tokenizer_fixture(adapter)
+            (adapter/'merges.txt').write_text('b a\n',encoding='utf-8')
+            with self.assertRaisesRegex(ValueError,'inconsistent_merges_file'):
+                verify_tokenizer_compatibility(base,adapter)
+
+    def test_bytelevel_reserialization_ignores_only_role_unused_fields(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base,adapter=Path(temporary)/'base',Path(temporary)/'adapter'
+            self.tokenizer_fixture(base);self.tokenizer_fixture(adapter)
+            before=json.loads((base/'tokenizer.json').read_text(encoding='utf-8'))
+            before['pre_tokenizer']={'type':'Sequence','pretokenizers':[{'type':'ByteLevel','add_prefix_space':False,'use_regex':False,'trim_offsets':False}]}
+            before['decoder']={'type':'ByteLevel','add_prefix_space':False,'use_regex':False,'trim_offsets':False}
+            after=deepcopy(before)
+            after['pre_tokenizer']['pretokenizers'][0]['trim_offsets']=True
+            after['decoder'].update(add_prefix_space=True,use_regex=True,trim_offsets=True)
+            (base/'tokenizer.json').write_text(json.dumps(before),encoding='utf-8')
+            (adapter/'tokenizer.json').write_text(json.dumps(after),encoding='utf-8')
+            verify_tokenizer_compatibility(base,adapter)
+            for key in ('add_prefix_space','use_regex'):
+                changed=deepcopy(after);changed['pre_tokenizer']['pretokenizers'][0][key]=True
+                (adapter/'tokenizer.json').write_text(json.dumps(changed),encoding='utf-8')
+                with self.assertRaisesRegex(ValueError,'base_tokenizer_mismatch:pre_tokenizer'):
+                    verify_tokenizer_compatibility(base,adapter)
+
     def test_tokenizer_changed_token_id_is_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:
             base, adapter = Path(temporary) / "base", Path(temporary) / "adapter"
