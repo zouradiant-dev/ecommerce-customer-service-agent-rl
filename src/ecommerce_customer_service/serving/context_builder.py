@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from collections.abc import Mapping
 import json
 from typing import Any, Protocol
 
@@ -34,6 +35,12 @@ class HFTokenCounter:
         arguments = {"tools": canonicalize_tool_schemas(tools)} if tools else {}
         ids = self.tokenizer.apply_chat_template(normalize_messages(messages), tokenize=True,
                                                 add_generation_prompt=True, **arguments)
+        # Transformers 5 returns BatchEncoding by default; Transformers 4
+        # returns the IDs list. Counting mapping keys would silently underbudget.
+        if isinstance(ids, Mapping):
+            ids = ids.get("input_ids")
+        if not isinstance(ids, (list, tuple)) or any(type(token) is not int for token in ids):
+            raise ValueError("unsupported_tokenizer_input_ids")
         return len(ids)
 
 

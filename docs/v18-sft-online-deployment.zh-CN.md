@@ -1,6 +1,6 @@
 # v18 SFT 推理接入与下一轮实验
 
-本次完成的是离线权重核验、推理服务代码、工具协议防护和连接检查。没有租实例、下载基础模型、安装 GPU 依赖或运行真实模型。当前网页仍可使用订单卡片验证业务流程；智能对话尚未连接。
+本说明覆盖离线权重核验、推理服务、工具协议防护和连接检查。准备阶段没有租实例或运行真实模型；随后已复用 Featurize 镜像中的基础模型与 v18 SFT 完成 BF16 推理和网页联调，首轮真实 dev 回归为 5/15，详见 [实际接入与回归记录](v18-online-first-real-evaluation-20261013.zh-CN.md)。
 
 ## 1. 模型备份核验结果
 
@@ -118,7 +118,7 @@ python scripts/evaluate_online_agent.py --mode model --model ecommerce-v18-sft -
 
 ## 5. 本次验证边界
 
-本机缺少 torch/transformers/peft 等依赖，未加载 CUDA 模型。已验证真实备份文件及 tokenizer；工程测试覆盖 HTTP 鉴权、身份/协议校验、生成上限、繁忙/截断拒绝、旧参数拒绝和终止 JSON 的写入声明拒绝，复跑会话与幂等操作回归。HTTP 单测中的生成器是测试替身。
+准备阶段默认 Python 缺少 torch/transformers/peft 等依赖，未在本机加载 CUDA 模型。后续复用了另一套本机 CPU tokenizer 环境进行精确计数，GPU 模型在远端运行。已验证真实备份文件及 tokenizer；工程测试覆盖 HTTP 鉴权、身份/协议校验、生成上限、繁忙/截断拒绝、旧参数拒绝和终止 JSON 的写入声明拒绝，复跑会话与幂等操作回归。HTTP 单测中的生成器仍是测试替身，另行真实接入证据见上面的实际回归记录。
 
 本次通过 20 项新增部署测试、32 项会话测试、18 项记忆/评测测试和 16 项原有本地模型解析测试，共 86 项相关测试；十五个工程 smoke 用例通过。实际 endpoint 检查记录 URLError，service_identity_checked/generation_checked 均为 false，没有伪造已接通结果。
 

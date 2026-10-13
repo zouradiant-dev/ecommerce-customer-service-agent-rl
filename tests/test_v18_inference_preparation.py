@@ -271,6 +271,20 @@ class ArtifactAndProtocolTests(unittest.TestCase):
         self.assertEqual({"order_id": "order_A"}, tokenizer.arguments)
         self.assertIsInstance(messages[1]["tool_calls"][0]["function"]["arguments"], str)
 
+    def test_counter_counts_batchencoding_tokens_instead_of_mapping_keys(self):
+        from collections import UserDict
+        class Tokenizer:
+            def apply_chat_template(self, messages, **kwargs):
+                return UserDict(input_ids=list(range(499)), attention_mask=[1] * 499)
+        self.assertEqual(499, HFTokenCounter(Tokenizer()).count([{"role": "user", "content": "查询订单"}], []))
+
+    def test_counter_rejects_missing_ids_instead_of_reporting_key_count(self):
+        class Tokenizer:
+            def apply_chat_template(self, messages, **kwargs):
+                return {"attention_mask": [1, 1]}
+        with self.assertRaisesRegex(ValueError, "unsupported_tokenizer_input_ids"):
+            HFTokenCounter(Tokenizer()).count([{"role": "user", "content": "查询订单"}], [])
+
     def test_terminal_json_unwraps_only_nonwrite_response(self):
         terminal = {"decision": "ASK_CLARIFICATION", "action_taken": False, "action_id": None, "message": "您指哪一单？"}
         self.assertEqual("您指哪一单？", terminal_content(json.dumps(terminal)))
