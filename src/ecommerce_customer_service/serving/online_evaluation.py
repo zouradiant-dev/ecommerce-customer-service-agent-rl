@@ -17,6 +17,7 @@ from .policy import get_policy
 from .service import CustomerService
 from .storage import ServiceError, Store, encode
 from .telemetry import summarize
+from .knowledge import KnowledgeIndex, augment_policy
 
 
 class ScriptedSmokeModel:
@@ -90,13 +91,14 @@ def initial_orders(case: dict[str, Any], backend: MockBusinessBackend) -> None:
 
 
 def run_case(case: dict[str, Any], directory: Path, model: ChatModel,
-             context: ContextBuilder, *, policy_profile: str = "baseline_v1") -> dict[str, Any]:
+             context: ContextBuilder, *, policy_profile: str = "baseline_v1",
+             knowledge: KnowledgeIndex | None = None) -> dict[str, Any]:
     directory.mkdir(parents=True, exist_ok=False)
     store = Store(directory / "sessions.sqlite")
     raw_backend = MockBusinessBackend(directory / "business.sqlite")
     initial_orders(case, raw_backend)
     backend = FaultBackend(raw_backend)
-    service = CustomerService(store, backend, model, context_builder=context, policy_profile=policy_profile)
+    service = CustomerService(store, backend, model, context_builder=context, policy_profile=policy_profile,knowledge=knowledge)
     customer = case.get("customer_id", "customer_alice")
     conversation = service.create_conversation(customer)["conversation_id"]
     aliases: dict[str, str] = {}
@@ -129,7 +131,7 @@ def run_case(case: dict[str, Any], directory: Path, model: ChatModel,
                     with store.transaction() as db:
                         db.execute("UPDATE operations SET expires_at=0 WHERE conversation_id=? AND status='pending_confirmation'", (conversation,))
                 elif name == "restart":
-                    service = CustomerService(Store(directory / "sessions.sqlite"), backend, model, context_builder=context, policy_profile=policy_profile)
+                    service = CustomerService(Store(directory / "sessions.sqlite"), backend, model, context_builder=context, policy_profile=policy_profile,knowledge=knowledge)
                     service.recover()
                 elif name in {"lose_ack", "backend_unavailable", "read_timeout_once"}:
                     setattr(backend, {"lose_ack": "lose_ack", "backend_unavailable": "unavailable",
@@ -186,6 +188,22 @@ def run_case(case: dict[str, Any], directory: Path, model: ChatModel,
                                          for row in operations) != expected["pending_count"]:
         failures.append("pending_operation_count")
     replies = [str(row.get("content", "")) for row in history["messages"] if row.get("role") == "assistant"]
+    if expected.get('knowledge_lookup_required') and not any(
+            row.get('name')=='search_policies' and row.get('role')=='tool' for row in history['messages']):
+        failures.append('knowledge_lookup_missing')
+    sources=[source for event in events for source in (event.get('result') or {}).get('sources',[])]
+    if not set(expected.get('required_citations',[])) <= {source['citation'] for source in sources}:
+        failures.append('required_knowledge_citation_missing')
+    if expected.get('no_knowledge_sources') and sources:
+        failures.append('unexpected_knowledge_evidence')
+    for check in expected.get('knowledge_checks', []):
+        event = next((event for event in events if event['step'] == check['step']), {})
+        turn = event.get('result') or {}
+        citations = {source['citation'] for source in turn.get('sources', [])}
+        if not set(check['required_citations']) <= citations:
+            failures.append('turn_knowledge_citation_missing:' + str(check['step']))
+        if check['no_sources'] and (citations or '没有检索到有效说明' not in turn.get('message', '')):
+            failures.append('knowledge_abstention_missing:' + str(check['step']))
     for phrase in expected.get("forbidden_reply_phrases", []):
         if any(phrase in reply for reply in replies):
             failures.append("reply_phrase:" + phrase)
@@ -221,7 +239,7 @@ def run_case(case: dict[str, Any], directory: Path, model: ChatModel,
 
 def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
               model: ChatModel | None = None, context: ContextBuilder | None = None,
-              policy_profile: str = "baseline_v1") -> dict[str, Any]:
+              policy_profile: str = "baseline_v1", knowledge: KnowledgeIndex | None = None) -> dict[str, Any]:
     if mode not in {"smoke", "model"} or (mode == "model" and model is None):
         raise ValueError("invalid_evaluation_mode")
     if not cases:
@@ -232,10 +250,12 @@ def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
     if any(case.get("split") != "dev" for case in cases):
         raise ValueError("this_regression_runner_accepts_dev_only; use_a_separate_frozen_test_protocol")
     policy = get_policy(policy_profile)
+    if knowledge:policy=augment_policy(policy)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     context = context or ContextBuilder()
     protocol = {"schema_version": "online_agent_evaluation_v3", "mode": mode,
+                'knowledge_index_sha256':knowledge.sha256 if knowledge else None,
                 "context_version": CONTEXT_VERSION, **policy.metadata(),
                 "evaluation_kind": "engineering_smoke" if mode == "smoke" else "served_model_on_simulated_business",
                 "real_model_execution": mode == "model", "production_quality_claim": False,
@@ -254,7 +274,7 @@ def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
     results = []
     for case in cases:
         active_model = ScriptedSmokeModel(case["smoke_responses"]) if mode == "smoke" else model
-        results.append(run_case(case, output / "cases" / case["case_id"], active_model, context, policy_profile=policy_profile))
+        results.append(run_case(case, output / "cases" / case["case_id"], active_model, context, policy_profile=policy_profile,knowledge=knowledge))
         # Fail fast on a broken model endpoint, rather than buying many failing calls.
         if mode == "model" and results[-1]["model_infrastructure_failures"]:
             break

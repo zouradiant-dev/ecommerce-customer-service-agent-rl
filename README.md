@@ -2,6 +2,8 @@
 
 **Project paper:** [English (primary)](PROJECT_PAPER_EN.md) | [中文](PROJECT_PAPER_ZH.md)
 
+**Agent 与 RL 双主线准备：** 已冻结独立的业务/知识 dev 评测与 train-only 奖励采样设计。复核发现 10 月 5 日原 v18 已采过 20 题 × 4 次，两种奖励均满分、组内差异为零；80 条轨迹的 CPU 工具/奖励重放一致。新增采样排除旧 20 题，不自动启动 GRPO。下一次先分别评测与采样，权重和历史成绩不改写。见 [证据、协议与执行步骤](docs/dual-track-agent-rl-20261014.zh-CN.md)。
+
 **2026-10-14 工程迭代：** 新增订单目标校验配置 `binding_guard_v4`、失效预览回复校正、实际模型输入防重叠及训练长度检查、只读 MCP gateway、可选版本化 BM25 知识检索和失败复核队列。已做本机工程与 MCP 协议验证，未更新 v18 权重或重跑真实模型成绩；知识库是演示说明，多 Agent routing 未实现。详见 [实现、启动与验证边界](docs/online-agent-improvements-20261014.zh-CN.md) 和 [六题轨迹复核](docs/online-repair-bad-case-review-20261014.zh-CN.md)。
 
 **在线诊断与对照：** 已分析十个预览缺失 Bad Case，增加可切换提示词/工具描述的策略配置及十二个新商品/订单 dev 用例。完整对照仍为 5/15，扩展集合从 7/12 到 8/12 但出现回退，因此网页保留原方案，尚未重训。结果、失败实验和后续数据设计见 [在线策略对照记录](docs/online-policy-ablation-20261013.zh-CN.md)。

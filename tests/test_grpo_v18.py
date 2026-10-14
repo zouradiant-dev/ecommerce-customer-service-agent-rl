@@ -72,6 +72,25 @@ class TrainSelectionTest(unittest.TestCase):
             rows.append({"task_id": "forbidden", "split": "test"})
         self.manifest.write_text("".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8")
 
+    def test_seeded_selection_excludes_old_tasks_and_is_reproducible(self):
+        self.make_manifest()
+        excluded = ['v18_train_alpha_0000', 'v18_train_beta_0000']
+        with patch.object(guards, 'EXPECTED_MANIFEST_SHA256', sha256_file(self.manifest)):
+            _, first = guards.select_v18_train_tasks(self.manifest, tasks_per_scenario=1,
+                selection_seed=20261014, excluded_task_ids=excluded)
+            _, second = guards.select_v18_train_tasks(self.manifest, tasks_per_scenario=1,
+                selection_seed=20261014, excluded_task_ids=reversed(excluded))
+            self.assertEqual(first, second)
+            self.assertEqual(['v18_train_alpha_0001', 'v18_train_beta_0001'], first['task_ids'])
+            with self.assertRaisesRegex(ValueError, 'not enough'):
+                guards.select_v18_train_tasks(self.manifest, tasks_per_scenario=2, excluded_task_ids=excluded)
+            with self.assertRaisesRegex(ValueError, 'not_in_frozen'):
+                guards.select_v18_train_tasks(self.manifest, tasks_per_scenario=1,
+                                             excluded_task_ids=['v18_train_unknown_0000'])
+            with self.assertRaisesRegex(ValueError, 'excluded_ids'):
+                guards.select_v18_train_tasks(self.manifest, tasks_per_scenario=1,
+                                             excluded_task_ids=['v18_dev_alpha_0000'])
+
     def test_balanced_selection_is_train_only_and_hash_bound(self):
         self.make_manifest()
         with patch.object(guards, "EXPECTED_MANIFEST_SHA256", sha256_file(self.manifest)):

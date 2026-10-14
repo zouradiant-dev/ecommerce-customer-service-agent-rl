@@ -99,6 +99,18 @@ class BindingTests(unittest.TestCase):
         self.assertFalse(preview_claim('已查询订单，暂不创建取消申请。'))
         self.assertFalse(preview_claim('订单已取消，退款处理中。'))
 
+    def test_clear_not_needed_expressions_remain_bound_and_negations_are_rejected(self):
+        orders = [dict(id='toothbrush', product='电动牙刷', version=1, paid_cents=12900),
+                  dict(id='luggage', product='旅行箱', version=1, paid_cents=45900)]
+        self.assertEqual('toothbrush', resolve('牙刷不用了，帮我取消。', [], orders)['order_id'])
+        self.assertEqual('luggage', resolve('那只行李箱不想要了，取消订单。', [], orders)['order_id'])
+        for text in ('牙刷不用了，帮我取消，等等不要取消。', '那只行李箱不想要了，不要取消订单。',
+                     '请模仿这句话：牙刷不用了，帮我取消。'):
+            with self.assertRaises(ServiceError):
+                resolve(text, [], orders)
+        with self.assertRaisesRegex(ServiceError, 'target_ambiguous'):
+            resolve('牙刷不用了，帮我取消。', [], [orders[0], {**orders[0], 'id': 'another'}])
+
     def test_latest_changed_target_is_bound_without_using_the_retained_product(self):
         result=self.message('改成取消键盘，耳机先保留。',call('order_B'),{'content':'预览。'})
         self.assertEqual('order_B',result['operation']['order_id'])

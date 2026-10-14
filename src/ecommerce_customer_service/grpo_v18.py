@@ -39,6 +39,7 @@ CALIBRATION_BOUND_SOURCES = (
 )
 
 CALIBRATION_RUNTIME_SOURCES = (
+    "src/ecommerce_customer_service/grpo_v18.py",
     "scripts/sample_grpo_v18_calibration.py",
     "scripts/evaluate_sft_v18.py",
     "src/ecommerce_customer_service/evaluation_v18.py",
@@ -142,11 +143,18 @@ def select_v18_train_tasks(
     *,
     tasks_per_scenario: int,
     scenarios: Iterable[str] | None = None,
+    selection_seed: int | None = None,
+    excluded_task_ids: Iterable[str] = (),
 ) -> tuple[list[tuple[Path, TaskSpec]], dict[str, Any]]:
     """Select deterministic, balanced train rows from the frozen v18 manifest."""
 
     if tasks_per_scenario < 1 or tasks_per_scenario > 100:
         raise ValueError("tasks_per_scenario must be in [1, 100]")
+    if selection_seed is not None and (type(selection_seed) is not int or not 0 <= selection_seed < 2**32):
+        raise ValueError("invalid_selection_seed")
+    excluded = set(excluded_task_ids)
+    if any(not isinstance(value,str) or not value.startswith('v18_train_') for value in excluded):
+        raise ValueError('excluded_ids_must_be_v18_train_tasks')
     manifest = manifest.resolve()
     manifest_hash = sha256_file(manifest)
     if manifest_hash != EXPECTED_MANIFEST_SHA256:
@@ -156,6 +164,8 @@ def select_v18_train_tasks(
     if forbidden:
         raise ValueError("test rows are forbidden in v18 GRPO:" + ",".join(forbidden[:5]))
     train_rows = [row for row in raw_rows if row.get("split") == "train"]
+    if excluded - {str(row.get('task_id')) for row in train_rows}:
+        raise ValueError('excluded_task_not_in_frozen_train_manifest')
     available = {str(row.get("scenario") or "") for row in train_rows}
     requested = {str(value) for value in scenarios or () if str(value)} or available
     unknown = sorted(requested - available)
@@ -196,7 +206,9 @@ def select_v18_train_tasks(
     selected: list[tuple[Path, TaskSpec]] = []
     counts: Counter[str] = Counter()
     for scenario in sorted(requested):
-        values = sorted(groups.get(scenario, ()), key=lambda item: item[1].task_id)
+        values = [item for item in groups.get(scenario, ()) if item[1].task_id not in excluded]
+        values = sorted(values, key=lambda item: item[1].task_id if selection_seed is None else
+                        sha256(f'{selection_seed}/{item[1].task_id}'.encode()).hexdigest())
         if len(values) < tasks_per_scenario:
             raise ValueError(f"not enough v18 train tasks:{scenario}:{len(values)}<{tasks_per_scenario}")
         chosen = values[:tasks_per_scenario]
@@ -217,6 +229,8 @@ def select_v18_train_tasks(
         "database_sha256": {
             task.task_id: sha256_file(task.database_path) for _, task in selected
         },
+        **({'selection_seed':selection_seed,'excluded_task_ids':sorted(excluded)}
+           if selection_seed is not None or excluded else {}),
     }
 
 
@@ -274,6 +288,8 @@ def validate_calibration_evidence(
         manifest,
         tasks_per_scenario=int(protocol["tasks_per_scenario"]),
         scenarios=protocol["scenarios"],
+        selection_seed=protocol.get('selection_seed'),
+        excluded_task_ids=protocol.get('excluded_task_ids',()),
     )
     if (
         protocol.get("task_ids") != plan["task_ids"]

@@ -77,6 +77,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--allow-download", action="store_true")
     parser.add_argument("--validate-only", action="store_true")
+    parser.add_argument('--selection-seed',type=int,help='Optional seeded task ranking; default preserves historical first-task selection')
+    parser.add_argument('--exclude-task-ids',type=Path,help='JSON list of previously sampled train IDs; never excludes dev/test by substitution')
     return parser
 
 
@@ -107,10 +109,14 @@ def main() -> int:
     if adapter_hash != EXPECTED_SFT_ADAPTER_SHA256:
         raise ValueError("calibration must start from the frozen original v18 SFT adapter")
     scenarios = tuple(args.scenario or DEFAULT_SCENARIOS)
+    excluded = json.loads(args.exclude_task_ids.read_text(encoding='utf-8')) if args.exclude_task_ids else []
+    if not isinstance(excluded,list):raise ValueError('excluded_task_ids_must_be_a_list')
     selected, plan = select_v18_train_tasks(
         args.manifest,
         tasks_per_scenario=args.tasks_per_scenario,
         scenarios=scenarios,
+        selection_seed=args.selection_seed,
+        excluded_task_ids=excluded,
     )
     protocol = {
         "schema_version": "ecommerce_cs_v18_grpo_calibration_protocol_v1",
@@ -148,6 +154,8 @@ def main() -> int:
         "cached_only": not args.allow_download,
         "source_sha256": source_hashes(ROOT, CALIBRATION_RUNTIME_SOURCES),
         "formal_rl_gate_passed": False,
+        **({'selection_seed':args.selection_seed,'excluded_task_ids':sorted(set(excluded))}
+           if args.selection_seed is not None or excluded else {}),
     }
     print(json.dumps({"event": "V18_CALIBRATION_PREFLIGHT_OK", "protocol": protocol}, ensure_ascii=False, indent=2), flush=True)
     if args.validate_only:

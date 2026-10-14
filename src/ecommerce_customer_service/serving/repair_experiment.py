@@ -112,6 +112,8 @@ def compare_runs(baseline: Path, candidate: Path) -> dict:
     controls=("case_sha256","case_ids","context_counter","context_budget","context_policy","recent_turns",
               "system_prompt_sha256","tools_sha256","source_sha256")
     if any(before[key]!=after[key] for key in controls): raise ValueError("nonpaired_repair_protocol")
+    if before.get('knowledge_index_sha256') != after.get('knowledge_index_sha256'):
+        raise ValueError('nonpaired_knowledge_index')
     old=json.loads((baseline/"artifact.json").read_text(encoding="utf-8"))
     new=json.loads((candidate/"artifact.json").read_text(encoding="utf-8"))
     if any(old[key]!=new[key] for key in ("base_revision","precision","template_sha256","vocab_sha256","generation")):

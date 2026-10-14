@@ -17,13 +17,15 @@ ALIASES = {
     "运动鞋": ("鞋子",), "电热水壶": ("水壶",), "电风扇": ("风扇",),
     "电饭煲": ("饭煲",), "双肩背包": ("背包",), "电磁炉": ("炉子",),
     "书桌": ("桌子",), "空气净化器": ("净化器",), "行车记录仪": ("记录仪",),
-    "电烤箱": ("烤箱",),
+    "电烤箱": ("烤箱",), "旅行箱": ("行李箱",),
 }
 PATTERNS = (
     r"^(?:请帮我|请|帮我|麻烦|我想|现在|改为|改成)?(?:取消|撤销)([^，,。！？?!]+)(?:[，,。！？?!].*)?$",
     r"^请处理(.+?)的取消申请[。！？?!]?$",
     r"^(.+?)(?:这单|这一单|订单)可以帮我取消吗[？?]?$",
     r"^我不想要(.+?)了[，,]请取消这单[。！!]?$",
+    r"^(.+?)不用了[，,](?:请帮我|帮我|请)取消[。！!]?$",
+    r"^那只(.+?)不想要了[，,](?:请)?取消订单[。！!]?$",
 )
 SUFFIX = re.compile(r"(?:的那一笔|那一笔|那笔|这一笔|这笔|这一单|这单|订单|。|\.)$")
 AMOUNT = re.compile(r"(?:金额\s*)?(\d+(?:\.\d{1,2})?)\s*元(?:的)?(?:那一笔|那笔|那单|这一笔)?$")
@@ -73,7 +75,7 @@ def resolve(text: str, previous_users: list[str], orders: list[dict[str, Any]]) 
     if len(candidates) != 1:
         raise ServiceError("target_ambiguous", 409)
     return {"order_id": candidates[0]["id"], "source": "user_request_and_fresh_owned_orders",
-            "order_version": candidates[0]["version"], "matching_version": "bounded_target_v1", "candidate_count": 1}
+            "order_version": candidates[0]["version"], "matching_version": "bounded_target_v2", "candidate_count": 1}
 
 
 def require_target(store, backend, customer: str, conversation: str, request: str, order: str) -> dict:

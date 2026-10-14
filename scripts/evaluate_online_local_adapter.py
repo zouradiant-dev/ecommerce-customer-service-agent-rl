@@ -15,6 +15,8 @@ from ecommerce_customer_service.serving.diagnostics import DiagnosticStore, OUTP
 from ecommerce_customer_service.serving.model import ModelOutputError, ModelServiceError
 from ecommerce_customer_service.serving.online_evaluation import run_suite
 from ecommerce_customer_service.serving.repair_experiment import rows
+from ecommerce_customer_service.serving.policy import PROFILES
+from ecommerce_customer_service.serving.knowledge import KnowledgeIndex
 
 
 class LocalChatModel:
@@ -50,6 +52,8 @@ def main():
     parser.add_argument('--cases',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--stage',choices=('baseline','candidate'),required=True)
+    parser.add_argument('--policy-profile',choices=PROFILES,default='binding_compact_v3')
+    parser.add_argument('--knowledge-file',type=Path)
     args=parser.parse_args()
     if args.output.exists(): raise FileExistsError('evaluation_output_exists')
     cases=rows(args.cases)
@@ -85,7 +89,8 @@ def main():
     client=LocalChatModel(TransformersCompleter(model,tokenizer,torch,generation,device='cuda:0',max_input_tokens=8192),
         identifier,DiagnosticStore(diagnostic_dir,capture_raw=True))
     result=run_suite(cases,args.output,mode='model',model=client,
-        context=ContextBuilder(counter=HFTokenCounter(tokenizer),max_input_tokens=8192,recent_turns=6),policy_profile='binding_compact_v3')
+        context=ContextBuilder(counter=HFTokenCounter(tokenizer),max_input_tokens=8192,recent_turns=6),
+        policy_profile=args.policy_profile,knowledge=KnowledgeIndex(args.knowledge_file) if args.knowledge_file else None)
     outcomes={path.parent.name:json.loads(path.read_text(encoding='utf-8'))['passed'] for path in args.output.glob('cases/*/result.json')}
     groups=sorted({case.get('regression_group','unspecified') for case in cases})
     result['by_regression_group']={group:{
