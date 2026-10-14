@@ -2,6 +2,8 @@
 
 **Project paper:** [English (primary)](PROJECT_PAPER_EN.md) | [中文](PROJECT_PAPER_ZH.md)
 
+**2026-10-14 真实双主线验证：** 同一 v4 协议的业务 dev 为 39/57→54/57，改善 15 题、回退 0 题；知识冻结原始评分 2/6→4/6，修正否定句误判后的事后辅助评分 3/6→5/6，二者分别保留。新 20 个 train 任务 ×4 次采样仍均为奖励 1，混合组比例 0%，不启动 GRPO。本轮只评测和采样，没有新训练或晋升候选。归档、252 个 SQLite 与 80 条奖励状态重放已核验，详见 [结果与 Bad Case](docs/dual-track-results-20261014.zh-CN.md)。
+
 **Agent 与 RL 双主线准备：** 已冻结独立的业务/知识 dev 评测与 train-only 奖励采样设计。复核发现 10 月 5 日原 v18 已采过 20 题 × 4 次，两种奖励均满分、组内差异为零；80 条轨迹的 CPU 工具/奖励重放一致。新增采样排除旧 20 题，不自动启动 GRPO。下一次先分别评测与采样，权重和历史成绩不改写。见 [证据、协议与执行步骤](docs/dual-track-agent-rl-20261014.zh-CN.md)。
 
 **2026-10-14 工程迭代：** 新增订单目标校验配置 `binding_guard_v4`、失效预览回复校正、实际模型输入防重叠及训练长度检查、只读 MCP gateway、可选版本化 BM25 知识检索和失败复核队列。已做本机工程与 MCP 协议验证，未更新 v18 权重或重跑真实模型成绩；知识库是演示说明，多 Agent routing 未实现。详见 [实现、启动与验证边界](docs/online-agent-improvements-20261014.zh-CN.md) 和 [六题轨迹复核](docs/online-repair-bad-case-review-20261014.zh-CN.md)。

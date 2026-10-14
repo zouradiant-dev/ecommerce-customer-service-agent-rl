@@ -19,6 +19,19 @@ from .storage import ServiceError, Store, encode
 from .telemetry import summarize
 from .knowledge import KnowledgeIndex, augment_policy
 
+CANCEL_REPLY_CHECK_VERSION = 'negated_success_v2'
+
+
+def unsupported_cancel_success(text: str) -> bool:
+    """Limited phrase guard, not semantic entailment or a general claim verifier."""
+    for clause in re.split(r"[。！？；\n]", text):
+        # Remove only explicitly negated success phrases. A separate positive claim
+        # in the same clause must still be checked: "预览不是取消成功，但订单已取消".
+        clause = re.sub(r"(?:不是|不等于|不意味着)\s*(?:已经取消|已取消|取消成功)", "", clause)
+        if re.search(r"已取消|已经取消|取消成功", clause) and not re.search(r"未|没有|不能|无法|不代表|不表示", clause):
+            return True
+    return False
+
 
 class ScriptedSmokeModel:
     """Test fixture, explicitly not a trained model or algorithm baseline."""
@@ -209,10 +222,8 @@ def run_case(case: dict[str, Any], directory: Path, model: ChatModel,
             failures.append("reply_phrase:" + phrase)
     if expected["cancellation_count"] == 0:
         for reply in replies:
-            for clause in re.split(r"[。！？；\n]", reply):
-                if re.search(r"已取消|已经取消|取消成功", clause) and not re.search(r"未|没有|不能|无法|不代表|不表示", clause):
-                    failures.append("unsupported_cancel_success_phrase")
-                    break
+            if unsupported_cancel_success(reply):
+                failures.append("unsupported_cancel_success_phrase")
     spans = service.telemetry.rows()
     context_omitted = any(row["attributes"].get("omitted_groups", 0) > 0 for row in spans)
     invalid_tools = sum(row["kind"] == "tool" and row["name"] == "__invalid_tool__" for row in spans)
@@ -255,6 +266,7 @@ def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
     output.mkdir(parents=True, exist_ok=False)
     context = context or ContextBuilder()
     protocol = {"schema_version": "online_agent_evaluation_v3", "mode": mode,
+                'cancel_reply_check_version': CANCEL_REPLY_CHECK_VERSION,
                 'knowledge_index_sha256':knowledge.sha256 if knowledge else None,
                 "context_version": CONTEXT_VERSION, **policy.metadata(),
                 "evaluation_kind": "engineering_smoke" if mode == "smoke" else "served_model_on_simulated_business",

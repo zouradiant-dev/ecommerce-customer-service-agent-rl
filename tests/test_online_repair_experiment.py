@@ -116,6 +116,15 @@ class RepairExperimentTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'nonpaired_knowledge'):
                 compare_runs(before, after)
 
+    def test_paired_comparison_rejects_different_reply_check_versions(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            before, after = self.runs(Path(temporary))
+            summary = json.loads((after / 'summary.json').read_text(encoding='utf-8'))
+            summary['cancel_reply_check_version'] = 'negated_success_v2'
+            (after / 'summary.json').write_text(json.dumps(summary), encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'nonpaired_cancel_reply'):
+                compare_runs(before, after)
+
     def test_completed_report_endpoint_is_read_only_and_uses_existing_auth(self):
         def forbidden(*args): raise AssertionError('report must not generate or train')
         report={'schema_version':'online_repair_pilot_v1','experiment_complete':True,'candidate_promoted':False}
