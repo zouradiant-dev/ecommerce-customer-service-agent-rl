@@ -22,8 +22,10 @@ class InferenceServer(ThreadingHTTPServer):
 
     def __init__(self, address: tuple[str, int], generator: Any, *, api_key: str = "", precision: str = "bf16",
                  diagnostics_dir: Path | None = None, capture_invalid_output: bool = False,
-                 repair_experiment_report: dict | None = None):
+                 repair_experiment_report: dict | None = None, artifact_identity: dict | None = None):
         self.generator, self.api_key, self.precision = generator, api_key, precision
+        self.artifact_identity = dict(artifact_identity or {})
+        self.model_id = self.artifact_identity.get('model_id', MODEL_ID)
         self.repair_experiment_report = repair_experiment_report
         if capture_invalid_output and diagnostics_dir is None:
             raise ValueError("raw_capture_requires_private_diagnostics_directory")
@@ -41,7 +43,7 @@ class InferenceServer(ThreadingHTTPServer):
                 "diagnostics_version": DIAGNOSTICS_VERSION,
                 "diagnostics_enabled": self.diagnostics is not None,
                 "raw_failure_capture_enabled": bool(self.diagnostics and self.diagnostics.capture_raw),
-                "online_quality_verified": False, **online_protocol_metadata()}
+                "online_quality_verified": False, **online_protocol_metadata(), **self.artifact_identity}
 
 
 class InferenceHandler(BaseHTTPRequestHandler):
@@ -73,7 +75,7 @@ class InferenceHandler(BaseHTTPRequestHandler):
         elif self.path == "/healthz":
             self.reply(200, self.server.metadata())
         elif self.path == "/v1/models":
-            self.reply(200, {"object": "list", "data": [{"id": MODEL_ID, "object": "model", "owned_by": "local"}]})
+            self.reply(200, {"object": "list", "data": [{"id": self.server.model_id, "object": "model", "owned_by": "local"}]})
         elif self.path == "/v1/repair-experiment" and self.server.repair_experiment_report is not None:
             self.reply(200, self.server.repair_experiment_report)
         elif self.path.startswith("/v1/diagnostics/") and self.server.diagnostics:
@@ -121,7 +123,7 @@ class InferenceHandler(BaseHTTPRequestHandler):
             allowed = {"model", "messages", "tools", "tool_choice", "temperature", "max_tokens", "stream"}
             if not isinstance(payload, dict) or set(payload) - allowed:
                 raise ValueError("unsupported_parameters")
-            if payload.get("model") != MODEL_ID:
+            if payload.get("model") != self.server.model_id:
                 raise ValueError("model_id_mismatch")
             if payload.get("stream", False) is not False or payload.get("temperature", 0) != 0:
                 raise ValueError("only_nonstreaming_greedy_generation_supported")
@@ -163,7 +165,7 @@ class InferenceHandler(BaseHTTPRequestHandler):
             message = {k: result[k] for k in ("role", "content", "tool_calls") if k in result}
             prompt = result["local_input_tokens"]
             completion = result["local_generated_tokens"]
-            self.reply(200, {"id": "chatcmpl_" + uuid4().hex, "object": "chat.completion", "model": MODEL_ID,
+            self.reply(200, {"id": "chatcmpl_" + uuid4().hex, "object": "chat.completion", "model": self.server.model_id,
                             "choices": [{"index": 0, "message": message,
                                          "finish_reason": "tool_calls" if message.get("tool_calls") else "stop"}],
                             "usage": {"prompt_tokens": prompt, "completion_tokens": completion,

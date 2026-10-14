@@ -132,7 +132,7 @@ class RecordingReference:
         return response
 
 
-def execute_reference(case: dict, directory: Path, counter=None, *, policy_profile='binding_compact_v3') -> tuple[list[dict], dict]:
+def execute_reference(case: dict, directory: Path, counter=None, *, policy_profile='binding_compact_v3', knowledge=None) -> tuple[list[dict], dict]:
     if case["split"] not in {"train","dev"}: raise ValueError("sealed_test_is_not_replayed_for_supervision")
     reference = RecordingReference(case)
     ordinal = 0
@@ -141,11 +141,17 @@ def execute_reference(case: dict, directory: Path, counter=None, *, policy_profi
         ordinal += 1
         return UUID(hex=sha256(f"{case['case_id']}/{ordinal}".encode()).hexdigest()[:32])
     context = ContextBuilder(counter=counter,max_input_tokens=8192 if counter else 32768)
-    with patch("ecommerce_customer_service.serving.service.uuid4",side_effect=identifier), patch("time.time",return_value=1700000000.0):
-        result = run_case(case,directory,reference,context,policy_profile=policy_profile)
+    # The old fixture clock is in 2023; versioned demo policies start in 2026.
+    # Freeze knowledge references within their effective interval instead.
+    reference_time = 1791936000.0 if knowledge else 1700000000.0
+    with patch("ecommerce_customer_service.serving.service.uuid4",side_effect=identifier), patch("time.time",return_value=reference_time):
+        result = run_case(case,directory,reference,context,policy_profile=policy_profile,knowledge=knowledge)
     if not result["passed"] or reference.responses:
         raise ValueError("reference_validation_failed:"+case["case_id"]+":"+str(result["failures"]))
     policy = get_policy(policy_profile)
+    if knowledge:
+        from .knowledge import augment_policy
+        policy = augment_policy(policy)
     for row in reference.samples:
         failures = validate_training_row(row)
         if failures: raise ValueError("invalid_reference_prefix:"+str(failures))

@@ -14,7 +14,7 @@ def fingerprint(messages, tools, tokenizer):
     return sha256(json.dumps(ids, separators=(',', ':')).encode()).hexdigest()
 
 
-def audit(rows_by_split, tokenizer, *, sealed_cases=(), policy_profile='binding_compact_v3'):
+def audit(rows_by_split, tokenizer, *, sealed_cases=(), policy_profile='binding_compact_v3', knowledge=None):
     index = defaultdict(lambda: defaultdict(list))
     counts = {}
     for split, rows in rows_by_split.items():
@@ -26,6 +26,9 @@ def audit(rows_by_split, tokenizer, *, sealed_cases=(), policy_profile='binding_
             sha = fingerprint(row['messages'][:-1], row['tools'], tokenizer)
             index[sha][split].append(row.get('id', row.get('task_id')))
     policy = get_policy(policy_profile)
+    if knowledge:
+        from .knowledge import augment_policy
+        policy = augment_policy(policy)
     context = ContextBuilder(counter=HFTokenCounter(tokenizer))
     counts['test_first_turns'] = len(sealed_cases)
     for case in sealed_cases:

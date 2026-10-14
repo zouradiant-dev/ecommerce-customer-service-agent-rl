@@ -251,6 +251,15 @@ def run_case(case: dict[str, Any], directory: Path, model: ChatModel,
 def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
               model: ChatModel | None = None, context: ContextBuilder | None = None,
               policy_profile: str = "baseline_v1", knowledge: KnowledgeIndex | None = None) -> dict[str, Any]:
+    return _run_suite(cases, output, mode=mode, model=model, context=context,
+                      policy_profile=policy_profile, knowledge=knowledge)
+
+
+def _run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
+               model: ChatModel | None = None, context: ContextBuilder | None = None,
+               policy_profile: str = "baseline_v1", knowledge: KnowledgeIndex | None = None,
+               evaluation_split: str = "dev", progress: bool = False) -> dict[str, Any]:
+    """Shared execution; sealed test is entered only by its separately gated CLI."""
     if mode not in {"smoke", "model"} or (mode == "model" and model is None):
         raise ValueError("invalid_evaluation_mode")
     if not cases:
@@ -258,7 +267,7 @@ def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
     ids = [case["case_id"] for case in cases]
     if len(set(ids)) != len(ids) or any(not re.fullmatch(r"[A-Za-z0-9_-]{1,100}", value) for value in ids):
         raise ValueError("invalid_or_duplicate_case_id")
-    if any(case.get("split") != "dev" for case in cases):
+    if evaluation_split not in {"dev", "test"} or any(case.get("split") != evaluation_split for case in cases):
         raise ValueError("this_regression_runner_accepts_dev_only; use_a_separate_frozen_test_protocol")
     policy = get_policy(policy_profile)
     if knowledge:policy=augment_policy(policy)
@@ -266,6 +275,7 @@ def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
     output.mkdir(parents=True, exist_ok=False)
     context = context or ContextBuilder()
     protocol = {"schema_version": "online_agent_evaluation_v3", "mode": mode,
+                'evaluation_split': evaluation_split,
                 'cancel_reply_check_version': CANCEL_REPLY_CHECK_VERSION,
                 'knowledge_index_sha256':knowledge.sha256 if knowledge else None,
                 "context_version": CONTEXT_VERSION, **policy.metadata(),
@@ -284,9 +294,15 @@ def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
                                  "backend.py", "storage.py", "online_cases.py", "api.py", "policy.py", "target_binding.py", "knowledge.py")}}
     write_json(output / "protocol.json", protocol)
     results = []
-    for case in cases:
+    for index, case in enumerate(cases):
+        if progress:
+            print(encode({'event':'ONLINE_CASE_START','split':evaluation_split,
+                          'index':index+1,'total':len(cases),'case_id':case['case_id']}),flush=True)
         active_model = ScriptedSmokeModel(case["smoke_responses"]) if mode == "smoke" else model
         results.append(run_case(case, output / "cases" / case["case_id"], active_model, context, policy_profile=policy_profile,knowledge=knowledge))
+        if progress:
+            print(encode({'event':'ONLINE_CASE_DONE','index':index+1,'total':len(cases),
+                          'passed':results[-1]['passed']}),flush=True)
         # Fail fast on a broken model endpoint, rather than buying many failing calls.
         if mode == "model" and results[-1]["model_infrastructure_failures"]:
             break
@@ -318,4 +334,10 @@ def run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
               "| 用例 | 通过 | 模型调用 | 工具调用 | 失败 |", "|---|---|---:|---:|---|"]
     report += [f"| {row['case_id']} | {row['passed']} | {row['model_calls']} | {row['tool_calls']} | {'; '.join(row['failures'])} |" for row in results]
     (output / "report.md").write_text("\n".join(report)+"\n", encoding="utf-8")
+    if evaluation_split == 'test':
+        summary['evaluation_kind'] = 'sealed_synthetic_acceptance_once'
+        summary['limitations'][0] = 'synthetic_shared_scenario_families_not_independent_distribution'
+        write_json(output / 'summary.json', summary)
+        (output / 'report.md').write_text('\n'.join(report).replace('开发回归报告','封存合成验收报告')+
+            '\n\n这是冻结候选后的一次合成验收，不是实际业务分布上的独立泛化证据。\n',encoding='utf-8')
     return summary

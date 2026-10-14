@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from hashlib import sha256
 import json
 import math
 from pathlib import Path
@@ -56,6 +57,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="deterministically sample at most this many dev rows for smoke runs",
     )
     parser.add_argument("--seed", type=int, default=7)
+    parser.add_argument("--shuffle-training-rows", action="store_true", help="Compatibility flag: training always uses one seeded shuffle, matching the legacy trainer")
     parser.add_argument("--device", type=int, default=0)
     parser.add_argument("--load-in-4bit", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--bf16", action=argparse.BooleanOptionalAction, default=True)
@@ -139,6 +141,14 @@ def encode_rows(rows: list[dict[str, Any]], tokenizer: Any, args: argparse.Names
     return encoded, skipped
 
 
+def prepare_training_examples(train_rows, dev_rows, tokenizer, args):
+    """Encode and apply the legacy seeded shuffle exactly once."""
+    train_examples, train_skipped = encode_rows(train_rows, tokenizer, args)
+    dev_examples, dev_skipped = encode_rows(dev_rows, tokenizer, args) if dev_rows else ([], 0)
+    random.Random(args.seed).shuffle(train_examples)
+    return train_examples, train_skipped, dev_examples, dev_skipped
+
+
 def main() -> int:
     args = build_parser().parse_args()
     if args.init_adapter and args.resume_from:
@@ -188,9 +198,9 @@ def main() -> int:
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
 
-    train_examples, train_skipped = encode_rows(train_rows, tokenizer, args)
-    dev_examples, dev_skipped = encode_rows(dev_rows, tokenizer, args) if dev_rows else ([], 0)
-    random.Random(args.seed).shuffle(train_examples)
+    train_examples, train_skipped, dev_examples, dev_skipped = prepare_training_examples(
+        train_rows, dev_rows, tokenizer, args
+    )
 
     def collate(examples: list[dict[str, Any]]) -> dict[str, Any]:
         length = max(len(example["input_ids"]) for example in examples)
@@ -207,6 +217,7 @@ def main() -> int:
             "labels": torch.tensor(labels, dtype=torch.long),
         }
 
+    training_order = [example['id'] for example in train_examples]
     train_loader = DataLoader(train_examples, batch_size=args.batch_size, shuffle=False, collate_fn=collate)
     dev_loader = DataLoader(dev_examples, batch_size=args.batch_size, shuffle=False, collate_fn=collate) if dev_examples else None
 
@@ -334,6 +345,11 @@ def main() -> int:
         )
 
     args.output.mkdir(parents=True, exist_ok=True)
+    (args.output / 'training-order.json').write_text(json.dumps({
+        'shuffle_once': True, 'seed': args.seed,
+        'ordered_example_ids': training_order,
+        'order_sha256': sha256(json.dumps(training_order, separators=(',', ':')).encode()).hexdigest(),
+    }, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
     trace: list[dict[str, Any]] = []
 
     def model_inputs(batch: dict[str, Any]) -> dict[str, Any]:
@@ -500,6 +516,8 @@ def main() -> int:
             else "parameter_grad"
         ),
         "train_rows": len(train_examples),
+        "training_order_sha256": sha256(json.dumps(training_order, separators=(',', ':')).encode()).hexdigest(),
+        "training_rows_shuffled_once": True,
         "dev_rows": len(dev_examples),
         "dev_source_rows": dev_source_rows,
         "train_skipped": train_skipped,
