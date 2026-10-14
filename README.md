@@ -2,6 +2,8 @@
 
 **Project paper:** [English (primary)](PROJECT_PAPER_EN.md) | [中文](PROJECT_PAPER_ZH.md)
 
+**2026-10-14 工程迭代：** 新增订单目标校验配置 `binding_guard_v4`、失效预览回复校正、实际模型输入防重叠及训练长度检查、只读 MCP gateway、可选版本化 BM25 知识检索和失败复核队列。已做本机工程与 MCP 协议验证，未更新 v18 权重或重跑真实模型成绩；知识库是演示说明，多 Agent routing 未实现。详见 [实现、启动与验证边界](docs/online-agent-improvements-20261014.zh-CN.md) 和 [六题轨迹复核](docs/online-repair-bad-case-review-20261014.zh-CN.md)。
+
 **在线诊断与对照：** 已分析十个预览缺失 Bad Case，增加可切换提示词/工具描述的策略配置及十二个新商品/订单 dev 用例。完整对照仍为 5/15，扩展集合从 7/12 到 8/12 但出现回退，因此网页保留原方案，尚未重训。结果、失败实验和后续数据设计见 [在线策略对照记录](docs/online-policy-ablation-20261013.zh-CN.md)。
 
 **真实 SFT 已接入：** v18 最终 SFT 已在 Featurize RTX 4090 24GB 上运行 BF16 推理，完成本机网页真实订单查询联调。首轮十五个模拟业务多轮 dev 用例通过 5/15；取消预览生成仍需调优，不能把接通模型当成任务效果达标。见 [首次真实回归](docs/v18-online-first-real-evaluation-20261013.zh-CN.md) 与 [接入步骤](docs/v18-sft-online-deployment.zh-CN.md)。

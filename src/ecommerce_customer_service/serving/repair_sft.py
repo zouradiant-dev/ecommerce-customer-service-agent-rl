@@ -27,6 +27,12 @@ REQUESTS = {
     "dev": ("请处理{product}的取消申请。", "{product}这单可以帮我取消吗？"),
     "test": ("想撤销{product}这笔订单，请帮忙处理。", "计划取消{product}，麻烦查查这笔。"),
 }
+HANDOFF_REQUESTS = {
+    'train': ('请转人工客服处理。','帮我接人工客服。','我需要人工帮助。','麻烦安排人工跟进。',
+              '请让工作人员处理。','我要和人工客服沟通。','请把咨询交给人工。','转给人工服务人员吧。'),
+    'dev': ('这件事请人工客服接手。','可以由人工继续处理吗？'),
+    'test': ('希望与客服工作人员直接沟通。','请安排人工专员协助这次咨询。'),
+}
 
 
 def prepare(order_id: str, *, listing: bool = True) -> list[dict]:
@@ -96,7 +102,7 @@ def episode(split: str, kind: str, variant: int, seed: int) -> dict:
         steps = [message(f"先查询{product}订单，不要操作。"),checkpoint(0),message(request),confirm()]
         reference = [tool("list_orders"),tool("get_order",order_id=target),say("已查询订单，暂不创建取消申请。")]+prepare(target,listing=False)
     elif kind == "handoff":
-        steps, reference, cancelled = [message("请转人工客服处理。")], [tool("escalate_to_human",reason="用户主动要求人工帮助")], None
+        steps, reference, cancelled = [message(HANDOFF_REQUESTS[split][variant % len(HANDOFF_REQUESTS[split])])], [tool("escalate_to_human",reason="用户主动要求人工帮助")], None
     states = {order["id"]: order["status"] for order in orders}
     amount = next((order["paid_cents"] if order["status"]=="paid" else 0 for order in orders if order["id"]==cancelled),0)
     if cancelled: states[cancelled] = "cancelled"
@@ -126,7 +132,7 @@ class RecordingReference:
         return response
 
 
-def execute_reference(case: dict, directory: Path, counter=None) -> tuple[list[dict], dict]:
+def execute_reference(case: dict, directory: Path, counter=None, *, policy_profile='binding_compact_v3') -> tuple[list[dict], dict]:
     if case["split"] not in {"train","dev"}: raise ValueError("sealed_test_is_not_replayed_for_supervision")
     reference = RecordingReference(case)
     ordinal = 0
@@ -136,10 +142,10 @@ def execute_reference(case: dict, directory: Path, counter=None) -> tuple[list[d
         return UUID(hex=sha256(f"{case['case_id']}/{ordinal}".encode()).hexdigest()[:32])
     context = ContextBuilder(counter=counter,max_input_tokens=8192 if counter else 32768)
     with patch("ecommerce_customer_service.serving.service.uuid4",side_effect=identifier), patch("time.time",return_value=1700000000.0):
-        result = run_case(case,directory,reference,context,policy_profile="binding_compact_v3")
+        result = run_case(case,directory,reference,context,policy_profile=policy_profile)
     if not result["passed"] or reference.responses:
         raise ValueError("reference_validation_failed:"+case["case_id"]+":"+str(result["failures"]))
-    policy = get_policy("binding_compact_v3")
+    policy = get_policy(policy_profile)
     for row in reference.samples:
         failures = validate_training_row(row)
         if failures: raise ValueError("invalid_reference_prefix:"+str(failures))

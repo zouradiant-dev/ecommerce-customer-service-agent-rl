@@ -17,7 +17,8 @@ _current: ContextVar[Any] = ContextVar("online_agent_span", default=None)
 ALLOWED = {"conversation_id", "request_id", "operation_id", "tool_call_id", "order_id", "model_id",
            "prompt_sha256", "tools_sha256", "counter", "context_version", "context_policy", "input_budget_units", "budget_limit",
            "kept_groups", "omitted_groups", "digest_entries", "input_tokens", "output_tokens", "finish_reason",
-           "outcome", "error_code", "exception_type", "handoff", "attempt", "response_model", "http_status", "diagnostic_id"}
+           "outcome", "error_code", "exception_type", "handoff", "attempt", "response_model", "http_status", "diagnostic_id",
+           "index_sha256", "hit_count"}
 
 
 def current_span() -> Any:

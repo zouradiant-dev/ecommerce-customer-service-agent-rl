@@ -17,6 +17,7 @@ from ecommerce_customer_service.serving.context_builder import ContextBuilder, l
 from ecommerce_customer_service.serving.runtime import exclusive_runtime
 from ecommerce_customer_service.serving.service import CustomerService
 from ecommerce_customer_service.serving.storage import Store
+from ecommerce_customer_service.serving.knowledge import KnowledgeIndex
 
 
 def main() -> int:
@@ -35,7 +36,8 @@ def main() -> int:
     parser.add_argument("--context-budget", type=int, default=8192, help="Input token budget, or conservative estimate without tokenizer")
     parser.add_argument("--recent-turns", type=int, default=6)
     parser.add_argument("--context-policy", choices=["structured", "full-history"], default="structured")
-    parser.add_argument("--policy-profile", choices=PROFILES, default="baseline_v1")
+    parser.add_argument("--policy-profile", choices=PROFILES, default="binding_guard_v4")
+    parser.add_argument("--knowledge-file",type=Path,help="Optional versioned knowledge JSONL; demo corpus is not enterprise policy")
     args = parser.parse_args()
     if args.mode == "model" and not args.model:
         parser.error("--mode model requires --model")
@@ -58,7 +60,9 @@ def serve(args: argparse.Namespace) -> int:
              if args.mode == "model" else None)
     counter = load_token_counter(args.tokenizer_path) if args.tokenizer_path else None
     context = ContextBuilder(counter=counter, max_input_tokens=args.context_budget, recent_turns=args.recent_turns, policy=args.context_policy)
-    service = CustomerService(Store(args.data_dir / "sessions.sqlite"), backend, model, context_builder=context, policy_profile=args.policy_profile)
+    service = CustomerService(Store(args.data_dir / "sessions.sqlite"), backend, model, context_builder=context,
+                              policy_profile=args.policy_profile,
+                              knowledge=KnowledgeIndex(args.knowledge_file) if args.knowledge_file else None)
     recovered = service.recover()
     demo_accounts = ({"alice": "customer_alice", "bob": "customer_bob"}
                      if args.backend == "mock" and args.auth_file is None

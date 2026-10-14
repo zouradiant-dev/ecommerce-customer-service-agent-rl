@@ -1,4 +1,4 @@
-"""Versioned prompt/description ablations; never change tools or authorization."""
+"""Historical prompt ablations plus a separately identified target guard profile."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -9,7 +9,7 @@ from .model import ONLINE_PROTOCOL, SYSTEM_PROMPT, tool_schemas
 from .storage import encode
 
 FACTORIAL_PROFILES = ("baseline_v1", "binding_prompt_v2", "binding_tools_v2", "binding_combined_v2")
-PROFILES = FACTORIAL_PROFILES + ("binding_compact_v3",)
+PROFILES = FACTORIAL_PROFILES + ("binding_compact_v3", "binding_guard_v4")
 
 BINDING_PROMPT = """你是电商售后助手，按真实工具结果处理当前用户的最新需求。身份已经由服务端认证，无需姓名或手机号。
 先区分用户是在查询、要求取消、撤回/改目标，还是要求人工；仅查询或明确不要操作时，不创建取消申请。
@@ -58,6 +58,8 @@ def get_policy(name: str = "baseline_v1") -> Policy:
         for schema in schemas:
             function = schema["function"]
             function["description"] = DESCRIPTIONS.get(function["name"], function["description"])
-    prompt = (COMPACT_PROMPT if name == "binding_compact_v3" else
+    prompt = (COMPACT_PROMPT + "\n服务端校验订单目标；目标不明确、无匹配或多匹配时先澄清，不反复重试预览。"
+              "每条新消息都会作废旧申请，继续处理须创建新的有效预览；不得声称失效申请仍可确认。"
+              if name == "binding_guard_v4" else COMPACT_PROMPT if name == "binding_compact_v3" else
               BINDING_PROMPT if name in {"binding_prompt_v2", "binding_combined_v2"} else SYSTEM_PROMPT)
     return Policy(name, prompt, schemas)

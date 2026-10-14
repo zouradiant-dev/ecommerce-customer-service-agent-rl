@@ -185,6 +185,11 @@ class OnlineHandler(BaseHTTPRequestHandler):
         service = self.server.service
         if not post and path == "/api/orders":
             result = service.orders(customer)
+        elif not post and len(parts)==3 and parts[:2]==['api','orders']:
+            result = service.order(customer,parts[2])
+        elif post and path == '/api/knowledge/search':
+            self._fields(body,{'query'})
+            result = service.search_policies(body['query'])
         elif post and path == "/api/conversations":
             self._fields(body, set())
             result = service.create_conversation(customer)

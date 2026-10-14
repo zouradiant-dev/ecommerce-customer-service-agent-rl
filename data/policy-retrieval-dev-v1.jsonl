@@ -1,0 +1,4 @@
+{"case_id":"refund-pending","split":"dev","query":"退款处理中是否到账？","expected_citations":["refund-state@1"]}
+{"case_id":"cancel-shipped","split":"dev","query":"已发货订单能直接取消吗？","expected_citations":["cancel-preview@1"]}
+{"case_id":"human-takeover","split":"dev","query":"人工客服接管后自动操作怎么办？","expected_citations":["handoff@1"]}
+{"case_id":"unknown-topic","split":"dev","query":"xyzabc987","expected_citations":[]}
