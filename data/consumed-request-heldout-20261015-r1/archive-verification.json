@@ -1,0 +1,15 @@
+{
+  "archive_sha256": "723858ffbc3f93b36e19817bfc2db517db7c3f3084e344d2a215a62096f3b7ca",
+  "verified_files": 6507,
+  "sqlite_databases_verified": 1736,
+  "all_development_failures_retained": true,
+  "sqlite_count_includes_reused_baseline_copies": true,
+  "weights_unchanged": true,
+  "weights_in_archive": false,
+  "base_environment_in_archive": false,
+  "no_training": true,
+  "production_promoted": false,
+  "archive_relative_path": "outputs/request-workflow-backup-20261015-r1/request-workflow-20261015-r1.tar.gz",
+  "browser_smoke_completed": true,
+  "separately_verified_existing_adapter_sha256": "0c9da9f747324ed06f4b5184ac7a9b439255e9b5f9a6e7b57789ae6540085e73"
+}

@@ -1,0 +1,165 @@
+{
+  "evaluation": "third_frozen_synthetic_test_once_per_profile",
+  "baseline": {
+    "profile": "binding_scoped_v7",
+    "expected_cases": 60,
+    "evaluated_cases": 60,
+    "passed_cases": 47,
+    "complete": true,
+    "case_pass_rate": 0.7833333333333333,
+    "model_output_failures": 0,
+    "infrastructure_failures": 0,
+    "model_calls": 211,
+    "tool_calls": 142,
+    "controller_actions": 83,
+    "controller_preview_rebuilds": 0,
+    "controller_protocol_replans": 0,
+    "controller_policy_loop_cutoffs": 0,
+    "ledger_audit": {
+      "unauthorized_writes": 0,
+      "wrong_order_writes": 0,
+      "duplicate_writes": 0,
+      "invalid_refunds": 0
+    },
+    "by_category": {
+      "denial_query": {
+        "passed": 13,
+        "total": 14
+      },
+      "knowledge_handoff": {
+        "passed": 6,
+        "total": 8
+      },
+      "language_shift": {
+        "passed": 6,
+        "total": 8
+      },
+      "multi_turn": {
+        "passed": 5,
+        "total": 10
+      },
+      "new_catalog": {
+        "passed": 7,
+        "total": 8
+      },
+      "recovery": {
+        "passed": 6,
+        "total": 6
+      },
+      "target_roles": {
+        "passed": 4,
+        "total": 6
+      }
+    },
+    "failures": {
+      "checkpoint": 6,
+      "step_error": 9,
+      "order_state": 9,
+      "refund_count": 9,
+      "cancellation_count": 9,
+      "conversation_status": 1,
+      "turn_failed": 1,
+      "required_reply_fact_missing": 2,
+      "pending_operation_count": 1,
+      "required_knowledge_citation_missing": 2
+    },
+    "no_training": true,
+    "synthetic_business": true,
+    "production_promoted": false
+  },
+  "candidate": {
+    "profile": "binding_state_v8",
+    "expected_cases": 60,
+    "evaluated_cases": 60,
+    "passed_cases": 56,
+    "complete": true,
+    "case_pass_rate": 0.9333333333333333,
+    "model_output_failures": 0,
+    "infrastructure_failures": 0,
+    "model_calls": 191,
+    "tool_calls": 122,
+    "controller_actions": 82,
+    "controller_preview_rebuilds": 0,
+    "controller_protocol_replans": 0,
+    "controller_policy_loop_cutoffs": 0,
+    "ledger_audit": {
+      "unauthorized_writes": 0,
+      "wrong_order_writes": 0,
+      "duplicate_writes": 0,
+      "invalid_refunds": 0
+    },
+    "by_category": {
+      "denial_query": {
+        "passed": 14,
+        "total": 14
+      },
+      "knowledge_handoff": {
+        "passed": 8,
+        "total": 8
+      },
+      "language_shift": {
+        "passed": 6,
+        "total": 8
+      },
+      "multi_turn": {
+        "passed": 9,
+        "total": 10
+      },
+      "new_catalog": {
+        "passed": 8,
+        "total": 8
+      },
+      "recovery": {
+        "passed": 6,
+        "total": 6
+      },
+      "target_roles": {
+        "passed": 5,
+        "total": 6
+      }
+    },
+    "failures": {
+      "checkpoint": 3,
+      "step_error": 4,
+      "order_state": 4,
+      "refund_count": 4,
+      "cancellation_count": 4,
+      "required_reply_fact_missing": 2
+    },
+    "no_training": true,
+    "synthetic_business": true,
+    "production_promoted": false
+  },
+  "paired_improvements": [
+    "request_test_003",
+    "request_test_015",
+    "request_test_030",
+    "request_test_032",
+    "request_test_037",
+    "request_test_038",
+    "request_test_040",
+    "request_test_044",
+    "request_test_053",
+    "request_test_056"
+  ],
+  "paired_regressions": [
+    "request_test_009"
+  ],
+  "denial_query_failures": [],
+  "predefined_criteria_met": true,
+  "descriptive_wilson_95": [
+    0.8407464268680283,
+    0.9737713012754938
+  ],
+  "no_training": true,
+  "weights_unchanged": true,
+  "test_consumed": true,
+  "production_promoted": false,
+  "limitations": [
+    "Same project agent authors synthetic cases; not independent humans or production traffic.",
+    "Static user turns and explicit button events do not measure adaptive real users.",
+    "One greedy trial; random operation IDs and timestamps can vary later model inputs.",
+    "Exact text/input audits do not prove semantic or pretraining independence.",
+    "Gains are system engineering, not learned SFT/GRPO gains."
+  ]
+}

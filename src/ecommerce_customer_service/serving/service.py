@@ -249,6 +249,17 @@ class CustomerService:
             expected['search_policies']={'query'}
         if name not in expected or not isinstance(arguments, dict) or set(arguments) != expected[name]:
             raise ServiceError("tool_not_allowed_or_invalid_arguments")
+        if self.policy.name == 'binding_state_v8' and name == 'escalate_to_human':
+            from .request_workflow import current
+            from .policy_evidence import handoff_requested
+            _,text=current(self.store,customer,conversation,request)
+            if not handoff_requested(text):raise ServiceError('handoff_not_requested',409)
+        if self.policy.name == 'binding_state_v8' and self.knowledge is not None and name in {'preview_cancel','escalate_to_human'}:
+            from .request_workflow import current
+            from .policy_evidence import route
+            payload,text=current(self.store,customer,conversation,request)
+            if route(text,payload['binding']) is not None:
+                raise ServiceError('target_needs_clarification' if name=='preview_cancel' else 'handoff_not_requested',409)
         if self.policy.name == 'binding_scoped_v7' and self.knowledge is not None and name in {'preview_cancel','escalate_to_human'}:
             from .policy_answer import route
             with self.store.transaction() as db:
@@ -265,13 +276,25 @@ class CustomerService:
                 from .intent_target import guidance
                 users = [m['content'] for m in self.store.model_history(customer, conversation) if m['role']=='user']
                 listing = {**listing, 'request_binding': guidance(users[-1], users[:-1], listing['orders'])}
+            if self.policy.name == 'binding_state_v8':
+                from .request_workflow import current
+                from .order_facts import enrich
+                payload,_=current(self.store,customer,conversation,request)
+                listing={**listing,'orders':[enrich(r) for r in listing['orders']], 'request_binding':payload['binding']}
             return listing
         if name == "search_policies":
             return self.search_policies(arguments['query'])
         if name == "get_order":
-            return self.backend.get_order(customer, identifier(arguments["order_id"]))
+            result=self.backend.get_order(customer, identifier(arguments["order_id"]))
+            if self.policy.name == 'binding_state_v8' and isinstance(result.get('order'),dict):
+                from .order_facts import enrich
+                result={**result,'order':enrich(result['order'])}
+            return result
         if name == "preview_cancel":
             evidence = None
+            if self.policy.name == 'binding_state_v8':
+                from .request_workflow import require_target as require_workflow_target
+                evidence=require_workflow_target(self.store,self.backend,customer,conversation,request,arguments['order_id'])
             if self.policy.name in {"binding_guard_v4", "binding_grounded_v5", "binding_catalog_v6", "binding_scoped_v7"}:
                 evidence = require_target(self.store, self.backend, customer, conversation, request, arguments["order_id"],
                                           grounded=self.policy.name in {"binding_grounded_v5", "binding_catalog_v6"},
@@ -370,6 +393,18 @@ class CustomerService:
                 operation = output
         return operation
 
+    def _policy_evidence_response(self,conversation,request,evidence):
+        from .policy_answer import extractive_answer
+        content=extractive_answer(evidence)
+        with self.telemetry.span('controller','policy_tool_loop_cutoff',authorization_for_write=False,
+                                 hit_count=len(evidence['hits'])):
+            self.store.record(conversation,request,'policy_loop_cutoff',{},
+                {'max_model_tool_rounds':1,'evidence_source':'original_user_query','no_business_write':True})
+        self.store.append(conversation,request,{'role':'assistant','content':content})
+        return {'message':content,'mode':'model','operation':None,'answer_source':'controller_evidence',
+            'sources':[{'citation':h['citation'],'source':h['source'],'version':h['version'],'demo_only':h['demo_only']}
+                       for h in evidence['hits']]}
+
     def _run_turn(self, customer: str, conversation: str, request: str) -> dict[str, Any]:
         if self.model is None:
             content = "智能客服暂未连接。您可以先查看订单，并通过订单卡片申请取消。"
@@ -381,22 +416,33 @@ class CustomerService:
         knowledge_result = None
         request_binding = None
         preview_replan_used = False
+        protocol_replan_used = False
         target_is_previewable = False
         policy_topics = None
-        if self.policy.name == 'binding_scoped_v7':
-            from .intent_target import guidance
-            from .policy_answer import route, scoped_result
+        policy_answer_evidence = None
+        if self.policy.name in {'binding_scoped_v7','binding_state_v8'}:
+            if self.policy.name == 'binding_state_v8':
+                from .request_workflow import prepare
+                from .policy_evidence import route,select as scoped_result
+            else:
+                from .intent_target import guidance
+                from .policy_answer import route, scoped_result
             users = [m['content'] for m in messages if m['role']=='user']
             with self.telemetry.span('controller', 'read_preview_intent', authorization_for_write=False):
                 listing = self.backend.list_orders(customer)
                 orders = listing.get('orders') if isinstance(listing, dict) else None
                 if not isinstance(orders, list) or any(row.get('customer_id') != customer for row in orders):
                     raise ServiceError('invalid_owned_order_evidence', 502)
-                request_binding = guidance(users[-1], users[:-1], orders)
+                if self.policy.name == 'binding_state_v8':
+                    from .request_workflow import validated_orders
+                    orders=validated_orders(listing,customer)
+                request_binding = (prepare(self.store,customer,conversation,request,users[-1],orders)
+                                   if self.policy.name == 'binding_state_v8' else guidance(users[-1], users[:-1], orders))
                 target_is_previewable = request_binding['unique_target'] and any(
                     row['id'] in request_binding['candidate_order_ids'] and row['status'] in {'pending','paid'} for row in orders)
                 self.store.record(conversation, request, 'controller_catalog', {}, listing)
-            policy_topics = route(users[-1]) if self.knowledge is not None else None
+            policy_topics = ((route(users[-1],request_binding) if self.policy.name == 'binding_state_v8' else route(users[-1]))
+                             if self.knowledge is not None else None)
             if policy_topics is not None:
                 # An explicit read-only controller action, recorded as such. It is
                 # not an LLM-selected tool call or a generated supervision target.
@@ -404,8 +450,14 @@ class CustomerService:
                 query = {'query': users[-1]}
                 lookup_call = {'role':'assistant', 'content':'', 'tool_calls':[{'id':call_id, 'type':'function',
                     'function':{'name':'search_policies', 'arguments':encode(query)}}]}
-                with self.telemetry.span('controller', 'required_policy_lookup', authorization_for_write=False):
+                with self.telemetry.span('controller', 'required_policy_lookup', authorization_for_write=False) as evidence_span:
                     knowledge_result = scoped_result(self.search_policies(users[-1]), policy_topics)
+                    if self.policy.name == 'binding_state_v8':
+                        policy_answer_evidence=knowledge_result
+                        diagnostic=knowledge_result['evidence_diagnostics']
+                        evidence_span.set(topic_count=len(diagnostic['topic_ids']),raw_hit_count=len(diagnostic['raw_citations']),
+                            selected_hit_count=len(diagnostic['selected_citations']),discarded_hit_count=len(diagnostic['discarded_citations']),
+                            no_evidence_reason=diagnostic['no_evidence_reason'])
                 self.store.record(conversation, request, 'search_policies', query,
                                   {**knowledge_result, 'initiated_by':'controller'})
                 lookup_result = {'role':'tool', 'name':'search_policies', 'tool_call_id':call_id,
@@ -455,8 +507,11 @@ class CustomerService:
                                 raise ServiceError("conversation_handed_off", 409)
                             output = self._tool(customer, conversation, request, name, arguments)
                             if name == 'search_policies':
-                                if policy_topics is not None and self.policy.name == 'binding_scoped_v7':
-                                    from .policy_answer import scoped_result
+                                if policy_topics is not None and self.policy.name in {'binding_scoped_v7','binding_state_v8'}:
+                                    if self.policy.name == 'binding_state_v8':
+                                        from .policy_evidence import select as scoped_result
+                                    else:
+                                        from .policy_answer import scoped_result
                                     output = scoped_result(output, policy_topics)
                                 knowledge_result = output
                             handed_off = name == "escalate_to_human"
@@ -477,6 +532,10 @@ class CustomerService:
                     content = "已进入本地待人工队列，自动操作已停止；尚未接入企业工单系统。"
                     self.store.append(conversation, request, {"role": "assistant", "content": content})
                     return {"message": content, "handed_off": True}
+                if self.policy.name == 'binding_state_v8' and policy_topics is not None and policy_answer_evidence is not None:
+                    # The original user lookup is authoritative. Model-generated
+                    # searches cannot overwrite it or repeat indefinitely.
+                    return self._policy_evidence_response(conversation,request,policy_answer_evidence)
                 continue
             with self.store.transaction() as db:
                 db.execute("UPDATE operations SET status='expired',updated_at=? WHERE conversation_id=? "
@@ -484,7 +543,7 @@ class CustomerService:
                 pending = db.execute("SELECT * FROM operations WHERE conversation_id=? "
                                      "AND status='pending_confirmation' ORDER BY created_at DESC LIMIT 1", (conversation,)).fetchone()
             # Any write request is shown as a server-generated preview, not model-authorized success.
-            if (self.policy.name == 'binding_scoped_v7' and not pending and target_is_previewable
+            if (self.policy.name in {'binding_scoped_v7','binding_state_v8'} and not pending and target_is_previewable
                     and policy_topics is None and not preview_replan_used and step + 1 < self.max_steps):
                 # One bounded planning correction, not an automatic preview/write.
                 # The model must still call get_order/preview_cancel; that tool
@@ -495,7 +554,7 @@ class CustomerService:
                 preview_replan_used = True
                 system = self.policy.prompt + '\n本轮规划检查：用户已明确要求继续取消，当前没有有效预览。不要再次询问聊天确认，也不要只说旧卡失效。现在按下列只读意图提示，重新 get_order 查询该唯一目标，若仍可取消则调用 preview_cancel；不能执行取消。\n' + encode(request_binding)
                 continue
-            if (self.policy.name == 'binding_scoped_v7' and not pending and target_is_previewable
+            if (self.policy.name in {'binding_scoped_v7','binding_state_v8'} and not pending and target_is_previewable
                     and preview_replan_used and policy_topics is None):
                 rebuilt = self._rebuild_preview_after_model_omission(customer,conversation,request,request_binding)
                 if rebuilt:
@@ -508,9 +567,16 @@ class CustomerService:
             else:
                 try:
                     message["content"] = terminal_content(message["content"])
-                    if self.policy.name == 'binding_scoped_v7' and policy_topics is not None and knowledge_result is not None:
+                    facts=None
+                    if self.policy.name == 'binding_state_v8':
+                        from .order_facts import reply
+                        facts=reply(users[-1],request_binding,orders)
+                    if self.policy.name in {'binding_scoped_v7','binding_state_v8'} and policy_topics is not None and knowledge_result is not None:
                         from .policy_answer import extractive_answer
                         message['content'] = extractive_answer(knowledge_result)
+                    elif facts is not None:
+                        with self.telemetry.span('controller','render_order_facts',authorization_for_write=False):
+                            message['content']=facts
                     elif target_error:
                         message["content"] = TARGET_MESSAGES[target_error]
                     elif preview_claim(message["content"]):
@@ -529,7 +595,15 @@ class CustomerService:
                             message['content']='以下为演示说明，不能当作实际商家政策：\n'+message['content']
                 except ModelProtocolError:
                     self.store.record(conversation, request, "terminal_validation", {},
-                                      {"error": "model_protocol_mismatch"})
+                                      {"error": "model_protocol_mismatch",'rejected_output_sha256':sha256(message['content'].encode()).hexdigest()})
+                    if self.policy.name == 'binding_state_v8' and not protocol_replan_used and step+1<self.max_steps:
+                        with self.telemetry.span('controller','terminal_protocol_replan',authorization_for_write=False):
+                            protocol_replan_used=True
+                        # Reject the JSON as an action. It is never converted into
+                        # a tool call or a write; ask the model once to reformat.
+                        messages.append(message)
+                        system=self.policy.prompt+'\n上一条纯文本JSON未通过终态协议校验，未作为工具调用执行。若要调用工具，必须使用tools定义的tool_calls；若只是解释或澄清，请直接用普通中文文本，不输出工具JSON或操作成功字段。最多纠正这一次。'
+                        continue
                     raise
             self.store.append(conversation, request, message)
             return {"message": message["content"], "mode": "model", "operation": self._public(pending) if pending else None,

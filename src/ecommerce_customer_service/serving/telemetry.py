@@ -18,7 +18,8 @@ ALLOWED = {"conversation_id", "request_id", "operation_id", "tool_call_id", "ord
            "prompt_sha256", "tools_sha256", "counter", "context_version", "context_policy", "input_budget_units", "budget_limit",
            "kept_groups", "omitted_groups", "digest_entries", "input_tokens", "output_tokens", "finish_reason",
            "outcome", "error_code", "exception_type", "handoff", "attempt", "response_model", "http_status", "diagnostic_id",
-           "index_sha256", "hit_count"}
+           "index_sha256", "hit_count", "topic_count", "raw_hit_count", "selected_hit_count",
+           "discarded_hit_count", "no_evidence_reason", "authorization_for_write"}
 
 
 def current_span() -> Any:

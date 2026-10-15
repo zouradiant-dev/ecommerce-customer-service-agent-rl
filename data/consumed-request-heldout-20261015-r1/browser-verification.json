@@ -1,0 +1,28 @@
+{
+  "checked_at": "2026-10-15T15:34:08.536928+00:00",
+  "status": "completed",
+  "scope": "local_mock_webpage_model_integration_smoke",
+  "conversation_id": "conv_156bef42e8a14f95800c5531c02bcc1f",
+  "model_sha256": "0c9da9f747324ed06f4b5184ac7a9b439255e9b5f9a6e7b57789ae6540085e73",
+  "ssh_port": 24566,
+  "new_training": false,
+  "prior_infrastructure_interruption_retained": true,
+  "checks": {
+    "denial_created_no_preview_or_write": true,
+    "keep_earphones_cancel_keyboard": true,
+    "multi_turn_preview_reissued": true,
+    "textual_confirmation_did_not_execute": true,
+    "button_confirmation_executed_once": true,
+    "page_reload_preserved_state_and_history": true,
+    "earphones_paid_keyboard_cancelled_mouse_shipped": true,
+    "single_refund_299_yuan_pending": true,
+    "model_refund_answer_did_not_claim_arrival": true
+  },
+  "service_process_restart_performed_in_browser_smoke": false,
+  "production_certified": false,
+  "screenshots_sha256": {
+    "browser-before-confirmation.png": "3c572c2e87ba69de90efe7aa4a4e8077345b8f72f20cba1d47360d0ca8e34256",
+    "browser-completed.png": "3d6e3c4a6bf846ebffe6b9f10c66bdd8a52a26b83c7799fa17f78d6b97071e02",
+    "browser-order-result.png": "222523531469a46c83b2fe9243d3d40b6c4598237aed58c2d4656fde6e01dda0"
+  }
+}

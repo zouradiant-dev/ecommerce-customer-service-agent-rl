@@ -217,6 +217,13 @@ def run_case(case: dict[str, Any], directory: Path, model: ChatModel,
             failures.append('turn_knowledge_citation_missing:' + str(check['step']))
         if check['no_sources'] and (citations or '没有检索到有效说明' not in turn.get('message', '')):
             failures.append('knowledge_abstention_missing:' + str(check['step']))
+    for check in expected.get('reply_checks', []):
+        event=next((event for event in events if event['step']==check['step']),{})
+        reply=(event.get('result') or {}).get('message','')
+        for phrase in check.get('required',[]):
+            if phrase not in reply:failures.append('required_reply_fact_missing:'+str(check['step']))
+        for phrase in check.get('forbidden',[]):
+            if phrase in reply:failures.append('forbidden_reply_fact:'+str(check['step']))
     for phrase in expected.get("forbidden_reply_phrases", []):
         if any(phrase in reply for reply in replies):
             failures.append("reply_phrase:" + phrase)
@@ -291,7 +298,7 @@ def _run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
                 "evaluation_path": "service_runtime_on_isolated_simulated_business",
                 "source_sha256": {name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
                     for name in ("service.py", "context_builder.py", "telemetry.py", "model.py", "online_evaluation.py",
-                                 "backend.py", "storage.py", "online_cases.py", "api.py", "policy.py", "target_binding.py", "grounded_target.py", "intent_target.py", "policy_answer.py", "knowledge.py")}}
+                                 "backend.py", "storage.py", "online_cases.py", "api.py", "policy.py", "target_binding.py", "grounded_target.py", "intent_target.py", "policy_answer.py", "request_workflow.py", "order_facts.py", "policy_evidence.py", "knowledge.py")}}
     write_json(output / "protocol.json", protocol)
     results = []
     for index, case in enumerate(cases):

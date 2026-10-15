@@ -1,0 +1,3773 @@
+{
+  "scope": "all_available_repository_data_jsonl_and_named_online_lineage_inputs_user_texts",
+  "source_files": {
+    "data/consumed-heldout-system-20261015-r1/bad_cases.jsonl": {
+      "sha256": "75afa71f47c85a9301a4a5da991b6b8e6236dec44d2a02391a6235c1b4e9700a",
+      "rows": 8,
+      "rows_with_user_text": 0
+    },
+    "data/consumed-heldout-system-20261015-r1/cases.jsonl": {
+      "sha256": "7fc319456dda712e480e9bd5afabc05c5bc5ff0e837d3f918a050e8393b9277b",
+      "rows": 60,
+      "rows_with_user_text": 60
+    },
+    "data/consumed-scoped-heldout-20261015-r1/cases.jsonl": {
+      "sha256": "8ba4a287f1e55c37e0fd0758b475cd783977e57b8a63b4534f6ef9f4d29859d0",
+      "rows": 60,
+      "rows_with_user_text": 60
+    },
+    "data/consumed-scoped-heldout-20261015-r1/paired-results.jsonl": {
+      "sha256": "87ea558a94b86776b7b6dfac10a683d2057c808350a60d71253cc7dca19ad0e5",
+      "rows": 60,
+      "rows_with_user_text": 0
+    },
+    "data/consumed-scoped-heldout-20261015-r1/test-v6-bad-cases.jsonl": {
+      "sha256": "d2e9e94148b7051dff77fc576dbca148bf10bd34d15812be70c5e7b214ceecdf",
+      "rows": 14,
+      "rows_with_user_text": 0
+    },
+    "data/consumed-scoped-heldout-20261015-r1/test-v7-bad-cases.jsonl": {
+      "sha256": "b8be169c357ecd5b8ebdb8073fe271c1431290c550a26d30804c166b6652e306",
+      "rows": 8,
+      "rows_with_user_text": 0
+    },
+    "data/demo-policies.jsonl": {
+      "sha256": "4ba3e86575fe720c1389120aaa570fd96a1c64c4ea317d0139b59ff1ba604f21",
+      "rows": 3,
+      "rows_with_user_text": 0
+    },
+    "data/online-agent-cases-v1.jsonl": {
+      "sha256": "203a9ad5a6773502a9eacdce9daa1f6637a7b7c44a25c1da67c7c2deac295a57",
+      "rows": 15,
+      "rows_with_user_text": 15
+    },
+    "data/online-binding-dev-v2.jsonl": {
+      "sha256": "735984896ee838f716f8e0d764b376c08933809531b0d413dc07fb7fba2bb72a",
+      "rows": 12,
+      "rows_with_user_text": 12
+    },
+    "data/policy-retrieval-dev-v1.jsonl": {
+      "sha256": "ae603d0bc24abe9c26a91b6bab7736c86b15086de828fb317c945bb9ff20b00d",
+      "rows": 4,
+      "rows_with_user_text": 0
+    },
+    "data/qwen15b-sft-v1/dev.jsonl": {
+      "sha256": "07e1d5cb005754a1872b8e7a9ba54e074efca6b165057a26d1b50e51976e007e",
+      "rows": 140,
+      "rows_with_user_text": 140
+    },
+    "data/qwen15b-sft-v1/train.jsonl": {
+      "sha256": "0521bab467546d565ce8d0c1f3d01cd66475df0b19c5f12cb3dab87e6e50f46d",
+      "rows": 300,
+      "rows_with_user_text": 300
+    },
+    "data/qwen15b-sft-v1-trajectory/dev.jsonl": {
+      "sha256": "33f587dd5ef38a00dd74c7255f1c7e17ce004356d97a7179cde9b0c52be1cf0c",
+      "rows": 140,
+      "rows_with_user_text": 140
+    },
+    "data/qwen15b-sft-v1-trajectory/train.jsonl": {
+      "sha256": "aabf7a19581a7cab65135ec2b6180dd94e655834ee27027133b0604d0a587034",
+      "rows": 300,
+      "rows_with_user_text": 300
+    },
+    "data/qwen15b-sft-v2-stateful-smoke/dev.jsonl": {
+      "sha256": "1c7caeff4ffc3603e2df71b789998efbd5887fada45c2213874e7bb593054f84",
+      "rows": 7,
+      "rows_with_user_text": 7
+    },
+    "data/qwen15b-sft-v2-stateful-smoke/train.jsonl": {
+      "sha256": "f1169953581af8b5b84930f0393611419998ab7fecc552246734e3d1969236df",
+      "rows": 14,
+      "rows_with_user_text": 14
+    },
+    "data/qwen15b-sft-v2-stateful-turn/dev.jsonl": {
+      "sha256": "67ec721083072bd96589d53e277c1e0499baa0fbd80a1f7e77a85c02e335c0b0",
+      "rows": 590,
+      "rows_with_user_text": 590
+    },
+    "data/qwen15b-sft-v2-stateful-turn/train.jsonl": {
+      "sha256": "0ec72d375c93566735155500296401aaded235f0689a96d0937f5937cfe2840f",
+      "rows": 1610,
+      "rows_with_user_text": 1610
+    },
+    "data/qwen15b-v1/tasks.jsonl": {
+      "sha256": "e31043c538c9a7da661affbb08376cfffe8fd91c6e2d845c1c9186f394f2648f",
+      "rows": 600,
+      "rows_with_user_text": 600
+    },
+    "data/qwen15b-v2/dev-full.jsonl": {
+      "sha256": "42ea013739939ee7ca49354d2dfbcec4a2b7c9dc36b3dacfddaec64619b56e42",
+      "rows": 140,
+      "rows_with_user_text": 140
+    },
+    "data/qwen15b-v2/pilot-all-templates.jsonl": {
+      "sha256": "ba47d96c653961fce7891f47f9a2b84ad1c2609682997a08c6c7f3275d422563",
+      "rows": 30,
+      "rows_with_user_text": 30
+    },
+    "data/qwen15b-v2/pilot-retry-persistent-tool-error.jsonl": {
+      "sha256": "50bdeb61144bde0be2b7c18b8e0c270df1b06253b93b03e903d9feca80fe8a98",
+      "rows": 1,
+      "rows_with_user_text": 1
+    },
+    "data/qwen15b-v2/pilot-retry-real-failures.jsonl": {
+      "sha256": "af5c97ed76ff83e40d6290f86f64f0aeafaefdb4a8b1c3ccbbc5f4f634729922",
+      "rows": 4,
+      "rows_with_user_text": 4
+    },
+    "data/qwen15b-v2/pilot-train-dev.jsonl": {
+      "sha256": "691e0dee083aab65a72803233a3974d784a077628a7d5c7f2f8219a8a67ffe14",
+      "rows": 22,
+      "rows_with_user_text": 22
+    },
+    "data/qwen15b-v2/retry-full-train-round2.jsonl": {
+      "sha256": "86392f7e97c26231571d4c5a151f4d97ff65f27e933674a5cc3637eb437c1a35",
+      "rows": 10,
+      "rows_with_user_text": 10
+    },
+    "data/qwen15b-v2/retry-full-train-v6.jsonl": {
+      "sha256": "b4d1794e16c17adeb43441150ed217b509fc929c426251d2aeae028466a113de",
+      "rows": 36,
+      "rows_with_user_text": 36
+    },
+    "data/qwen15b-v2/sft-teacher-v6/dev.jsonl": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rows": 0,
+      "rows_with_user_text": 0
+    },
+    "data/qwen15b-v2/sft-teacher-v6/train.jsonl": {
+      "sha256": "74f6089c668c2f1dc6970791c4c260cfcb95fc03c003a5e9bfe815b1076e78a7",
+      "rows": 1653,
+      "rows_with_user_text": 1653
+    },
+    "data/qwen15b-v2/sft-teacher-v8/dev.jsonl": {
+      "sha256": "30d43da9f81c9da618d5870cf344b6a1f5c3d3a6efb6287172d59f523773d5a1",
+      "rows": 616,
+      "rows_with_user_text": 616
+    },
+    "data/qwen15b-v2/sft-teacher-v8/train.jsonl": {
+      "sha256": "74f6089c668c2f1dc6970791c4c260cfcb95fc03c003a5e9bfe815b1076e78a7",
+      "rows": 1653,
+      "rows_with_user_text": 1653
+    },
+    "data/qwen15b-v2/tasks.jsonl": {
+      "sha256": "74c9887554626105421566cbedcf48ee22d8d7f24515aea89ad779b4c5db7e1b",
+      "rows": 600,
+      "rows_with_user_text": 600
+    },
+    "data/v18-sft-full-replay-r3/train.jsonl": {
+      "sha256": "9488ae9b687154ddb0c15c88684dedd5fa72051a98cccb3ce8cf7472edd88f99",
+      "rows": 16080,
+      "rows_with_user_text": 16080
+    },
+    "data/v18-sft-rebalance-r2/train.jsonl": {
+      "sha256": "6f7695dc33c000348e83c94366246a4f87d0810924defc89f93b20a8b2c970e3",
+      "rows": 1680,
+      "rows_with_user_text": 1680
+    },
+    "data/v18-sft-reference-r1/dev.jsonl": {
+      "sha256": "a1b246662715aaa8f72a8cdb234d218a19ff2d94fbe2164572d5eb8d4efae5d0",
+      "rows": 2960,
+      "rows_with_user_text": 2960
+    },
+    "data/v18-sft-reference-r1/reference-rollouts.jsonl": {
+      "sha256": "c718bcb9417c0fa9e73c7043d7a8aa08e7141cbd3a7e8853f073704739105873",
+      "rows": 3600,
+      "rows_with_user_text": 3600
+    },
+    "data/v18-sft-reference-r1/train.jsonl": {
+      "sha256": "2fbaaa34a8618fb00d4ed90081ed0bd478d46b633af5eb9efc34a432ce955f4f",
+      "rows": 14800,
+      "rows_with_user_text": 14800
+    },
+    "data/v18-sft-supplement-r1/reference-focus/dev.jsonl": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rows": 0,
+      "rows_with_user_text": 0
+    },
+    "data/v18-sft-supplement-r1/reference-focus/reference-rollouts.jsonl": {
+      "sha256": "98050bf029a5f3e5c88b96e70c69c372aa42add91825f89ebfab4ae39e22c320",
+      "rows": 320,
+      "rows_with_user_text": 320
+    },
+    "data/v18-sft-supplement-r1/reference-focus/train.jsonl": {
+      "sha256": "3f461b44751cf2095d9af38f82c6bfb6687bade8a3b169f91a164832cba24492",
+      "rows": 1280,
+      "rows_with_user_text": 1280
+    },
+    "data/v18-sft-supplement-r1/tasks.jsonl": {
+      "sha256": "983c6835b91e22ae03bd764db517c618b984f513a7366ba5710974e0ff546a24",
+      "rows": 320,
+      "rows_with_user_text": 320
+    },
+    "data/v18-sft-supplement-r1/train.jsonl": {
+      "sha256": "bcb140ae74f6bca75e66edbad0827bf0ad78b286c005ee58a40497a3afa4f71f",
+      "rows": 1880,
+      "rows_with_user_text": 1880
+    },
+    "data/v18-train-dev-r1/dev.jsonl": {
+      "sha256": "ea092017f830cd7426d8510472882c3362262b2cb4b20ca58ae006a7de195b8d",
+      "rows": 600,
+      "rows_with_user_text": 600
+    },
+    "data/v18-train-dev-r1/tasks.jsonl": {
+      "sha256": "b2564f4ed0d28dab405e6a3cfa19cff85ec29f3451b4f204926f0ee5c2c17c30",
+      "rows": 3600,
+      "rows_with_user_text": 3600
+    },
+    "data/v18-train-dev-r1/train.jsonl": {
+      "sha256": "d6776c5c42bd9c7007fcaf71db52a23ce92249386bece39c87d84924bcfffefc",
+      "rows": 3000,
+      "rows_with_user_text": 3000
+    },
+    "outputs/catalog-generalization-cases-20261015-r1/consumed-acceptance-dev.jsonl": {
+      "sha256": "4fdec0002a874bd7a60f44c90c68c2133b40c0dfa616e5386ec176740ea051d5",
+      "rows": 42,
+      "rows_with_user_text": 42
+    },
+    "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl": {
+      "sha256": "91e3569ebc3b48095a912228ec3621c2b423ddd778b5e9fec25d2cb1d8671b29",
+      "rows": 30,
+      "rows_with_user_text": 30
+    },
+    "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl": {
+      "sha256": "0ac5442172f3cf6b57eee4c1ba6242fced6f5ac1bdaed1a8cbf6a926eb42edd8",
+      "rows": 57,
+      "rows_with_user_text": 57
+    },
+    "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl": {
+      "sha256": "2366aedf7bf7f0051cde998e60514df70fcc92090167e18a0fb954990cd7aa68",
+      "rows": 57,
+      "rows_with_user_text": 57
+    },
+    "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/demo-policies.jsonl": {
+      "sha256": "4ba3e86575fe720c1389120aaa570fd96a1c64c4ea317d0139b59ff1ba604f21",
+      "rows": 3,
+      "rows_with_user_text": 0
+    },
+    "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/knowledge-dev-cases.jsonl": {
+      "sha256": "78652375daa3ec81e5fc229a7a8c58439d81359a0d6a073ca8fbb9306530a167",
+      "rows": 6,
+      "rows_with_user_text": 6
+    },
+    "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/sealed/test-cases.jsonl": {
+      "sha256": "214273f96ed37916644b9ecb1004a42fe351bd0e4f7cfba9b8b195796ad035eb",
+      "rows": 30,
+      "rows_with_user_text": 30
+    },
+    "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev-cases.jsonl": {
+      "sha256": "1ea1c44638c9da72aab58975ec432a2f32b877641e23cf62f5dc424a6d57a277",
+      "rows": 38,
+      "rows_with_user_text": 38
+    },
+    "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev.jsonl": {
+      "sha256": "ef490ce097fac58069ec8c8e39b42ae62df67520d6562269ee2b8e0733f1508c",
+      "rows": 148,
+      "rows_with_user_text": 148
+    },
+    "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl": {
+      "sha256": "b7ea4a072127059b65540c462781bede29d95779497711a1e968f3f542bf46aa",
+      "rows": 200,
+      "rows_with_user_text": 200
+    },
+    "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl": {
+      "sha256": "7ae391c36a7f9b65781daf1bc1eb6c1c81ce2c02ac2a5e9e79e82df5121205f5",
+      "rows": 880,
+      "rows_with_user_text": 880
+    },
+    "outputs/grounded-generalization-cases-20261015-r1/acceptance.jsonl": {
+      "sha256": "4048ec1b86a84c37c59f28479699bb23f1bda4733f4bf647541948813e1486b2",
+      "rows": 42,
+      "rows_with_user_text": 42
+    },
+    "outputs/grounded-generalization-cases-20261015-r1/known-regression.jsonl": {
+      "sha256": "256f5a92cda3d68cf9a0bc43fb4588f10ea798106aa7d043288517a43a1badbc",
+      "rows": 30,
+      "rows_with_user_text": 30
+    },
+    "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl": {
+      "sha256": "34fe9f868c407be732de13d0723407ff3c529a167cf63cf221920b3fbba9a1a4",
+      "rows": 42,
+      "rows_with_user_text": 42
+    },
+    "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl": {
+      "sha256": "0ac5442172f3cf6b57eee4c1ba6242fced6f5ac1bdaed1a8cbf6a926eb42edd8",
+      "rows": 57,
+      "rows_with_user_text": 57
+    },
+    "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/dev.jsonl": {
+      "sha256": "6949c5535be5b3b5879c6ddf454e65b033877d4d26923ec18fd085febdfb8649",
+      "rows": 128,
+      "rows_with_user_text": 128
+    },
+    "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/paired-dev-cases.jsonl": {
+      "sha256": "b4363a8b6d8f6cba20c55b5a30037e671d8672f591d2342115b1672bd91279e2",
+      "rows": 57,
+      "rows_with_user_text": 57
+    },
+    "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl": {
+      "sha256": "800e8d2bfb73286735fd0372a19ef25c4743d89e25d1b4be5a43579e74190d77",
+      "rows": 512,
+      "rows_with_user_text": 512
+    },
+    "outputs/request-development-cases-20261015-r1/consumed-first.jsonl": {
+      "sha256": "269312f74aec9cb9b0f1f9c29aa9957201b895916b55ba7bf195a090b308b439",
+      "rows": 60,
+      "rows_with_user_text": 60
+    },
+    "outputs/request-development-cases-20261015-r1/consumed-second.jsonl": {
+      "sha256": "50398165578fcb9fb1246bc6c483ed6efcd146bcbb138e868fe71892ce0ec89b",
+      "rows": 60,
+      "rows_with_user_text": 60
+    },
+    "outputs/request-development-cases-20261015-r1/new-development.jsonl": {
+      "sha256": "9baa7fe2272516b4a7c24dd41b45b39e1589d4f4b82704fa4a3a2bc8a3520450",
+      "rows": 40,
+      "rows_with_user_text": 40
+    },
+    "outputs/request-development-cases-20261015-r1/old-development.jsonl": {
+      "sha256": "3e5ac5e48e2655ed3731f5164f607c7cdb794257cce654c86478ed0ec58683c7",
+      "rows": 40,
+      "rows_with_user_text": 40
+    },
+    "outputs/request-development-cases-20261015-r1/prior-business.jsonl": {
+      "sha256": "0ac5442172f3cf6b57eee4c1ba6242fced6f5ac1bdaed1a8cbf6a926eb42edd8",
+      "rows": 57,
+      "rows_with_user_text": 57
+    },
+    "outputs/request-development-cases-20261015-r1/prior-knowledge.jsonl": {
+      "sha256": "0532006dcd52e22b8fb812c5ec8d1673dd57eab51d290f5f0dd5f74719ec0d0e",
+      "rows": 6,
+      "rows_with_user_text": 6
+    },
+    "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl": {
+      "sha256": "4bbeabeb26895a6fb5653118c68a8fcd46b4159c648a6c2e8d536033b0c779f9",
+      "rows": 60,
+      "rows_with_user_text": 60
+    },
+    "outputs/scoped-development-cases-20261015-r1/new-development.jsonl": {
+      "sha256": "8952e3052f6b1d1ae5808a3c169e174c6834ef96259a5d8b8c112080b72ed854",
+      "rows": 40,
+      "rows_with_user_text": 40
+    },
+    "outputs/scoped-development-cases-20261015-r1/prior-business.jsonl": {
+      "sha256": "0ac5442172f3cf6b57eee4c1ba6242fced6f5ac1bdaed1a8cbf6a926eb42edd8",
+      "rows": 57,
+      "rows_with_user_text": 57
+    },
+    "outputs/scoped-development-cases-20261015-r1/prior-knowledge.jsonl": {
+      "sha256": "0532006dcd52e22b8fb812c5ec8d1673dd57eab51d290f5f0dd5f74719ec0d0e",
+      "rows": 6,
+      "rows_with_user_text": 6
+    },
+    "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl": {
+      "sha256": "4bbeabeb26895a6fb5653118c68a8fcd46b4159c648a6c2e8d536033b0c779f9",
+      "rows": 60,
+      "rows_with_user_text": 60
+    },
+    "outputs/scoped-development-cases-20261015-r2/new-development.jsonl": {
+      "sha256": "3e5ac5e48e2655ed3731f5164f607c7cdb794257cce654c86478ed0ec58683c7",
+      "rows": 40,
+      "rows_with_user_text": 40
+    },
+    "outputs/scoped-development-cases-20261015-r2/prior-business.jsonl": {
+      "sha256": "0ac5442172f3cf6b57eee4c1ba6242fced6f5ac1bdaed1a8cbf6a926eb42edd8",
+      "rows": 57,
+      "rows_with_user_text": 57
+    },
+    "outputs/scoped-development-cases-20261015-r2/prior-knowledge.jsonl": {
+      "sha256": "0532006dcd52e22b8fb812c5ec8d1673dd57eab51d290f5f0dd5f74719ec0d0e",
+      "rows": 6,
+      "rows_with_user_text": 6
+    },
+    "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl": {
+      "sha256": "269312f74aec9cb9b0f1f9c29aa9957201b895916b55ba7bf195a090b308b439",
+      "rows": 60,
+      "rows_with_user_text": 60
+    },
+    "outputs/scoped-development-cases-20261015-r3/new-development.jsonl": {
+      "sha256": "3e5ac5e48e2655ed3731f5164f607c7cdb794257cce654c86478ed0ec58683c7",
+      "rows": 40,
+      "rows_with_user_text": 40
+    },
+    "outputs/scoped-development-cases-20261015-r3/prior-business.jsonl": {
+      "sha256": "0ac5442172f3cf6b57eee4c1ba6242fced6f5ac1bdaed1a8cbf6a926eb42edd8",
+      "rows": 57,
+      "rows_with_user_text": 57
+    },
+    "outputs/scoped-development-cases-20261015-r3/prior-knowledge.jsonl": {
+      "sha256": "0532006dcd52e22b8fb812c5ec8d1673dd57eab51d290f5f0dd5f74719ec0d0e",
+      "rows": 6,
+      "rows_with_user_text": 6
+    }
+  },
+  "historical_unique_user_texts": 4638,
+  "exact_first_turn_collisions": [],
+  "exact_user_turn_collisions": [],
+  "nearest_lexical_matches": [
+    {
+      "case_id": "request_test_001",
+      "first_user": "电动捆扎机买重复了，这件的订单帮我撤销一下。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "行星搅拌机重复采购了请帮我取消这一件的订单",
+          "bigram_jaccard": 0.1471,
+          "sequence_ratio": 0.439,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电动缝纫机的订单请取消",
+          "bigram_jaccard": 0.1154,
+          "sequence_ratio": 0.3871,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "替我把电动窗帘的订单退订了谢谢",
+          "bigram_jaccard": 0.1,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "无线领夹麦克风的订单请帮我终止交易",
+          "bigram_jaccard": 0.0938,
+          "sequence_ratio": 0.2703,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电子阅读器的订单请不要继续了撤销这笔购买",
+          "bigram_jaccard": 0.0857,
+          "sequence_ratio": 0.3,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_002",
+      "first_user": "台式清洗槽暂时用不上，请取消购买。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "标签打印机暂时用不上麻烦撤销该商品的订单",
+          "bigram_jaccard": 0.1379,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "滴灌控制阀这张购买请取消",
+          "bigram_jaccard": 0.1364,
+          "sequence_ratio": 0.2222,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "取暖器这一单我不要了取消购买",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.3448,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "便携电磨笔的购买麻烦申请取消",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.2069,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "数码钳形表的购买我不需要申请取消",
+          "bigram_jaccard": 0.1154,
+          "sequence_ratio": 0.2581,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_003",
+      "first_user": "便携读卡仪这张订单现在退订，另一件照常。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "便携扫描仪的订单现在是什么情况",
+          "bigram_jaccard": 0.1481,
+          "sequence_ratio": 0.4242,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "智能插座这张订单不要了",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.2759,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请把背包这张订单撤掉谢谢",
+          "bigram_jaccard": 0.12,
+          "sequence_ratio": 0.2667,
+          "sources": [
+            "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请把落地灯这张订单撤掉谢谢",
+          "bigram_jaccard": 0.1154,
+          "sequence_ratio": 0.2581,
+          "sources": [
+            "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请把保温杯这张订单撤掉谢谢",
+          "bigram_jaccard": 0.1154,
+          "sequence_ratio": 0.2581,
+          "sources": [
+            "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_004",
+      "first_user": "黄铜香插请取消订单，我已经有一件了。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "请取消耳机订单",
+          "bigram_jaccard": 0.1667,
+          "sequence_ratio": 0.4348,
+          "sources": [
+            "data/online-agent-cases-v1.jsonl",
+            "generated_historical_online_dev_cases",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "支付状态我已了解我确认取消订单请执行",
+          "bigram_jaccard": 0.1429,
+          "sequence_ratio": 0.2353,
+          "sources": [
+            "data/qwen15b-sft-v1-trajectory/train.jsonl",
+            "data/qwen15b-sft-v1/train.jsonl",
+            "data/qwen15b-sft-v2-stateful-turn/train.jsonl",
+            "data/qwen15b-v2/sft-teacher-v6/train.jsonl",
+            "data/qwen15b-v2/sft-teacher-v8/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电动缝纫机的订单请取消",
+          "bigram_jaccard": 0.1364,
+          "sequence_ratio": 0.2222,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "家里已经有除湿机了这次买的除湿机订单取消掉吧",
+          "bigram_jaccard": 0.1333,
+          "sequence_ratio": 0.2105,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "那只风扇不想要了取消订单",
+          "bigram_jaccard": 0.1304,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_005",
+      "first_user": "电动卷线盘留下，把卷线盘防雨罩取消。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "帮我取消电动牙刷这单",
+          "bigram_jaccard": 0.1,
+          "sequence_ratio": 0.1538,
+          "sources": [
+            "data/online-binding-dev-v2.jsonl",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/paired-dev-cases.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电动缝纫机的订单请取消",
+          "bigram_jaccard": 0.0952,
+          "sequence_ratio": 0.2963,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电动晾衣架这一单取消吧",
+          "bigram_jaccard": 0.0952,
+          "sequence_ratio": 0.2963,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "玻璃水壶留下只取消保温底座",
+          "bigram_jaccard": 0.087,
+          "sequence_ratio": 0.2759,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "说错了路由器留下取消网线测试仪",
+          "bigram_jaccard": 0.08,
+          "sequence_ratio": 0.2581,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_006",
+      "first_user": "手持电阻箱我仍要，电阻箱测试线这项撤单。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "手持声级计那笔先帮我撤单",
+          "bigram_jaccard": 0.0833,
+          "sequence_ratio": 0.3333,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电池内阻仪请撤单",
+          "bigram_jaccard": 0.0476,
+          "sequence_ratio": 0.3077,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电动打气筒请撤单",
+          "bigram_jaccard": 0.0476,
+          "sequence_ratio": 0.2308,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "灯光控制器这笔撤单",
+          "bigram_jaccard": 0.0455,
+          "sequence_ratio": 0.2222,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "这笔枕头的购买请帮忙撤单",
+          "bigram_jaccard": 0.04,
+          "sequence_ratio": 0.2,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_007",
+      "first_user": "取消醒酒壶清洁球的订单，玻璃醒酒壶继续寄。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "电动缝纫机的订单请取消",
+          "bigram_jaccard": 0.1304,
+          "sequence_ratio": 0.2,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "迷你砂轮机的订单麻烦取消",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.1935,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "取消耳机订单",
+          "bigram_jaccard": 0.1053,
+          "sequence_ratio": 0.32,
+          "sources": [
+            "data/online-agent-cases-v1.jsonl",
+            "generated_historical_online_dev_cases",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "取消牙刷订单",
+          "bigram_jaccard": 0.1053,
+          "sequence_ratio": 0.32,
+          "sources": [
+            "data/online-binding-dev-v2.jsonl",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/paired-dev-cases.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "桌面缠线机不用取消继续按原订单安排",
+          "bigram_jaccard": 0.1034,
+          "sequence_ratio": 0.2222,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_008",
+      "first_user": "花架防滑垫这次不要了，高脚花架正常安排。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "电动磨甲器这次不需要了麻烦处理购买",
+          "bigram_jaccard": 0.1034,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电动磨皮器不要了",
+          "bigram_jaccard": 0.0952,
+          "sequence_ratio": 0.2308,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "智能插座这张订单不要了",
+          "bigram_jaccard": 0.0833,
+          "sequence_ratio": 0.2759,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "桌面加湿器暂时不要了谢谢",
+          "bigram_jaccard": 0.08,
+          "sequence_ratio": 0.2,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请安排人工专员协助这次咨询",
+          "bigram_jaccard": 0.0769,
+          "sequence_ratio": 0.129,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/sealed/test-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/known-regression.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_009",
+      "first_user": "线圈绕制器我不再购买了，把这次交易结束吧。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "专业调音器我不买了",
+          "bigram_jaccard": 0.1304,
+          "sequence_ratio": 0.3571,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "木质首饰盒不再购买首饰盒隔板保留",
+          "bigram_jaccard": 0.1071,
+          "sequence_ratio": 0.2286,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "便携除胶器不再购买订单销掉吧",
+          "bigram_jaccard": 0.1071,
+          "sequence_ratio": 0.3636,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "茶叶分装器不再购买订单麻烦销掉",
+          "bigram_jaccard": 0.1034,
+          "sequence_ratio": 0.2941,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "手动磨粉机不再购买磨粉机防尘罩保留",
+          "bigram_jaccard": 0.1034,
+          "sequence_ratio": 0.2222,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_010",
+      "first_user": "手动压汁杯订错，这单先撤了，我不买了。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "专业调音器我不买了",
+          "bigram_jaccard": 0.15,
+          "sequence_ratio": 0.32,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "磁吸补光灯不买了",
+          "bigram_jaccard": 0.1,
+          "sequence_ratio": 0.25,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电动拉花笔预算不够不买了",
+          "bigram_jaccard": 0.0833,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "桌面切割机预算不够不买了",
+          "bigram_jaccard": 0.0833,
+          "sequence_ratio": 0.2143,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我不想要风扇了请取消这单",
+          "bigram_jaccard": 0.0833,
+          "sequence_ratio": 0.1429,
+          "sources": [
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_011",
+      "first_user": "微型平衡仪这笔不继续买了，请替我办一下。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "数位板买重了请给我办一下取消",
+          "bigram_jaccard": 0.1538,
+          "sequence_ratio": 0.4375,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "车载充气泵这笔不想买了取消申请给我看看",
+          "bigram_jaccard": 0.0938,
+          "sequence_ratio": 0.3784,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我从来没让你退订便携测色仪这笔购买继续",
+          "bigram_jaccard": 0.0938,
+          "sequence_ratio": 0.2703,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "改为取消桌面频谱仪这笔",
+          "bigram_jaccard": 0.08,
+          "sequence_ratio": 0.2069,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "炉子那笔不用了劳烦取消一下",
+          "bigram_jaccard": 0.0741,
+          "sequence_ratio": 0.3226,
+          "sources": [
+            "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_012",
+      "first_user": "陶瓷蒸汽盘预算改了，订单给我关掉。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "跑步机订错了订单给我关掉吧",
+          "bigram_jaccard": 0.3,
+          "sequence_ratio": 0.5,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "触控绘画屏这次先不买了订单给我取消",
+          "bigram_jaccard": 0.1538,
+          "sequence_ratio": 0.3125,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "手持雕刻针的订单关掉购买作废",
+          "bigram_jaccard": 0.08,
+          "sequence_ratio": 0.2759,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "便携压面机订单取消申请给我一下",
+          "bigram_jaccard": 0.0769,
+          "sequence_ratio": 0.2667,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "取消耳机订单",
+          "bigram_jaccard": 0.0556,
+          "sequence_ratio": 0.1905,
+          "sources": [
+            "data/online-agent-cases-v1.jsonl",
+            "generated_historical_online_dev_cases",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_013",
+      "first_user": "台式磨钻机这次不需要了，购买请作废。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "电动磨甲器这次不需要了麻烦处理购买",
+          "bigram_jaccard": 0.24,
+          "sequence_ratio": 0.5455,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "婴儿围栏那项购买请作废",
+          "bigram_jaccard": 0.1905,
+          "sequence_ratio": 0.3704,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "便携调奶器这笔购买作废吧我不需要它了",
+          "bigram_jaccard": 0.1429,
+          "sequence_ratio": 0.2941,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "洗地机不需要了取消这笔订单",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.3448,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "宠物饮水机这份订单请作废谢啦",
+          "bigram_jaccard": 0.12,
+          "sequence_ratio": 0.3333,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/consumed-acceptance-dev.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/acceptance.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_014",
+      "first_user": "木工定位尺我决定退订，先展示申请让我核对。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "便携洗眼器那项我决定退订请处理取消申请",
+          "bigram_jaccard": 0.1613,
+          "sequence_ratio": 0.3684,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我确认取消请先展示确认卡",
+          "bigram_jaccard": 0.0769,
+          "sequence_ratio": 0.2581,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "还是刚才那笔我决定继续取消",
+          "bigram_jaccard": 0.0714,
+          "sequence_ratio": 0.1875,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "摄影三脚架我决定不要了请开始处理",
+          "bigram_jaccard": 0.0645,
+          "sequence_ratio": 0.2286,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "网球拍那笔订单我决定撤回购买请帮忙处理取消",
+          "bigram_jaccard": 0.0556,
+          "sequence_ratio": 0.2,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_015",
+      "first_user": "吸盘搬运器不再购买，这笔订单销掉吧。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "便携除胶器不再购买订单销掉吧",
+          "bigram_jaccard": 0.4,
+          "sequence_ratio": 0.6667,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "茶叶分装器不再购买订单麻烦销掉",
+          "bigram_jaccard": 0.2609,
+          "sequence_ratio": 0.5806,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我明确同意取消这笔订单",
+          "bigram_jaccard": 0.1364,
+          "sequence_ratio": 0.2963,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "洗地机不需要了取消这笔订单",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.3448,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "木质首饰盒不再购买首饰盒隔板保留",
+          "bigram_jaccard": 0.12,
+          "sequence_ratio": 0.25,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_016",
+      "first_user": "手摇打孔器的交易终止，我以后需要再买。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "铜管扩口器的交易请终止这次不买",
+          "bigram_jaccard": 0.1538,
+          "sequence_ratio": 0.4375,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "厨房计时器的购买请撤回我以后再买",
+          "bigram_jaccard": 0.1481,
+          "sequence_ratio": 0.4242,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "无线领夹麦克风的订单请帮我终止交易",
+          "bigram_jaccard": 0.0667,
+          "sequence_ratio": 0.1765,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "冲牙器这笔购买我反悔了帮忙终止交易",
+          "bigram_jaccard": 0.0667,
+          "sequence_ratio": 0.1765,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我需要人工帮助",
+          "bigram_jaccard": 0.0476,
+          "sequence_ratio": 0.25,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_017",
+      "first_user": "我没有授权取消桌面拉丝轮，仍按原来的订单安排。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "桌面缠线机不用取消继续按原订单安排",
+          "bigram_jaccard": 0.2,
+          "sequence_ratio": 0.4211,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "首饰盒隔板取消是别人说的我没有授权",
+          "bigram_jaccard": 0.1613,
+          "sequence_ratio": 0.2632,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "除锈笔备用头取消是别人说的我没有授权",
+          "bigram_jaccard": 0.1562,
+          "sequence_ratio": 0.2564,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "磨粉机防尘罩取消是别人说的我没有授权",
+          "bigram_jaccard": 0.1562,
+          "sequence_ratio": 0.2564,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "逆变电源固定架取消是别人说的我没有授权",
+          "bigram_jaccard": 0.1515,
+          "sequence_ratio": 0.25,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_018",
+      "first_user": "迷你电泳槽的退订是同事提出的，我从未同意。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "我从未同意取消无线路由器别替我作决定",
+          "bigram_jaccard": 0.129,
+          "sequence_ratio": 0.2703,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我从来没让你退订便携测色仪这笔购买继续",
+          "bigram_jaccard": 0.0588,
+          "sequence_ratio": 0.1579,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "取消光学观鸟镜只是同事的建议我还没有决定",
+          "bigram_jaccard": 0.0571,
+          "sequence_ratio": 0.2564,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "取消手持金属探测器是同事的想法我只是来问问",
+          "bigram_jaccard": 0.0556,
+          "sequence_ratio": 0.25,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "硅胶揉面垫请退订",
+          "bigram_jaccard": 0.0417,
+          "sequence_ratio": 0.1481,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_019",
+      "first_user": "我没让你取消便携灯光测量仪，请保留它。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "改为取消便携投影仪智能手表保留",
+          "bigram_jaccard": 0.1538,
+          "sequence_ratio": 0.4375,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/consumed-acceptance-dev.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/acceptance.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我没叫你取消热转印压烫机你弄错了请保留这件商品",
+          "bigram_jaccard": 0.1515,
+          "sequence_ratio": 0.4,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "保留便携除锈笔取消除锈笔备用头",
+          "bigram_jaccard": 0.12,
+          "sequence_ratio": 0.125,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "查清楚了便携扫描仪请申请取消",
+          "bigram_jaccard": 0.1154,
+          "sequence_ratio": 0.129,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "便携水质仪请别取消我想继续收货",
+          "bigram_jaccard": 0.1111,
+          "sequence_ratio": 0.125,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_020",
+      "first_user": "可调焊接夹具请勿撤单，我还需要这一件。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "数码显微镜的撤单先停一下我还需要它",
+          "bigram_jaccard": 0.1429,
+          "sequence_ratio": 0.3529,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我确认保留这一件",
+          "bigram_jaccard": 0.0952,
+          "sequence_ratio": 0.32,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "取暖器这一单我不要了取消购买",
+          "bigram_jaccard": 0.0741,
+          "sequence_ratio": 0.1935,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "等等我还是需要折叠推车停止这次操作",
+          "bigram_jaccard": 0.0667,
+          "sequence_ratio": 0.2941,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "黄铜浇水壶我需要长嘴喷壶才是要撤单的那个",
+          "bigram_jaccard": 0.0606,
+          "sequence_ratio": 0.1081,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_021",
+      "first_user": "别急着取消超声测厚探头，先让我考虑清楚。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "旋转展示底座有两张订单我只要取消一张先让我看清是哪笔",
+          "bigram_jaccard": 0.0769,
+          "sequence_ratio": 0.2727,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "查清楚了便携扫描仪请申请取消",
+          "bigram_jaccard": 0.0714,
+          "sequence_ratio": 0.125,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "专业调音器先留着取消乐器连接线",
+          "bigram_jaccard": 0.069,
+          "sequence_ratio": 0.1818,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "精密称重台4有两笔先列出来让我选择取消哪笔",
+          "bigram_jaccard": 0.0571,
+          "sequence_ratio": 0.1026,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "精密称重台3有两笔先列出来让我选择取消哪笔",
+          "bigram_jaccard": 0.0571,
+          "sequence_ratio": 0.1026,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_022",
+      "first_user": "定时滴油器先不撤销，继续寄给我。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "触控绘画屏这次先不买了订单给我取消",
+          "bigram_jaccard": 0.0741,
+          "sequence_ratio": 0.2581,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "取消蓝牙适配器这一笔智能插座继续寄",
+          "bigram_jaccard": 0.0741,
+          "sequence_ratio": 0.2581,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "刚才那笔继续取消请给我新的确认页面",
+          "bigram_jaccard": 0.0741,
+          "sequence_ratio": 0.2581,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电子阅读器的订单请不要继续了撤销这笔购买",
+          "bigram_jaccard": 0.0667,
+          "sequence_ratio": 0.2353,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "先不要取消了",
+          "bigram_jaccard": 0.0588,
+          "sequence_ratio": 0.2,
+          "sources": [
+            "data/online-agent-cases-v1.jsonl",
+            "generated_historical_online_dev_cases",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_023",
+      "first_user": "我只查询小型滤油机是不是已经取消，不要创建新申请。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "请只查询电子节拍器是否已经被取消不要再创建申请",
+          "bigram_jaccard": 0.2222,
+          "sequence_ratio": 0.6087,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "这里显示游戏手柄已取消了吗不要创建新申请",
+          "bigram_jaccard": 0.2059,
+          "sequence_ratio": 0.4651,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我想知道手动裁皮器是否已经取消不要另外申请",
+          "bigram_jaccard": 0.1667,
+          "sequence_ratio": 0.4545,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "只查询枕头订单暂时不要取消",
+          "bigram_jaccard": 0.1333,
+          "sequence_ratio": 0.3333,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "只查询台灯订单暂时不要取消",
+          "bigram_jaccard": 0.1333,
+          "sequence_ratio": 0.3333,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_024",
+      "first_user": "取消电子角度规只是他人的意见，不代表本人要求。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "假如我取消电子航海钟这只是个假设",
+          "bigram_jaccard": 0.129,
+          "sequence_ratio": 0.3243,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "取消蜂蜡熔化锅是配送员提的不代表我的意思",
+          "bigram_jaccard": 0.1143,
+          "sequence_ratio": 0.3415,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "校准托盘买多了帮我取消电子秤砝码留下",
+          "bigram_jaccard": 0.0882,
+          "sequence_ratio": 0.2051,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "帮我取消电风扇订单",
+          "bigram_jaccard": 0.0769,
+          "sequence_ratio": 0.2,
+          "sources": [
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我没有要求取消保温杯",
+          "bigram_jaccard": 0.0741,
+          "sequence_ratio": 0.129,
+          "sources": [
+            "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_025",
+      "first_user": "关于手动装订夹，我还没决定是否取消，先保持原样。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "衣物护理机的订单先不要动我还没决定是否取消",
+          "bigram_jaccard": 0.25,
+          "sequence_ratio": 0.4762,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "磁力搅拌台我还没决定要不要取消先不要办理",
+          "bigram_jaccard": 0.1875,
+          "sequence_ratio": 0.3902,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "取消光学观鸟镜只是同事的建议我还没有决定",
+          "bigram_jaccard": 0.1143,
+          "sequence_ratio": 0.2439,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我反对把皮具打孔机取消订单应该保持原状",
+          "bigram_jaccard": 0.0857,
+          "sequence_ratio": 0.3,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "先保留不取消了",
+          "bigram_jaccard": 0.0833,
+          "sequence_ratio": 0.1429,
+          "sources": [
+            "data/online-binding-dev-v2.jsonl",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/paired-dev-cases.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_026",
+      "first_user": "我只是转述“取消铝制冷却台”，别把它当成我的指令。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "烘鞋器不要取消我只是核对配送信息",
+          "bigram_jaccard": 0.0938,
+          "sequence_ratio": 0.1622,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我只是引用取消手机云台请不要照做",
+          "bigram_jaccard": 0.0938,
+          "sequence_ratio": 0.3243,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "取消手持金属探测器是同事的想法我只是来问问",
+          "bigram_jaccard": 0.0811,
+          "sequence_ratio": 0.1429,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请复述取消保温杯",
+          "bigram_jaccard": 0.08,
+          "sequence_ratio": 0.2069,
+          "sources": [
+            "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请复述取消空气炸锅",
+          "bigram_jaccard": 0.0769,
+          "sequence_ratio": 0.2,
+          "sources": [
+            "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_027",
+      "first_user": "假如便携磁吸台灯取消了会怎样？我只是举例。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "烘鞋器不要取消我只是核对配送信息",
+          "bigram_jaccard": 0.1,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我只是引用取消手机云台请不要照做",
+          "bigram_jaccard": 0.1,
+          "sequence_ratio": 0.1714,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "假如我取消电子航海钟这只是个假设",
+          "bigram_jaccard": 0.1,
+          "sequence_ratio": 0.3429,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "假如花洒套装取消了钱一般是什么状态",
+          "bigram_jaccard": 0.0968,
+          "sequence_ratio": 0.3333,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "演示页面里那个取消预览按钮点下去算已经取消了吗我只是了解功能",
+          "bigram_jaccard": 0.0952,
+          "sequence_ratio": 0.2449,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_028",
+      "first_user": "我反对取消铜制雕花锤，这笔先留着。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "我反对取消台式封蜡炉按原样保留",
+          "bigram_jaccard": 0.1667,
+          "sequence_ratio": 0.4,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "专业调音器先留着取消乐器连接线",
+          "bigram_jaccard": 0.12,
+          "sequence_ratio": 0.2,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我反对把皮具打孔机取消订单应该保持原状",
+          "bigram_jaccard": 0.1034,
+          "sequence_ratio": 0.2941,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我确定要取消这笔购买",
+          "bigram_jaccard": 0.0952,
+          "sequence_ratio": 0.4,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "改为取消桌面频谱仪这笔",
+          "bigram_jaccard": 0.0909,
+          "sequence_ratio": 0.3077,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_029",
+      "first_user": "粉末分装漏斗不要取消，也不要帮我转人工。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "请解释本地待人工队列的说明不要帮我转人工",
+          "bigram_jaccard": 0.2143,
+          "sequence_ratio": 0.3684,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "先不要取消了",
+          "bigram_jaccard": 0.1667,
+          "sequence_ratio": 0.3333,
+          "sources": [
+            "data/online-agent-cases-v1.jsonl",
+            "generated_historical_online_dev_cases",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "只查询枕头订单暂时不要取消",
+          "bigram_jaccard": 0.12,
+          "sequence_ratio": 0.2581,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "只查询台灯订单暂时不要取消",
+          "bigram_jaccard": 0.12,
+          "sequence_ratio": 0.2581,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "只查询运动鞋订单暂时不要取消",
+          "bigram_jaccard": 0.1154,
+          "sequence_ratio": 0.25,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_030",
+      "first_user": "请暂停取消电动抛光鼓的操作，我需要重新考虑。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "帮我取消电动牙刷这单",
+          "bigram_jaccard": 0.12,
+          "sequence_ratio": 0.2667,
+          "sources": [
+            "data/online-binding-dev-v2.jsonl",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/paired-dev-cases.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我需要人工帮助",
+          "bigram_jaccard": 0.087,
+          "sequence_ratio": 0.2222,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "帮我取消电风扇订单",
+          "bigram_jaccard": 0.08,
+          "sequence_ratio": 0.2069,
+          "sources": [
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "帮我取消电热水壶订单",
+          "bigram_jaccard": 0.0769,
+          "sequence_ratio": 0.2,
+          "sources": [
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电动缝纫机的订单请取消",
+          "bigram_jaccard": 0.0741,
+          "sequence_ratio": 0.1935,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_031",
+      "first_user": "高压气泵我需要，取消气泵收纳架才对。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "先不要取消了",
+          "bigram_jaccard": 0.1176,
+          "sequence_ratio": 0.2727,
+          "sources": [
+            "data/online-agent-cases-v1.jsonl",
+            "generated_historical_online_dev_cases",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我需要人工帮助",
+          "bigram_jaccard": 0.1111,
+          "sequence_ratio": 0.2609,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "讲错了揉面垫要保留取消擀面杖支架才对",
+          "bigram_jaccard": 0.1071,
+          "sequence_ratio": 0.3529,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我确定要取消这笔购买",
+          "bigram_jaccard": 0.0952,
+          "sequence_ratio": 0.3077,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "微型扭矩仪我现在要取消",
+          "bigram_jaccard": 0.0909,
+          "sequence_ratio": 0.2963,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_032",
+      "first_user": "隔热罩订单撤销，罩子固定环保留。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "自动喂鱼器这单撤销购买别的商品保留",
+          "bigram_jaccard": 0.1154,
+          "sequence_ratio": 0.3226,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "先保留订单不取消了",
+          "bigram_jaccard": 0.1053,
+          "sequence_ratio": 0.1739,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/consumed-acceptance-dev.jsonl",
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/sealed/test-cases.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请把背包这张订单撤掉谢谢",
+          "bigram_jaccard": 0.0909,
+          "sequence_ratio": 0.2308,
+          "sources": [
+            "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "如果撤销保温杯订单会怎样",
+          "bigram_jaccard": 0.0909,
+          "sequence_ratio": 0.1538,
+          "sources": [
+            "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请把落地灯这张订单撤掉谢谢",
+          "bigram_jaccard": 0.087,
+          "sequence_ratio": 0.2222,
+          "sources": [
+            "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_033",
+      "first_user": "电子手轮我买了两笔，只取消一笔；请列出金额让我选。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "显示器支架买了两笔我要取消其中一笔",
+          "bigram_jaccard": 0.1562,
+          "sequence_ratio": 0.4103,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "精密称重台4有两笔先列出来让我选择取消哪笔",
+          "bigram_jaccard": 0.1389,
+          "sequence_ratio": 0.3256,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "精密称重台3有两笔先列出来让我选择取消哪笔",
+          "bigram_jaccard": 0.1389,
+          "sequence_ratio": 0.3256,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "精密称重台2有两笔先列出来让我选择取消哪笔",
+          "bigram_jaccard": 0.1389,
+          "sequence_ratio": 0.3256,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "精密称重台1有两笔先列出来让我选择取消哪笔",
+          "bigram_jaccard": 0.1389,
+          "sequence_ratio": 0.3256,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_034",
+      "first_user": "订单OXD20ACBB6CE9请帮我取消，桌面晶体收音器留下。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "请帮我取消无线耳机订单",
+          "bigram_jaccard": 0.1515,
+          "sequence_ratio": 0.25,
+          "sources": [
+            "data/online-agent-cases-v1.jsonl",
+            "generated_historical_online_dev_cases",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请帮我查一下订单ordbb9656326c到哪里了",
+          "bigram_jaccard": 0.1304,
+          "sequence_ratio": 0.2963,
+          "sources": [
+            "data/qwen15b-sft-v1-trajectory/train.jsonl",
+            "data/qwen15b-sft-v1/train.jsonl",
+            "data/qwen15b-sft-v2-stateful-smoke/train.jsonl",
+            "data/qwen15b-sft-v2-stateful-turn/train.jsonl",
+            "data/qwen15b-v1/tasks.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "帮我取消鼠标订单",
+          "bigram_jaccard": 0.129,
+          "sequence_ratio": 0.2162,
+          "sources": [
+            "data/online-agent-cases-v1.jsonl",
+            "generated_historical_online_dev_cases",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "帮我取消鞋子订单",
+          "bigram_jaccard": 0.129,
+          "sequence_ratio": 0.2162,
+          "sources": [
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "帮我取消枕头订单",
+          "bigram_jaccard": 0.129,
+          "sequence_ratio": 0.2162,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_035",
+      "first_user": "工具袋我想取消，先确认是哪一个。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "我想取消一笔订单",
+          "bigram_jaccard": 0.1765,
+          "sequence_ratio": 0.4545,
+          "sources": [
+            "data/online-agent-cases-v1.jsonl",
+            "generated_historical_online_dev_cases",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "收纳袋那一单我想取消具体是哪笔还没核对",
+          "bigram_jaccard": 0.1481,
+          "sequence_ratio": 0.4242,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我想看刚才的确认卡",
+          "bigram_jaccard": 0.1053,
+          "sequence_ratio": 0.3478,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我确认取消请先展示确认卡",
+          "bigram_jaccard": 0.0952,
+          "sequence_ratio": 0.4615,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我想取消的是热风整形枪但列表里似乎没有请先核实",
+          "bigram_jaccard": 0.0938,
+          "sequence_ratio": 0.2703,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_036",
+      "first_user": "我要求取消的是电动除蜡仪，不是便携吸尘枪，请先核实目录。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "我想取消的是热风整形枪但列表里似乎没有请先核实",
+          "bigram_jaccard": 0.15,
+          "sequence_ratio": 0.4167,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "现在要取消的是光照度仪不是声级计",
+          "bigram_jaccard": 0.1471,
+          "sequence_ratio": 0.3902,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我没有要求取消保温杯",
+          "bigram_jaccard": 0.1,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我没有要求取消空气炸锅",
+          "bigram_jaccard": 0.0968,
+          "sequence_ratio": 0.2778,
+          "sources": [
+            "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我没有要求取消智能手表",
+          "bigram_jaccard": 0.0968,
+          "sequence_ratio": 0.2778,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/consumed-acceptance-dev.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/acceptance.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_037",
+      "first_user": "台式电子负载帮我申请取消。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "智能门锁帮我申请取消",
+          "bigram_jaccard": 0.3333,
+          "sequence_ratio": 0.5455,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "针对音箱这单请申请取消",
+          "bigram_jaccard": 0.1667,
+          "sequence_ratio": 0.3478,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "针对枕头这单请申请取消",
+          "bigram_jaccard": 0.1667,
+          "sequence_ratio": 0.3478,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "针对台灯这单请申请取消",
+          "bigram_jaccard": 0.1667,
+          "sequence_ratio": 0.4348,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "户外天文支架先申请取消",
+          "bigram_jaccard": 0.1667,
+          "sequence_ratio": 0.3478,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_038",
+      "first_user": "便携花边裁剪器这笔订单退订。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "想撤销空气净化器这笔订单请帮忙处理",
+          "bigram_jaccard": 0.1667,
+          "sequence_ratio": 0.3333,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/sealed/test-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/known-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我明确同意取消这笔订单",
+          "bigram_jaccard": 0.1579,
+          "sequence_ratio": 0.3333,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "洗地机不需要了取消这笔订单",
+          "bigram_jaccard": 0.1429,
+          "sequence_ratio": 0.3077,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "替我把电动窗帘的订单退订了谢谢",
+          "bigram_jaccard": 0.1304,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "想撤销记录仪这笔订单请帮忙处理",
+          "bigram_jaccard": 0.1304,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/sealed/test-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/known-regression.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_039",
+      "first_user": "桌面热压封边器这单取消。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "桌面雕花仪这单退订",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.4,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "帮我取消电动牙刷这单",
+          "bigram_jaccard": 0.1176,
+          "sequence_ratio": 0.1905,
+          "sources": [
+            "data/online-binding-dev-v2.jsonl",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/paired-dev-cases.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "针对音箱这单请申请取消",
+          "bigram_jaccard": 0.1111,
+          "sequence_ratio": 0.3636,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "针对枕头这单请申请取消",
+          "bigram_jaccard": 0.1111,
+          "sequence_ratio": 0.3636,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "针对台灯这单请申请取消",
+          "bigram_jaccard": 0.1111,
+          "sequence_ratio": 0.3636,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_040",
+      "first_user": "陶艺压泥板请撤销购买。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "蒸汽拖把的购买请撤销",
+          "bigram_jaccard": 0.2,
+          "sequence_ratio": 0.3,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "热敏纸这笔购买申请撤销",
+          "bigram_jaccard": 0.1875,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "自动喂鱼器这单撤销购买别的商品保留",
+          "bigram_jaccard": 0.1364,
+          "sequence_ratio": 0.2963,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "厨房计时器的购买请撤回我以后再买",
+          "bigram_jaccard": 0.0909,
+          "sequence_ratio": 0.2308,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电子阅读器的订单请不要继续了撤销这笔购买",
+          "bigram_jaccard": 0.0769,
+          "sequence_ratio": 0.3333,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_041",
+      "first_user": "木质线轴架的订单多少钱？",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "陶瓷拉坯刀花了多少钱",
+          "bigram_jaccard": 0.1176,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电动缝纫机的订单请取消",
+          "bigram_jaccard": 0.1111,
+          "sequence_ratio": 0.2727,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "迷你砂轮机的订单麻烦取消",
+          "bigram_jaccard": 0.1053,
+          "sequence_ratio": 0.2609,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电动打气筒多少钱我只查价格",
+          "bigram_jaccard": 0.1,
+          "sequence_ratio": 0.25,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "手持雕刻针的订单关掉购买作废",
+          "bigram_jaccard": 0.0952,
+          "sequence_ratio": 0.24,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_042",
+      "first_user": "光纤检查镜申请退订。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "硅胶揉面垫请退订",
+          "bigram_jaccard": 0.1538,
+          "sequence_ratio": 0.3529,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "录音笔那笔请退订",
+          "bigram_jaccard": 0.1538,
+          "sequence_ratio": 0.3529,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "便携压痕机请退订",
+          "bigram_jaccard": 0.1538,
+          "sequence_ratio": 0.3529,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "黄铜篆刻印床这单请退订",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.3,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "户外滴水计时器这项请退订",
+          "bigram_jaccard": 0.1176,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_043",
+      "first_user": "便携折弯器这次购买取消。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "玻璃磨口机购买取消",
+          "bigram_jaccard": 0.2,
+          "sequence_ratio": 0.4,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "取暖器这一单我不要了取消购买",
+          "bigram_jaccard": 0.15,
+          "sequence_ratio": 0.32,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "便携电磨笔的购买麻烦申请取消",
+          "bigram_jaccard": 0.15,
+          "sequence_ratio": 0.48,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电动橡皮擦我改主意了撤掉这次购买",
+          "bigram_jaccard": 0.1364,
+          "sequence_ratio": 0.2963,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电动磨甲器这次不需要了麻烦处理购买",
+          "bigram_jaccard": 0.1304,
+          "sequence_ratio": 0.3571,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_044",
+      "first_user": "铝制测量平台买重了，申请取消。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "智能门锁帮我申请取消",
+          "bigram_jaccard": 0.1667,
+          "sequence_ratio": 0.3478,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "针对音箱这单请申请取消",
+          "bigram_jaccard": 0.1579,
+          "sequence_ratio": 0.3333,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "针对枕头这单请申请取消",
+          "bigram_jaccard": 0.1579,
+          "sequence_ratio": 0.3333,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "针对台灯这单请申请取消",
+          "bigram_jaccard": 0.1579,
+          "sequence_ratio": 0.4167,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "户外天文支架先申请取消",
+          "bigram_jaccard": 0.1579,
+          "sequence_ratio": 0.3333,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_045",
+      "first_user": "电子湿度记录卡请取消。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "请取消耳机订单",
+          "bigram_jaccard": 0.1538,
+          "sequence_ratio": 0.3529,
+          "sources": [
+            "data/online-agent-cases-v1.jsonl",
+            "generated_historical_online_dev_cases",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "竹制鞋架请取消",
+          "bigram_jaccard": 0.1538,
+          "sequence_ratio": 0.3529,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "户外电源请取消",
+          "bigram_jaccard": 0.1538,
+          "sequence_ratio": 0.4706,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请取消orderd",
+          "bigram_jaccard": 0.1429,
+          "sequence_ratio": 0.3158,
+          "sources": [
+            "data/online-agent-cases-v1.jsonl",
+            "generated_historical_online_dev_cases",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "陶艺转盘这一笔请取消",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.3,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_046",
+      "first_user": "手持压线轮这张购买请退订。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "滴灌控制阀这张购买请取消",
+          "bigram_jaccard": 0.2222,
+          "sequence_ratio": 0.4167,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "硅胶揉面垫请退订",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.3,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "录音笔那笔请退订",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.3,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "便携压痕机请退订",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.4,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "蒸汽拖把的购买请撤销",
+          "bigram_jaccard": 0.1111,
+          "sequence_ratio": 0.2727,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_047",
+      "first_user": "便携喷砂笔订单帮我取消。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "帮我取消鼠标订单",
+          "bigram_jaccard": 0.3077,
+          "sequence_ratio": 0.4211,
+          "sources": [
+            "data/online-agent-cases-v1.jsonl",
+            "generated_historical_online_dev_cases",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "帮我取消鞋子订单",
+          "bigram_jaccard": 0.3077,
+          "sequence_ratio": 0.4211,
+          "sources": [
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "帮我取消枕头订单",
+          "bigram_jaccard": 0.3077,
+          "sequence_ratio": 0.4211,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "帮我取消垫子订单",
+          "bigram_jaccard": 0.3077,
+          "sequence_ratio": 0.4211,
+          "sources": [
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "帮我取消台灯订单",
+          "bigram_jaccard": 0.3077,
+          "sequence_ratio": 0.4211,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_048",
+      "first_user": "光学滤镜转盘请撤销购买。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "蒸汽拖把的购买请撤销",
+          "bigram_jaccard": 0.1875,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "热敏纸这笔购买申请撤销",
+          "bigram_jaccard": 0.1765,
+          "sequence_ratio": 0.2727,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "自动喂鱼器这单撤销购买别的商品保留",
+          "bigram_jaccard": 0.1304,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "厨房计时器的购买请撤回我以后再买",
+          "bigram_jaccard": 0.087,
+          "sequence_ratio": 0.2222,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电子阅读器的订单请不要继续了撤销这笔购买",
+          "bigram_jaccard": 0.0741,
+          "sequence_ratio": 0.3226,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_049",
+      "first_user": "桌面电热压板我决定取消订单。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "那只电热水壶不想要了取消订单",
+          "bigram_jaccard": 0.1905,
+          "sequence_ratio": 0.4444,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "桌面音频接口这次不想买了取消订单",
+          "bigram_jaccard": 0.1739,
+          "sequence_ratio": 0.4138,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "帮我取消电热水壶订单",
+          "bigram_jaccard": 0.1667,
+          "sequence_ratio": 0.3478,
+          "sources": [
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "那只风扇不想要了取消订单",
+          "bigram_jaccard": 0.15,
+          "sequence_ratio": 0.32,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "那只音箱不想要了取消订单",
+          "bigram_jaccard": 0.15,
+          "sequence_ratio": 0.32,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_050",
+      "first_user": "手动冲压座这件的订单撤单。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "请把不存在的订制柜这张订单撤掉谢谢",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.2759,
+          "sources": [
+            "outputs/grounded-generalization-cases-20261015-r1/new-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "充电板支撑架照常发太阳能充电板的订单撤掉",
+          "bigram_jaccard": 0.12,
+          "sequence_ratio": 0.25,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "行星搅拌机重复采购了请帮我取消这一件的订单",
+          "bigram_jaccard": 0.1071,
+          "sequence_ratio": 0.303,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "电动缝纫机的订单请取消",
+          "bigram_jaccard": 0.1053,
+          "sequence_ratio": 0.3478,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "智能插座这张订单不要了",
+          "bigram_jaccard": 0.1053,
+          "sequence_ratio": 0.3478,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_051",
+      "first_user": "黄铜放大镜架还未付款，取消购买就行。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "取暖器这一单我不要了取消购买",
+          "bigram_jaccard": 0.12,
+          "sequence_ratio": 0.2667,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "指针式罗盘还没付款替我取消这笔购买",
+          "bigram_jaccard": 0.1071,
+          "sequence_ratio": 0.4242,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "玻璃磨口机购买取消",
+          "bigram_jaccard": 0.0952,
+          "sequence_ratio": 0.16,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我确定要取消这笔购买",
+          "bigram_jaccard": 0.0909,
+          "sequence_ratio": 0.3077,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "滴灌控制阀这张购买请取消",
+          "bigram_jaccard": 0.0833,
+          "sequence_ratio": 0.1429,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_052",
+      "first_user": "台式震动筛已经发货了，帮我看看还能不能取消。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "显影液量杯虽然已经发货我还是想取消你先核实能不能办",
+          "bigram_jaccard": 0.1622,
+          "sequence_ratio": 0.4,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "速干帐篷已经发货也请给我取消",
+          "bigram_jaccard": 0.1429,
+          "sequence_ratio": 0.4118,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "鞋子不用了帮我取消",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.3448,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "牙刷不用了帮我取消",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.3448,
+          "sources": [
+            "data/online-binding-dev-v2.jsonl",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/paired-dev-cases.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "枕头不用了帮我取消",
+          "bigram_jaccard": 0.125,
+          "sequence_ratio": 0.3448,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_053",
+      "first_user": "想了解这套演示规则：已经发货的订单可否直接取消？",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "我只想了解演示规则发货后还能取消吗先不处理我的订单",
+          "bigram_jaccard": 0.25,
+          "sequence_ratio": 0.5106,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "演示规则我想了解一下发货以后能取消吗",
+          "bigram_jaccard": 0.2258,
+          "sequence_ratio": 0.4,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "如果订单已经发货演示取消规则是怎样规定的",
+          "bigram_jaccard": 0.2121,
+          "sequence_ratio": 0.2857,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请取消已经发货的订单ord85553a9ca6如果当前阶段不能取消不要创建退款",
+          "bigram_jaccard": 0.14,
+          "sequence_ratio": 0.2951,
+          "sources": [
+            "data/qwen15b-v1/tasks.jsonl",
+            "data/qwen15b-v2/pilot-all-templates.jsonl",
+            "data/qwen15b-v2/tasks.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请取消已经发货的订单ordfb7bae4505如果当前阶段不能取消不要创建退款",
+          "bigram_jaccard": 0.1373,
+          "sequence_ratio": 0.2951,
+          "sources": [
+            "data/qwen15b-v1/tasks.jsonl",
+            "data/qwen15b-v2/tasks.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_054",
+      "first_user": "演示里的退款pending代表什么，能证明真实资金到账吗？",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "演示中的退款pending是否能证明资金已经到账",
+          "bigram_jaccard": 0.4,
+          "sequence_ratio": 0.7451,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "退款pending处理中是否代表到账",
+          "bigram_jaccard": 0.303,
+          "sequence_ratio": 0.5778,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/knowledge-dev-cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/prior-knowledge.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/prior-knowledge.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/prior-knowledge.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/prior-knowledge.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "退款pending说明是什么",
+          "bigram_jaccard": 0.3,
+          "sequence_ratio": 0.5366,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/knowledge-dev-cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/prior-knowledge.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/prior-knowledge.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/prior-knowledge.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/prior-knowledge.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "退款pending的含义是不是还没有到账请解释演示状态",
+          "bigram_jaccard": 0.2381,
+          "sequence_ratio": 0.4074,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请说明演示后台退款pending的含义和真实支付的关系",
+          "bigram_jaccard": 0.2381,
+          "sequence_ratio": 0.4815,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_055",
+      "first_user": "演示人工接管队列的政策请解释一下，暂时不要转接。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "人工接管队列的演示说明是什么请解释政策不要转接",
+          "bigram_jaccard": 0.4333,
+          "sequence_ratio": 0.6222,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/knowledge-dev-cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/prior-knowledge.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/prior-knowledge.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/prior-knowledge.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/prior-knowledge.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我只想了解演示人工接管队列不需要转接",
+          "bigram_jaccard": 0.3103,
+          "sequence_ratio": 0.6,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请解释本地待人工队列的说明不要帮我转人工",
+          "bigram_jaccard": 0.1818,
+          "sequence_ratio": 0.381,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "桌面加湿器暂时不要了谢谢",
+          "bigram_jaccard": 0.1034,
+          "sequence_ratio": 0.2353,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "只查询枕头订单暂时不要取消",
+          "bigram_jaccard": 0.1,
+          "sequence_ratio": 0.2286,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/train.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_056",
+      "first_user": "请解释演示取消确认流程及退款处理中状态，我只了解规则。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "请解释演示取消的确认步骤以及模拟退款状态先不要帮我取消购买",
+          "bigram_jaccard": 0.2143,
+          "sequence_ratio": 0.5556,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "演示中的退款处理中和确认到账之间有什么区别",
+          "bigram_jaccard": 0.1579,
+          "sequence_ratio": 0.3043,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我只想了解演示规则发货后还能取消吗先不处理我的订单",
+          "bigram_jaccard": 0.1429,
+          "sequence_ratio": 0.32,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请解释演示退款会不会真的对接支付机构",
+          "bigram_jaccard": 0.1389,
+          "sequence_ratio": 0.3256,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "支付状态我已了解我确认取消订单请执行",
+          "bigram_jaccard": 0.1389,
+          "sequence_ratio": 0.2326,
+          "sources": [
+            "data/qwen15b-sft-v1-trajectory/train.jsonl",
+            "data/qwen15b-sft-v1/train.jsonl",
+            "data/qwen15b-sft-v2-stateful-turn/train.jsonl",
+            "data/qwen15b-v2/sft-teacher-v6/train.jsonl",
+            "data/qwen15b-v2/sft-teacher-v8/train.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_057",
+      "first_user": "演示商店对安装费用有什么收费政策？请给出依据。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "演示商品三年延保的收费标准有明确依据吗",
+          "bigram_jaccard": 0.1176,
+          "sequence_ratio": 0.35,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "想查一下演示商店跨境关税的计算政策有没有可引用的规定",
+          "bigram_jaccard": 0.0976,
+          "sequence_ratio": 0.2553,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "安装维修费用",
+          "bigram_jaccard": 0.087,
+          "sequence_ratio": 0.2963,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "演示中的退款处理中和确认到账之间有什么区别",
+          "bigram_jaccard": 0.0811,
+          "sequence_ratio": 0.2381,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "这家店的延保价格表和上门安装收费有文件依据吗",
+          "bigram_jaccard": 0.0789,
+          "sequence_ratio": 0.3256,
+          "sources": [
+            "data/consumed-heldout-system-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-first.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/consumed-regression.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/consumed-regression.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_058",
+      "first_user": "演示系统对保修期内换货运费有规定吗？",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "预览申请和界面确认在演示系统中有何区别",
+          "bigram_jaccard": 0.0968,
+          "sequence_ratio": 0.2778,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "演示系统里的本地人工队列和实际客服工单有什么区别",
+          "bigram_jaccard": 0.0833,
+          "sequence_ratio": 0.2439,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "这套演示有没有关于运费计算的政策",
+          "bigram_jaccard": 0.069,
+          "sequence_ratio": 0.2424,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "如果订单已经发货演示取消规则是怎样规定的",
+          "bigram_jaccard": 0.0606,
+          "sequence_ratio": 0.2162,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "演示页面转人工之后是进入真实公司的客服工单系统吗",
+          "bigram_jaccard": 0.0541,
+          "sequence_ratio": 0.2439,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_059",
+      "first_user": "请安排真人客服接手这次咨询，我需要人工协助。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "请安排人工专员协助这次咨询",
+          "bigram_jaccard": 0.2917,
+          "sequence_ratio": 0.4848,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/sealed/test-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/known-regression.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请安排人工客服和我聊一下我需要真人协助",
+          "bigram_jaccard": 0.2759,
+          "sequence_ratio": 0.6154,
+          "sources": [
+            "data/consumed-scoped-heldout-20261015-r1/cases.jsonl",
+            "outputs/request-development-cases-20261015-r1/consumed-second.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "我需要人工帮助",
+          "bigram_jaccard": 0.1905,
+          "sequence_ratio": 0.4444,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "这次请客服工作人员来接手我需要和真人沟通",
+          "bigram_jaccard": 0.1875,
+          "sequence_ratio": 0.45,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "这件事请人工客服接手",
+          "bigram_jaccard": 0.1667,
+          "sequence_ratio": 0.4,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/consumed-acceptance-dev.jsonl",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev.jsonl"
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "request_test_060",
+      "first_user": "这件事情请转人工，由工作人员继续处理。",
+      "nearest_lexical_matches": [
+        {
+          "normalized_historical_text": "请转人工处理",
+          "bigram_jaccard": 0.2353,
+          "sequence_ratio": 0.5217,
+          "sources": [
+            "data/online-agent-cases-v1.jsonl",
+            "generated_historical_online_dev_cases",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/grounded-generalization-cases-20261015-r1/prior-business-dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请转人工客服处理",
+          "bigram_jaccard": 0.2105,
+          "sequence_ratio": 0.48,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/fresh-acceptance.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/dev.jsonl",
+            "outputs/online-repair-backup-20261013-r1/extracted/experiment-data/paired-dev-cases.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "请让工作人员处理",
+          "bigram_jaccard": 0.2105,
+          "sequence_ratio": 0.56,
+          "sources": [
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/train.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "可以由人工继续处理吗",
+          "bigram_jaccard": 0.1905,
+          "sequence_ratio": 0.4444,
+          "sources": [
+            "outputs/catalog-generalization-cases-20261015-r1/consumed-acceptance-dev.jsonl",
+            "outputs/catalog-generalization-cases-20261015-r1/prior-business-dev.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/business-dev-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev-cases.jsonl",
+            "outputs/current-instance-closeout-result-20261014-r1/extracted/closeout-inputs/train-dev/dev.jsonl"
+          ]
+        },
+        {
+          "normalized_historical_text": "能否让一位人工客服继续处理我的事情",
+          "bigram_jaccard": 0.1852,
+          "sequence_ratio": 0.3529,
+          "sources": [
+            "outputs/request-development-cases-20261015-r1/old-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r1/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r2/new-development.jsonl",
+            "outputs/scoped-development-cases-20261015-r3/new-development.jsonl"
+          ]
+        }
+      ]
+    }
+  ],
+  "model_calls": 0,
+  "semantic_embedding_audit": false,
+  "scenario_semantics_overlap_expected": true,
+  "author_knows_project": true,
+  "independent_human_distribution_claim": false,
+  "limitations": [
+    "Not a proof of absence from base model pretraining or unavailable historical data.",
+    "Character bigrams and sequence ratios are lexical, not semantic similarity judgments.",
+    "Same business tasks recur intentionally; labels and scenario semantics are not disjoint."
+  ]
+}

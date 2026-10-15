@@ -1,0 +1,10 @@
+{
+  "cases": 60,
+  "frozen_before_model_calls": true,
+  "author_independent": false,
+  "sha256": {
+    "cases.jsonl": "7a8d3cb6b464b8e103f077dd7958db24cb9d684791558101c14813e1216482d2",
+    "protocol.json": "83658cba659e3d416e9ee014686ea2199169b6ff6156fc9430fc091305058f4c",
+    "overlap-audit.json": "291123450fa7f5be0f09befc17a2f3ce51576624a22ae2f8825796b7af7101ef"
+  }
+}

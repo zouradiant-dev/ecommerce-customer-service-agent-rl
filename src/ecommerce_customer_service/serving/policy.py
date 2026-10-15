@@ -9,7 +9,7 @@ from .model import ONLINE_PROTOCOL, SYSTEM_PROMPT, tool_schemas
 from .storage import encode
 
 FACTORIAL_PROFILES = ("baseline_v1", "binding_prompt_v2", "binding_tools_v2", "binding_combined_v2")
-PROFILES = FACTORIAL_PROFILES + ("binding_compact_v3", "binding_guard_v4", "binding_grounded_v5", "binding_catalog_v6", "binding_scoped_v7")
+PROFILES = FACTORIAL_PROFILES + ("binding_compact_v3", "binding_guard_v4", "binding_grounded_v5", "binding_catalog_v6", "binding_scoped_v7", "binding_state_v8")
 
 BINDING_PROMPT = """你是电商售后助手，按真实工具结果处理当前用户的最新需求。身份已经由服务端认证，无需姓名或手机号。
 先区分用户是在查询、要求取消、撤回/改目标，还是要求人工；仅查询或明确不要操作时，不创建取消申请。
@@ -53,6 +53,10 @@ class Policy:
 def get_policy(name: str = "baseline_v1") -> Policy:
     if name not in PROFILES:
         raise ValueError("unknown_policy_profile")
+    if name == 'binding_state_v8':
+        previous=get_policy('binding_scoped_v7')
+        prompt=previous.prompt+'\n当前请求状态由服务端按分句角色、本人目录和上一轮请求框架解析。确认卡失效不等于忘记待处理请求；仅 dialogue_state 为 awaiting_button 且 unique_target=true 才能对唯一目标查询并预览。awaiting_choice 必须先澄清。用户撤回、仅查询、否认和未知新商品均不能借用旧请求。\npaid_amount_yuan 是后台金额的服务端格式化值，请直接引用；不要自行换算分与元。候选订单列表与政策原文由服务端展示。'
+        return Policy(name,prompt,previous.tools)
     schemas = tool_schemas()
     if name in {"binding_tools_v2", "binding_combined_v2"}:
         for schema in schemas:

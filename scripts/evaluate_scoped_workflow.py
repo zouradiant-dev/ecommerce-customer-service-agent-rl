@@ -48,6 +48,8 @@ def run_stage(rows,output,profile,model,context,knowledge,hashes):
             spans=json.loads((directory/'spans.json').read_text(encoding='utf-8'))
             result['controller_actions']=sum(s['kind']=='controller' for s in spans)
             result['controller_preview_rebuilds']=sum(s['kind']=='controller' and s['name']=='preview_rebuild_preview_cancel' for s in spans)
+            result['controller_protocol_replans']=sum(s['kind']=='controller' and s['name']=='terminal_protocol_replan' for s in spans)
+            result['controller_policy_loop_cutoffs']=sum(s['kind']=='controller' and s['name']=='policy_tool_loop_cutoff' for s in spans)
             ledger=ledger_audit(case,directory);write(directory/'ledger-audit.json',ledger)
             result['ledger_audit']={k:v for k,v in ledger.items() if k not in {'cancellations','refunds'}}
             for name,value in result['ledger_audit'].items():
@@ -63,6 +65,8 @@ def run_stage(rows,output,profile,model,context,knowledge,hashes):
         model_calls=sum(r['model_calls'] for r in results),tool_calls=sum(r['tool_calls'] for r in results),
         controller_actions=sum(r['controller_actions'] for r in results),
         controller_preview_rebuilds=sum(r['controller_preview_rebuilds'] for r in results),
+        controller_protocol_replans=sum(r['controller_protocol_replans'] for r in results),
+        controller_policy_loop_cutoffs=sum(r['controller_policy_loop_cutoffs'] for r in results),
         ledger_audit={name:sum(r['ledger_audit'][name] for r in results) for name in ('unauthorized_writes','wrong_order_writes','duplicate_writes','invalid_refunds')},
         by_category={category:dict(passed=sum(r['passed'] for r in results if r['category']==category),total=sum(r['category']==category for r in results)) for category in sorted({r['category'] for r in results})},
         failures=dict(Counter(f.split(':')[0] for r in results for f in r['failures'])),

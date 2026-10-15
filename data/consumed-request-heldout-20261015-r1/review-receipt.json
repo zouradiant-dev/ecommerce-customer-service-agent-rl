@@ -1,0 +1,19 @@
+{
+  "source_summary_sha256": "07d9f0f4417d26e2c858160d2b16837f209af96f9e0ab1dcc1feaf14b3ab8093",
+  "test_consumed": true,
+  "model_calls_replayed": 0,
+  "source_unchanged_since_freeze": true,
+  "files_sha256": {
+    "cases.jsonl": "7a8d3cb6b464b8e103f077dd7958db24cb9d684791558101c14813e1216482d2",
+    "manifest.json": "fb7fb8831e0ee1af381ee5582e8599e334386310e57510ba6db07588e261a177",
+    "overlap-audit.json": "291123450fa7f5be0f09befc17a2f3ce51576624a22ae2f8825796b7af7101ef",
+    "paired-results.jsonl": "3edb16f9d2e7b044a8ff4021534708af0a1911cd9bd2b8183449f4e3bdd58061",
+    "protocol.json": "83658cba659e3d416e9ee014686ea2199169b6ff6156fc9430fc091305058f4c",
+    "README.md": "95567aa1a42e24422c05d8c4480634ad78905248187f16585da1da4ecf087e69",
+    "summary.json": "07d9f0f4417d26e2c858160d2b16837f209af96f9e0ab1dcc1feaf14b3ab8093",
+    "test-v7-actual-input-audit.json": "b9979401014f51461eb79d15d4dbee3b2ccaef6b546b5b816dc9dad9dddd3ab8",
+    "test-v7-bad_cases.jsonl": "65e275cdd358dbefcdb5b15cedd54f3b6c7c79e607de249ad59e2e69c9dcefae",
+    "test-v8-actual-input-audit.json": "e7415cbeca38333c4ecad1b966729a25725598fd9a9b7e7695ff99b052bb8213",
+    "test-v8-bad_cases.jsonl": "86a01492f86d42ad79a740cacf675a081dd561696e9f1ee17b0f17adc0bf7ad8"
+  }
+}
