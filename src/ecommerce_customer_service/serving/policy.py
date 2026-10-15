@@ -9,7 +9,7 @@ from .model import ONLINE_PROTOCOL, SYSTEM_PROMPT, tool_schemas
 from .storage import encode
 
 FACTORIAL_PROFILES = ("baseline_v1", "binding_prompt_v2", "binding_tools_v2", "binding_combined_v2")
-PROFILES = FACTORIAL_PROFILES + ("binding_compact_v3", "binding_guard_v4")
+PROFILES = FACTORIAL_PROFILES + ("binding_compact_v3", "binding_guard_v4", "binding_grounded_v5", "binding_catalog_v6")
 
 BINDING_PROMPT = """你是电商售后助手，按真实工具结果处理当前用户的最新需求。身份已经由服务端认证，无需姓名或手机号。
 先区分用户是在查询、要求取消、撤回/改目标，还是要求人工；仅查询或明确不要操作时，不创建取消申请。
@@ -60,6 +60,8 @@ def get_policy(name: str = "baseline_v1") -> Policy:
             function["description"] = DESCRIPTIONS.get(function["name"], function["description"])
     prompt = (COMPACT_PROMPT + "\n服务端校验订单目标；目标不明确、无匹配或多匹配时先澄清，不反复重试预览。"
               "每条新消息都会作废旧申请，继续处理须创建新的有效预览；不得声称失效申请仍可确认。"
-              if name == "binding_guard_v4" else COMPACT_PROMPT if name == "binding_compact_v3" else
+              if name in {"binding_guard_v4", "binding_grounded_v5", "binding_catalog_v6"} else COMPACT_PROMPT if name == "binding_compact_v3" else
               BINDING_PROMPT if name in {"binding_prompt_v2", "binding_combined_v2"} else SYSTEM_PROMPT)
+    if name == 'binding_catalog_v6':
+        prompt += '\nlist_orders 返回的 aliases 是该商品的服务端受控别名。用户说别名时也匹配该行 product；同名或同别名匹配多笔仍须按订单号或金额澄清。退订、撤单、作废订单的明确请求可创建取消预览；仍不能跳过界面按钮确认。\n用户在聊天说“确认取消”时，旧申请已因新消息失效：若原目标仍明确且可取消，应重新 get_order 并调用 preview_cancel 创建新的待按钮确认申请，不能只查询后引用旧卡。聊天确认永远不执行取消或退款；撤回、切换目标或查询请求不能继承旧授权。'
     return Policy(name, prompt, schemas)

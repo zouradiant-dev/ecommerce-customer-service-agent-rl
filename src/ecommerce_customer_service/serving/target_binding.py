@@ -78,7 +78,8 @@ def resolve(text: str, previous_users: list[str], orders: list[dict[str, Any]]) 
             "order_version": candidates[0]["version"], "matching_version": "bounded_target_v2", "candidate_count": 1}
 
 
-def require_target(store, backend, customer: str, conversation: str, request: str, order: str) -> dict:
+def require_target(store, backend, customer: str, conversation: str, request: str, order: str,
+                   *, grounded: bool = False, catalog_aliases: bool = False) -> dict:
     with store.transaction() as db:
         store.require_owner(db, customer, conversation)
         turn = db.execute("SELECT text,status FROM turns WHERE conversation_id=? AND request_id=?",
@@ -93,7 +94,10 @@ def require_target(store, backend, customer: str, conversation: str, request: st
                                         or not isinstance(row.get("id"), str) or type(row.get("version")) is not int
                                         or row["version"] < 1 for row in rows):
         raise ServiceError("invalid_owned_order_evidence", 502)
-    evidence = resolve(turn["text"], users[:-1], rows)
+    resolver = resolve
+    if grounded:
+        from .grounded_target import resolve as resolver
+    evidence = resolver(turn["text"], users[:-1], rows, **({'catalog_aliases': catalog_aliases} if grounded else {}))
     if evidence["order_id"] != order:
         raise ServiceError("target_order_mismatch", 409)
     store.record(conversation, request, "target_binding", {"order_id": order}, evidence)

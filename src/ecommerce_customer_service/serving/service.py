@@ -250,15 +250,22 @@ class CustomerService:
         if name not in expected or not isinstance(arguments, dict) or set(arguments) != expected[name]:
             raise ServiceError("tool_not_allowed_or_invalid_arguments")
         if name == "list_orders":
-            return self.backend.list_orders(customer)
+            listing = self.backend.list_orders(customer)
+            if self.policy.name == 'binding_catalog_v6':
+                from .target_binding import ALIASES
+                listing = {**listing, 'orders': [{**row, 'aliases': list(ALIASES.get(row.get('product'), ()))}
+                                                 for row in listing['orders']]}
+            return listing
         if name == "search_policies":
             return self.search_policies(arguments['query'])
         if name == "get_order":
             return self.backend.get_order(customer, identifier(arguments["order_id"]))
         if name == "preview_cancel":
             evidence = None
-            if self.policy.name == "binding_guard_v4":
-                evidence = require_target(self.store, self.backend, customer, conversation, request, arguments["order_id"])
+            if self.policy.name in {"binding_guard_v4", "binding_grounded_v5", "binding_catalog_v6"}:
+                evidence = require_target(self.store, self.backend, customer, conversation, request, arguments["order_id"],
+                                          grounded=self.policy.name in {"binding_grounded_v5", "binding_catalog_v6"},
+                                          catalog_aliases=self.policy.name == 'binding_catalog_v6')
             return self._preview(customer, conversation, arguments["order_id"], request_id=request,
                                  matched_version=evidence["order_version"] if evidence else None)
         reason = arguments["reason"]
