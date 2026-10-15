@@ -1,0 +1,14 @@
+{
+  "archive_sha256": "f3302ee03fb2692792caa470b9e259faf2a9fcb4d08b0ef934a6d9edacee00de",
+  "verified_files": 444,
+  "sqlite_databases_verified": 120,
+  "test_cases": 60,
+  "passed_cases": 52,
+  "all_raw_results_retained": true,
+  "one_model_execution_per_case": true,
+  "postprocessing_interruption_disclosed": true,
+  "weights_unchanged": true,
+  "weights_or_base_environment_in_archive": false,
+  "no_training": true,
+  "no_production_promotion": true
+}

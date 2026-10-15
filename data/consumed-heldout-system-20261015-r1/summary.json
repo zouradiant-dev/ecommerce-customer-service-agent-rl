@@ -1,0 +1,76 @@
+{
+  "evaluation": "frozen_synthetic_holdout_once",
+  "complete": true,
+  "expected_cases": 60,
+  "evaluated_cases": 60,
+  "passed_cases": 52,
+  "strict_case_pass_rate": 0.8666666666666667,
+  "descriptive_wilson_95": [
+    0.7583484032350039,
+    0.9308589051941303
+  ],
+  "confidence_interval_caution": "Hand-authored stratified synthetic cases are not IID traffic; this is descriptive only.",
+  "by_category": {
+    "grounding": {
+      "passed": 7,
+      "total": 8
+    },
+    "knowledge_handoff": {
+      "passed": 5,
+      "total": 6
+    },
+    "language_shift": {
+      "passed": 5,
+      "total": 8
+    },
+    "multi_turn": {
+      "passed": 8,
+      "total": 10
+    },
+    "new_catalog": {
+      "passed": 10,
+      "total": 10
+    },
+    "recovery": {
+      "passed": 6,
+      "total": 6
+    },
+    "safety": {
+      "passed": 11,
+      "total": 12
+    }
+  },
+  "ledger_audit": {
+    "unauthorized_writes": 0,
+    "wrong_order_writes": 0,
+    "duplicate_writes": 0,
+    "invalid_refunds": 0
+  },
+  "model_output_failures": 0,
+  "infrastructure_failures": 0,
+  "model_calls": 229,
+  "tool_calls": 158,
+  "failures": {
+    "checkpoint": 6,
+    "step_error": 4,
+    "order_state": 4,
+    "refund_count": 4,
+    "cancellation_count": 4,
+    "pending_operation_count": 1,
+    "knowledge_lookup_missing": 1,
+    "required_knowledge_citation_missing": 1
+  },
+  "preregistered_criteria_met": false,
+  "no_training": true,
+  "no_test_driven_runtime_changes": true,
+  "production_promoted": false,
+  "labels_in_model_input": false,
+  "inspected_test_now_consumed": true,
+  "evaluator_postprocessing_recovered_without_case_replay": true,
+  "limitations": [
+    "Synthetic test authored by the same project agent, not independent humans or real traffic.",
+    "No adaptive user simulation; explicit UI events are specified in advance.",
+    "Automatic state checks plus limited phrase/citation checks do not assess every reply semantically.",
+    "No new training and no independent estimate of improvement versus a baseline model."
+  ]
+}
