@@ -48,6 +48,14 @@ class LedgerAssertions(unittest.TestCase):
         self.assertEqual(1, result['invalid_refunds'])
         self.assertEqual(0, result['wrong_order_writes'])
 
+    def test_historical_case_without_inline_orders_uses_pristine_default_prestate(self):
+        self.case.pop('initial_orders')
+        self.case['steps'].append({'kind':'confirm'})
+        self.case['expected']['order_statuses']['order_A']='cancelled'
+        self.insert_cancel('op-default','order_A')
+        result=ledger_audit(self.case,self.directory)
+        self.assertEqual(0,result['wrong_order_writes'])
+
     def test_wilson_interval_has_nonzero_uncertainty_even_for_all_passed(self):
         low, high = wilson(60, 60)
         self.assertLess(low, .95)

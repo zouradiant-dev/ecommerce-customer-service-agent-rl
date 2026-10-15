@@ -1,0 +1,163 @@
+{
+  "evaluation": "once_only_paired_heldout_synthetic_test",
+  "baseline": {
+    "profile": "binding_catalog_v6",
+    "expected_cases": 60,
+    "evaluated_cases": 60,
+    "passed_cases": 46,
+    "complete": true,
+    "case_pass_rate": 0.7666666666666667,
+    "model_output_failures": 0,
+    "infrastructure_failures": 0,
+    "model_calls": 230,
+    "tool_calls": 161,
+    "controller_actions": 0,
+    "controller_preview_rebuilds": 0,
+    "ledger_audit": {
+      "unauthorized_writes": 0,
+      "wrong_order_writes": 0,
+      "duplicate_writes": 0,
+      "invalid_refunds": 0
+    },
+    "by_category": {
+      "denial_query": {
+        "passed": 12,
+        "total": 14
+      },
+      "knowledge_handoff": {
+        "passed": 7,
+        "total": 8
+      },
+      "language_shift": {
+        "passed": 4,
+        "total": 8
+      },
+      "multi_turn": {
+        "passed": 6,
+        "total": 10
+      },
+      "new_catalog": {
+        "passed": 5,
+        "total": 8
+      },
+      "recovery": {
+        "passed": 6,
+        "total": 6
+      },
+      "target_roles": {
+        "passed": 6,
+        "total": 6
+      }
+    },
+    "failures": {
+      "checkpoint": 12,
+      "step_error": 9,
+      "order_state": 9,
+      "refund_count": 9,
+      "cancellation_count": 9,
+      "turn_failed": 1,
+      "pending_operation_count": 4,
+      "required_knowledge_citation_missing": 1
+    },
+    "no_training": true,
+    "synthetic_business": true,
+    "production_promoted": false
+  },
+  "candidate": {
+    "profile": "binding_scoped_v7",
+    "expected_cases": 60,
+    "evaluated_cases": 60,
+    "passed_cases": 52,
+    "complete": true,
+    "case_pass_rate": 0.8666666666666667,
+    "model_output_failures": 0,
+    "infrastructure_failures": 0,
+    "model_calls": 219,
+    "tool_calls": 144,
+    "controller_actions": 84,
+    "controller_preview_rebuilds": 0,
+    "ledger_audit": {
+      "unauthorized_writes": 0,
+      "wrong_order_writes": 0,
+      "duplicate_writes": 0,
+      "invalid_refunds": 0
+    },
+    "by_category": {
+      "denial_query": {
+        "passed": 14,
+        "total": 14
+      },
+      "knowledge_handoff": {
+        "passed": 7,
+        "total": 8
+      },
+      "language_shift": {
+        "passed": 6,
+        "total": 8
+      },
+      "multi_turn": {
+        "passed": 7,
+        "total": 10
+      },
+      "new_catalog": {
+        "passed": 7,
+        "total": 8
+      },
+      "recovery": {
+        "passed": 6,
+        "total": 6
+      },
+      "target_roles": {
+        "passed": 5,
+        "total": 6
+      }
+    },
+    "failures": {
+      "checkpoint": 5,
+      "step_error": 6,
+      "order_state": 6,
+      "refund_count": 6,
+      "cancellation_count": 6,
+      "pending_operation_count": 1,
+      "required_knowledge_citation_missing": 1
+    },
+    "no_training": true,
+    "synthetic_business": true,
+    "production_promoted": false
+  },
+  "paired_improvements": [
+    "scoped_test_002",
+    "scoped_test_007",
+    "scoped_test_008",
+    "scoped_test_009",
+    "scoped_test_012",
+    "scoped_test_019",
+    "scoped_test_030",
+    "scoped_test_038",
+    "scoped_test_055"
+  ],
+  "paired_regressions": [
+    "scoped_test_005",
+    "scoped_test_034",
+    "scoped_test_056"
+  ],
+  "denial_query_failures": [],
+  "paired_pass_rate_delta": 0.09999999999999998,
+  "descriptive_wilson_95": [
+    0.7583484032350039,
+    0.9308589051941303
+  ],
+  "predefined_criteria_met": false,
+  "no_training": true,
+  "weights_unchanged": true,
+  "test_used_for_selection": false,
+  "test_is_now_consumed": true,
+  "production_promoted": false,
+  "limitations": [
+    "Same project agent authors synthetic cases; not independent humans or real customer traffic.",
+    "Scenario semantics intentionally overlap; text audit does not prove semantic or pretraining independence.",
+    "v7 adds deterministic intent context, bounded planning support and extractive demo policy answers.",
+    "Any improvement is an end-to-end system gain, not a learned SFT or GRPO gain.",
+    "Descriptive intervals for hand-authored, non-IID cases do not estimate production accuracy."
+  ]
+}

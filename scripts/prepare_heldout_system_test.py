@@ -225,10 +225,10 @@ def historical_files():
     return sorted(files)
 
 
-def audit(candidates):
+def audit(candidates, *, extra_paths=()):
     corpus = defaultdict(set)
     inputs = {}
-    for path in historical_files():
+    for path in sorted(set(historical_files()) | {Path(p) for p in extra_paths}):
         count = 0; with_user_text = 0
         for line in path.read_text(encoding='utf-8-sig').splitlines():
             if not line.strip(): continue

@@ -9,7 +9,7 @@ from .model import ONLINE_PROTOCOL, SYSTEM_PROMPT, tool_schemas
 from .storage import encode
 
 FACTORIAL_PROFILES = ("baseline_v1", "binding_prompt_v2", "binding_tools_v2", "binding_combined_v2")
-PROFILES = FACTORIAL_PROFILES + ("binding_compact_v3", "binding_guard_v4", "binding_grounded_v5", "binding_catalog_v6")
+PROFILES = FACTORIAL_PROFILES + ("binding_compact_v3", "binding_guard_v4", "binding_grounded_v5", "binding_catalog_v6", "binding_scoped_v7")
 
 BINDING_PROMPT = """你是电商售后助手，按真实工具结果处理当前用户的最新需求。身份已经由服务端认证，无需姓名或手机号。
 先区分用户是在查询、要求取消、撤回/改目标，还是要求人工；仅查询或明确不要操作时，不创建取消申请。
@@ -60,8 +60,12 @@ def get_policy(name: str = "baseline_v1") -> Policy:
             function["description"] = DESCRIPTIONS.get(function["name"], function["description"])
     prompt = (COMPACT_PROMPT + "\n服务端校验订单目标；目标不明确、无匹配或多匹配时先澄清，不反复重试预览。"
               "每条新消息都会作废旧申请，继续处理须创建新的有效预览；不得声称失效申请仍可确认。"
-              if name in {"binding_guard_v4", "binding_grounded_v5", "binding_catalog_v6"} else COMPACT_PROMPT if name == "binding_compact_v3" else
+              if name in {"binding_guard_v4", "binding_grounded_v5", "binding_catalog_v6", "binding_scoped_v7"} else COMPACT_PROMPT if name == "binding_compact_v3" else
               BINDING_PROMPT if name in {"binding_prompt_v2", "binding_combined_v2"} else SYSTEM_PROMPT)
-    if name == 'binding_catalog_v6':
+    if name in {'binding_catalog_v6', 'binding_scoped_v7'}:
         prompt += '\nlist_orders 返回的 aliases 是该商品的服务端受控别名。用户说别名时也匹配该行 product；同名或同别名匹配多笔仍须按订单号或金额澄清。退订、撤单、作废订单的明确请求可创建取消预览；仍不能跳过界面按钮确认。\n用户在聊天说“确认取消”时，旧申请已因新消息失效：若原目标仍明确且可取消，应重新 get_order 并调用 preview_cancel 创建新的待按钮确认申请，不能只查询后引用旧卡。聊天确认永远不执行取消或退款；撤回、切换目标或查询请求不能继承旧授权。'
+    if name == 'binding_scoped_v7':
+        prompt += '\n当前 business_state.request_binding 是服务端按用户原话和新查询的本人目录生成的预览意图，不授权写入。intent=cancel_preview 且 unique_target=true 时，只对 candidate_order_ids 的唯一订单重新 get_order，再 preview_cancel；retained_order_ids 是用户要求保留的订单，绝不能当作取消目标。不要因对话中的其他商品分散而选错。'
+        prompt += '\n确认继续取消、要求重新显示取消确认页面，也需要本轮读取并创建新预览，不能只用自然语言回复旧卡已经失效。intent 为 blocked_scope、withdrawn、question 或 query_or_idle 时不得创建预览；用户提到他人说过取消，不等于本人提出取消。'
+        prompt += '\n政策说明由服务端先检索并最终展示来源原文。预览按钮只创建待确认申请；界面确认取消按钮才会提交取消。不要颠倒这两个动作，退款 pending 不是资金到账。'
     return Policy(name, prompt, schemas)

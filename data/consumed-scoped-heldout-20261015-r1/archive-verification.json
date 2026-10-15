@@ -1,0 +1,16 @@
+{
+  "archive_sha256": "036e0abad77867b18df23d2a84e411a90e82b2ef4fac20199126d794572b6c70",
+  "verified_files": 7928,
+  "sqlite_databases_verified": 2142,
+  "all_dev_failures_and_test_retained": true,
+  "weights_unchanged": true,
+  "weights_in_archive": false,
+  "base_environment_in_archive": false,
+  "no_training": true,
+  "production_promoted": false,
+  "archive_relative_path": "outputs/scoped-workflow-backup-20261015-r1/scoped-workflow-20261015-r1.tar.gz",
+  "archive_kept_outside_git": true,
+  "sqlite_count_includes_copied_baseline_databases": true,
+  "distinct_fresh_test_trajectories": 120,
+  "candidate_criteria_met": false
+}

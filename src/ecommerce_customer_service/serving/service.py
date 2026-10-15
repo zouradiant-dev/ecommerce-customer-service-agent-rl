@@ -249,12 +249,22 @@ class CustomerService:
             expected['search_policies']={'query'}
         if name not in expected or not isinstance(arguments, dict) or set(arguments) != expected[name]:
             raise ServiceError("tool_not_allowed_or_invalid_arguments")
+        if self.policy.name == 'binding_scoped_v7' and self.knowledge is not None and name in {'preview_cancel','escalate_to_human'}:
+            from .policy_answer import route
+            with self.store.transaction() as db:
+                turn = db.execute('SELECT text FROM turns WHERE conversation_id=? AND request_id=?',(conversation,request)).fetchone()
+            if turn is not None and route(turn['text']) is not None:
+                raise ServiceError('target_needs_clarification' if name=='preview_cancel' else 'handoff_not_requested',409)
         if name == "list_orders":
             listing = self.backend.list_orders(customer)
-            if self.policy.name == 'binding_catalog_v6':
+            if self.policy.name in {'binding_catalog_v6', 'binding_scoped_v7'}:
                 from .target_binding import ALIASES
                 listing = {**listing, 'orders': [{**row, 'aliases': list(ALIASES.get(row.get('product'), ()))}
                                                  for row in listing['orders']]}
+            if self.policy.name == 'binding_scoped_v7':
+                from .intent_target import guidance
+                users = [m['content'] for m in self.store.model_history(customer, conversation) if m['role']=='user']
+                listing = {**listing, 'request_binding': guidance(users[-1], users[:-1], listing['orders'])}
             return listing
         if name == "search_policies":
             return self.search_policies(arguments['query'])
@@ -262,10 +272,11 @@ class CustomerService:
             return self.backend.get_order(customer, identifier(arguments["order_id"]))
         if name == "preview_cancel":
             evidence = None
-            if self.policy.name in {"binding_guard_v4", "binding_grounded_v5", "binding_catalog_v6"}:
+            if self.policy.name in {"binding_guard_v4", "binding_grounded_v5", "binding_catalog_v6", "binding_scoped_v7"}:
                 evidence = require_target(self.store, self.backend, customer, conversation, request, arguments["order_id"],
                                           grounded=self.policy.name in {"binding_grounded_v5", "binding_catalog_v6"},
-                                          catalog_aliases=self.policy.name == 'binding_catalog_v6')
+                                          catalog_aliases=self.policy.name == 'binding_catalog_v6',
+                                          scoped=self.policy.name == 'binding_scoped_v7')
             return self._preview(customer, conversation, arguments["order_id"], request_id=request,
                                  matched_version=evidence["order_version"] if evidence else None)
         reason = arguments["reason"]
@@ -320,6 +331,45 @@ class CustomerService:
                        (status, encode(result), conversation, request))
         return result
 
+    def _rebuild_preview_after_model_omission(self, customer, conversation, request, binding):
+        """Only renew an earlier preview after a fresh, explicit user continuation.
+
+        Never fill in an initial cancel intent, arbitrary target, or business write.
+        Both reads/preview are visible as controller actions, not LLM tool calls.
+        """
+        if not binding.get('unique_target') or not binding.get('inherited_target'):
+            return None
+        target = binding['candidate_order_ids'][0]
+        with self.store.transaction() as db:
+            previous = db.execute("SELECT 1 FROM operations WHERE conversation_id=? AND order_id=? "
+                                  "AND status IN ('superseded','expired') LIMIT 1", (conversation,target)).fetchone()
+        if not previous:
+            return None
+        operation = None
+        for name in ('get_order','preview_cancel'):
+            call_id = 'controller_' + uuid4().hex
+            arguments = {'order_id':target}
+            call = {'role':'assistant','content':'','tool_calls':[{'id':call_id,'type':'function',
+                'function':{'name':name,'arguments':encode(arguments)}}]}
+            self.store.append(conversation,request,call)
+            try:
+                with self.telemetry.span('controller','preview_rebuild_'+name,authorization_for_write=False):
+                    output = self._tool(customer,conversation,request,name,arguments)
+            except Exception as error:
+                code = error.code if isinstance(error,ServiceError) else 'controller_read_failed'
+                output = {'error':code}
+            self.store.record(conversation,request,name,arguments,{**output,'initiated_by':'controller_preview_rebuild'})
+            self.store.append(conversation,request,{'role':'tool','name':name,'tool_call_id':call_id,'content':encode(output)})
+            if output.get('error'):
+                return None
+            if name == 'get_order':
+                order = output.get('order') or {}
+                if order.get('id') != target or order.get('status') not in {'paid','pending'}:
+                    return None
+            else:
+                operation = output
+        return operation
+
     def _run_turn(self, customer: str, conversation: str, request: str) -> dict[str, Any]:
         if self.model is None:
             content = "智能客服暂未连接。您可以先查看订单，并通过订单卡片申请取消。"
@@ -329,10 +379,45 @@ class CustomerService:
         schemas, system = self.policy.tools, self.policy.prompt
         target_error = None
         knowledge_result = None
+        request_binding = None
+        preview_replan_used = False
+        target_is_previewable = False
+        policy_topics = None
+        if self.policy.name == 'binding_scoped_v7':
+            from .intent_target import guidance
+            from .policy_answer import route, scoped_result
+            users = [m['content'] for m in messages if m['role']=='user']
+            with self.telemetry.span('controller', 'read_preview_intent', authorization_for_write=False):
+                listing = self.backend.list_orders(customer)
+                orders = listing.get('orders') if isinstance(listing, dict) else None
+                if not isinstance(orders, list) or any(row.get('customer_id') != customer for row in orders):
+                    raise ServiceError('invalid_owned_order_evidence', 502)
+                request_binding = guidance(users[-1], users[:-1], orders)
+                target_is_previewable = request_binding['unique_target'] and any(
+                    row['id'] in request_binding['candidate_order_ids'] and row['status'] in {'pending','paid'} for row in orders)
+                self.store.record(conversation, request, 'controller_catalog', {}, listing)
+            policy_topics = route(users[-1]) if self.knowledge is not None else None
+            if policy_topics is not None:
+                # An explicit read-only controller action, recorded as such. It is
+                # not an LLM-selected tool call or a generated supervision target.
+                call_id = 'controller_' + uuid4().hex
+                query = {'query': users[-1]}
+                lookup_call = {'role':'assistant', 'content':'', 'tool_calls':[{'id':call_id, 'type':'function',
+                    'function':{'name':'search_policies', 'arguments':encode(query)}}]}
+                with self.telemetry.span('controller', 'required_policy_lookup', authorization_for_write=False):
+                    knowledge_result = scoped_result(self.search_policies(users[-1]), policy_topics)
+                self.store.record(conversation, request, 'search_policies', query,
+                                  {**knowledge_result, 'initiated_by':'controller'})
+                lookup_result = {'role':'tool', 'name':'search_policies', 'tool_call_id':call_id,
+                                 'content':encode(knowledge_result)}
+                for row in (lookup_call, lookup_result):
+                    self.store.append(conversation, request, row); messages.append(row)
         for step in range(self.max_steps):
             with self.telemetry.span("context", "build_context") as span:
+                state = self.store.context_state(customer, conversation)
+                if request_binding is not None: state['request_binding'] = request_binding
                 built = self.context_builder.build(system, messages, schemas,
-                    self.store.context_state(customer, conversation))
+                    state)
                 span.set(**built.metadata)
             with self.telemetry.span("model", "complete", attempt=step + 1,
                     model_id=getattr(self.model, "model", type(self.model).__name__),
@@ -370,6 +455,9 @@ class CustomerService:
                                 raise ServiceError("conversation_handed_off", 409)
                             output = self._tool(customer, conversation, request, name, arguments)
                             if name == 'search_policies':
+                                if policy_topics is not None and self.policy.name == 'binding_scoped_v7':
+                                    from .policy_answer import scoped_result
+                                    output = scoped_result(output, policy_topics)
                                 knowledge_result = output
                             handed_off = name == "escalate_to_human"
                             if isinstance(output, dict) and output.get("id"):
@@ -396,13 +484,34 @@ class CustomerService:
                 pending = db.execute("SELECT * FROM operations WHERE conversation_id=? "
                                      "AND status='pending_confirmation' ORDER BY created_at DESC LIMIT 1", (conversation,)).fetchone()
             # Any write request is shown as a server-generated preview, not model-authorized success.
+            if (self.policy.name == 'binding_scoped_v7' and not pending and target_is_previewable
+                    and policy_topics is None and not preview_replan_used and step + 1 < self.max_steps):
+                # One bounded planning correction, not an automatic preview/write.
+                # The model must still call get_order/preview_cancel; that tool
+                # rechecks live target evidence and the button remains mandatory.
+                with self.telemetry.span('controller','missing_preview_replan',authorization_for_write=False):
+                    self.store.record(conversation,request,'controller_replan',request_binding,
+                                      {'reason':'unique_cancel_intent_without_current_preview','attempt':1})
+                preview_replan_used = True
+                system = self.policy.prompt + '\n本轮规划检查：用户已明确要求继续取消，当前没有有效预览。不要再次询问聊天确认，也不要只说旧卡失效。现在按下列只读意图提示，重新 get_order 查询该唯一目标，若仍可取消则调用 preview_cancel；不能执行取消。\n' + encode(request_binding)
+                continue
+            if (self.policy.name == 'binding_scoped_v7' and not pending and target_is_previewable
+                    and preview_replan_used and policy_topics is None):
+                rebuilt = self._rebuild_preview_after_model_omission(customer,conversation,request,request_binding)
+                if rebuilt:
+                    content = self._preview_message(rebuilt)
+                    self.store.append(conversation,request,{'role':'assistant','content':content})
+                    return {'message':content,'mode':'model','operation':rebuilt,'controller_preview_rebuild':True}
             if pending:
                 operation = self._public(pending)
                 message["content"] = self._preview_message(operation)
             else:
                 try:
                     message["content"] = terminal_content(message["content"])
-                    if target_error:
+                    if self.policy.name == 'binding_scoped_v7' and policy_topics is not None and knowledge_result is not None:
+                        from .policy_answer import extractive_answer
+                        message['content'] = extractive_answer(knowledge_result)
+                    elif target_error:
                         message["content"] = TARGET_MESSAGES[target_error]
                     elif preview_claim(message["content"]):
                         message["content"] = "当前没有有效的待确认取消申请，请重新指定商品或订单，或通过订单卡片申请取消。"

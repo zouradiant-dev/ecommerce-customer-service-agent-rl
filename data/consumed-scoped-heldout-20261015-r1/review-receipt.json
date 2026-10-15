@@ -1,0 +1,24 @@
+{
+  "cases_sha256": "8ba4a287f1e55c37e0fd0758b475cd783977e57b8a63b4534f6ef9f4d29859d0",
+  "summary_sha256": "03ae9ab493d5e0c98e53faa8a962e493fbd8f5c6b1f1241f3c7c1a5b64a667e4",
+  "completed_marker_sha256": "4e1345866d432bb966487b7c2d18951f61ffc9c5539e299ac84c25b5c42e5a55",
+  "test_consumed": true,
+  "model_calls_replayed": 0,
+  "runtime_unchanged_since_freeze": true,
+  "no_training": true,
+  "production_promoted": false,
+  "source_result_directory": "D:\\桌面\\llm-learning\\ecommerce-customer-service-agent-rl\\outputs\\scoped-workflow-test-20261015-r1",
+  "files_sha256": {
+    "cases.jsonl": "8ba4a287f1e55c37e0fd0758b475cd783977e57b8a63b4534f6ef9f4d29859d0",
+    "manifest.json": "62a222a49dc1022412834436512dcdd2d279881a7a69a1d8bae9e823c06fa48c",
+    "overlap-audit.json": "1901e3a5e506dab47ef4a780ebdb9cfc79ae6614c3a4e076806111e955e877a1",
+    "paired-results.jsonl": "87ea558a94b86776b7b6dfac10a683d2057c808350a60d71253cc7dca19ad0e5",
+    "protocol.json": "d4596b1188ddfd1e403f07a54e2e3e4e4623e794193c8ddb3e2288af8adeafe9",
+    "README.md": "287dec898dec1aefb0d9d09e5c111caa285a07da08e4dcaa09a7c6937d209992",
+    "summary.json": "03ae9ab493d5e0c98e53faa8a962e493fbd8f5c6b1f1241f3c7c1a5b64a667e4",
+    "test-v6-actual-input-audit.json": "1241bb12f18c6ffb3d4e8b1abf6074b3f8e5f6489256ed7088afa4c0e724dd9b",
+    "test-v6-bad-cases.jsonl": "d2e9e94148b7051dff77fc576dbca148bf10bd34d15812be70c5e7b214ceecdf",
+    "test-v7-actual-input-audit.json": "1da3525e5ce42cbc9b1529c39c3dec2df969606e9c5948e6a3a386fcf0edd23d",
+    "test-v7-bad-cases.jsonl": "b8be169c357ecd5b8ebdb8073fe271c1431290c550a26d30804c166b6652e306"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "version": "scoped_holdout_manifest_v1",
+  "cases": 60,
+  "frozen_before_test_model_calls": true,
+  "new_test_authored_after_development_selection": true,
+  "author_independent": false,
+  "semantic_independence_claim": false,
+  "sha256": {
+    "cases.jsonl": "8ba4a287f1e55c37e0fd0758b475cd783977e57b8a63b4534f6ef9f4d29859d0",
+    "protocol.json": "d4596b1188ddfd1e403f07a54e2e3e4e4623e794193c8ddb3e2288af8adeafe9",
+    "overlap-audit.json": "1901e3a5e506dab47ef4a780ebdb9cfc79ae6614c3a4e076806111e955e877a1"
+  }
+}

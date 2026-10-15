@@ -291,7 +291,7 @@ def _run_suite(cases: list[dict[str, Any]], output: Path, *, mode: str,
                 "evaluation_path": "service_runtime_on_isolated_simulated_business",
                 "source_sha256": {name: sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
                     for name in ("service.py", "context_builder.py", "telemetry.py", "model.py", "online_evaluation.py",
-                                 "backend.py", "storage.py", "online_cases.py", "api.py", "policy.py", "target_binding.py", "grounded_target.py", "knowledge.py")}}
+                                 "backend.py", "storage.py", "online_cases.py", "api.py", "policy.py", "target_binding.py", "grounded_target.py", "intent_target.py", "policy_answer.py", "knowledge.py")}}
     write_json(output / "protocol.json", protocol)
     results = []
     for index, case in enumerate(cases):
